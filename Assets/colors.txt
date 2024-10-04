@@ -1,0 +1,13 @@
+DARK
+- text: #ebf0f3
+- background: #06090a
+- primary: #a3b8c7
+- secondary: #44416a
+- accent: #7a68a2
+
+LIGHT
+- text: #0b1013
+- background: #f5f8f9
+- primary: #384d5c
+- secondary: #9693bd
+- accent: #705d98
