@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Velura", "Velura\Velura.csproj", "{351CF294-2FF8-49E4-BF2A-1D69E1CAF4AF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Velura.iOS", "Velura.iOS\Velura.iOS.csproj", "{8570E8E5-0975-4E2A-A907-C3031CB8382A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{351CF294-2FF8-49E4-BF2A-1D69E1CAF4AF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{351CF294-2FF8-49E4-BF2A-1D69E1CAF4AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{351CF294-2FF8-49E4-BF2A-1D69E1CAF4AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{351CF294-2FF8-49E4-BF2A-1D69E1CAF4AF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8570E8E5-0975-4E2A-A907-C3031CB8382A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8570E8E5-0975-4E2A-A907-C3031CB8382A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8570E8E5-0975-4E2A-A907-C3031CB8382A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8570E8E5-0975-4E2A-A907-C3031CB8382A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

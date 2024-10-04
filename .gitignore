@@ -1,0 +1,13 @@
+.vs/
+.idea/
+
+*.suo
+*.user
+*.DS_Store
+
+
+Velura/bin/
+Velura/obj/
+
+Velura.iOS/bin/
+Velura.iOS/obj/
