@@ -1,13 +1,26 @@
 using Microsoft.Extensions.Logging;
+using MvvmCross.Core;
+using MvvmCross.IoC;
 using MvvmCross.Platforms.Ios.Core;
 using Serilog;
 using Serilog.Core;
 using Serilog.Extensions.Logging;
+using Velura.iOS.Models;
+using Velura.Models.Abstract;
 
 namespace Velura.iOS;
 
 public class Setup : MvxIosSetup<App>
 {
+	protected override IMvxSettings InitializeSettings(
+		IMvxIoCProvider iocProvider)
+	{
+		iocProvider.RegisterType<IConfig, Config>();
+		
+		return base.InitializeSettings(iocProvider);
+	}
+	
+	
 	static string GetLogFilePath()
 	{
 		string documentsFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
