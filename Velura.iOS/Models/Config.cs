@@ -1,5 +1,4 @@
 using System.ComponentModel;
-using System.Globalization;
 using System.Runtime.CompilerServices;
 using Velura.Models.Abstract;
 
@@ -16,18 +15,29 @@ public class Config : IConfig
 		[CallerMemberName] string? propertyName = null) =>
 		PropertyChanged?.Invoke(this, new(propertyName));
 
-	
-	public void Remove(
-		string propertyName) => 
+
+	public void Reset(
+		string propertyName)
+	{
 		userDefaults.RemoveObject(propertyName);
+		OnPropertyChanged(propertyName);
+	}
+
+	public void Reset()
+	{
+		NSUserDefaults.ResetStandardUserDefaults();
+		foreach (string propertyName in IConfig.DefaultItems.Keys)
+			OnPropertyChanged(propertyName);
+	}
+	
 	
 	
 	T GetOrDefault<T>(
-		string key)
+		string propertyName)
 	{
-		NSObject value = userDefaults.ValueForKey(new(key));
+		NSObject value = userDefaults.ValueForKey(new(propertyName));
 		if (value is null)
-			return IConfig.GetDefaultValue<T>(key);
+			return (T)IConfig.DefaultItems[propertyName];
 
 		Type type = typeof(T);
 		if (type == typeof(string))
@@ -45,11 +55,11 @@ public class Config : IConfig
 	}
 
 	void Set<T>(
-		string key,
+		string propertyName,
 		T value)
 	{
-		userDefaults.SetValueForKey(NSObject.FromObject(value), new(key));
-		OnPropertyChanged(key);
+		userDefaults.SetValueForKey(NSObject.FromObject(value), new(propertyName));
+		OnPropertyChanged(propertyName);
 	}
 	
 	

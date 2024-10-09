@@ -5,4 +5,8 @@ namespace Velura.iOS.Views;
 
 public sealed class SettingsViewController() : ViewController<SettingsViewModel>("Settings", "gearshape", "gearshape.fill")
 {
+    public override void ViewDidLoad()
+    {
+        base.ViewDidLoad();
+    }
 }

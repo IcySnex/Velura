@@ -6,22 +6,19 @@ namespace Velura.Models.Abstract;
 
 public interface IConfig : INotifyPropertyChanged
 {
-	public static T GetDefaultValue<T>(
-		string propertyName)
-	{
-		PropertyInfo? info = typeof(IConfig).GetProperty(propertyName);
-		
-		ConfigItemAttribute<T> attribute = info?.GetCustomAttribute<ConfigItemAttribute<T>>() ?? throw new NullReferenceException("The property doesn't have a ConfigItemAttribute");
-		return attribute.DefaultValue;
-	}
+	public static readonly Dictionary<string, object> DefaultItems = typeof(IConfig).GetProperties().ToDictionary(
+		property => property.Name,
+		property => property.GetCustomAttribute<ConfigItemAttribute>()?.DefaultValue ?? throw new NullReferenceException($"The property '{property.Name} is not a ConfigItem."));
+
+
+	void Reset(string propertyName);
+	
+	void Reset();
 	
 	
-	void Remove(string propertyName);
-	
-	
-	[ConfigItem<string>("Some Key", "This is some random ahh example key", "123")]
+	[ConfigItem("Some Key", "General", "This is some random ahh example key", "123")]
 	string SomeKey { get; set; }
 
-	[ConfigItem<bool>("Some Switch", "This is some random ahh toggle woggle switchyy", true)]
+	[ConfigItem("Some Switch", "Advanced", "This is some random ahh toggle woggle switchyy", true)]
 	bool SomeSwitch { get; set; }
 }
