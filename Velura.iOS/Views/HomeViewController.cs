@@ -3,7 +3,7 @@ using Velura.ViewModels;
 
 namespace Velura.iOS.Views;
 
-public sealed class HomeViewController() : ViewController<HomeViewModel>("Home", "house", "house.fill")
+public sealed class HomeViewController() : TabbedViewController<HomeViewModel>("Home", "house", "house.fill")
 {
 	
 }

@@ -7,9 +7,9 @@ using MvvmCross.ViewModels;
 namespace Velura.iOS.Views.Abstract;
 
 [MvxTabPresentation(WrapInNavigationController = true)]
-public abstract class ViewController<TViewModel> : MvxViewController<TViewModel>  where TViewModel : class, IMvxViewModel
+public abstract class TabbedViewController<TViewModel> : MvxViewController<TViewModel>  where TViewModel : class, IMvxViewModel
 {
-	protected ViewController(
+	protected TabbedViewController(
 		string title,
 		string iconName,
 		string selectedIconName)

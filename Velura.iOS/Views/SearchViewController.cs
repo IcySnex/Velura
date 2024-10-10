@@ -3,6 +3,6 @@ using Velura.ViewModels;
 
 namespace Velura.iOS.Views;
 
-public sealed class SearchViewController() : ViewController<SearchViewModel>("Search", "magnifyingglass", "text.magnifyingglass")
+public sealed class SearchViewController() : TabbedViewController<SearchViewModel>("Search", "magnifyingglass", "text.magnifyingglass")
 {
 }
