@@ -26,10 +26,9 @@ public class Config : IConfig
 	public void Reset()
 	{
 		NSUserDefaults.ResetStandardUserDefaults();
-		foreach (string propertyName in IConfig.DefaultItems.Keys)
+		foreach (string propertyName in IConfig.Items.Keys)
 			OnPropertyChanged(propertyName);
 	}
-	
 	
 	
 	T GetOrDefault<T>(
@@ -37,7 +36,7 @@ public class Config : IConfig
 	{
 		NSObject value = userDefaults.ValueForKey(new(propertyName));
 		if (value is null)
-			return (T)IConfig.DefaultItems[propertyName];
+			return (T)IConfig.Items[propertyName].DefaultValue;
 
 		Type type = typeof(T);
 		if (type == typeof(string))
@@ -61,7 +60,6 @@ public class Config : IConfig
 		userDefaults.SetValueForKey(NSObject.FromObject(value), new(propertyName));
 		OnPropertyChanged(propertyName);
 	}
-	
 	
 	
 	public string SomeKey
