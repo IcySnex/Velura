@@ -1,25 +1,24 @@
 using Microsoft.Extensions.Logging;
-using MvvmCross.Core;
 using MvvmCross.IoC;
 using MvvmCross.Platforms.Ios.Core;
 using Serilog;
 using Serilog.Core;
 using Serilog.Extensions.Logging;
-using Velura.iOS.Models;
-using Velura.Models.Abstract;
+using Velura.iOS.Services;
+using Velura.Services.Abstract;
 
 namespace Velura.iOS;
 
 public class Setup : MvxIosSetup<App>
 {
-	protected override IMvxSettings InitializeSettings(
+	protected override void RegisterPlatformProperties(
 		IMvxIoCProvider iocProvider)
 	{
-		iocProvider.RegisterType<IConfig, Config>();
+		base.RegisterPlatformProperties(iocProvider);
 		
-		return base.InitializeSettings(iocProvider);
+		iocProvider.RegisterType<ISimpleStorage, NSUserDefaultsStorage>();
 	}
-	
+
 	
 	static string GetLogFilePath()
 	{
@@ -34,10 +33,11 @@ public class Setup : MvxIosSetup<App>
 
 	protected override ILoggerFactory? CreateLogFactory()
 	{
+		const string template = "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:l}{NewLine:l}{Exception:l}";
 		Logger logger = new LoggerConfiguration()
 			.MinimumLevel.Information()
-			.WriteTo.NSLog()
-			.WriteTo.File(GetLogFilePath(), rollingInterval: RollingInterval.Day, retainedFileCountLimit: 10)
+			.WriteTo.NSLog(outputTemplate: template)
+			.WriteTo.File(GetLogFilePath(), outputTemplate: template, rollingInterval: RollingInterval.Day, retainedFileCountLimit: 10)
 			.CreateLogger();
 
 		logger.Information("[Setup-CreateLogFactory] Initilaized Logger Factory.");

@@ -1,10 +1,9 @@
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
-using Velura.Services.Abstract;
 
 namespace Velura.Services;
 
-public class JsonConverter : IConverter
+public class JsonConverter
 {
 	readonly ILogger<JsonConverter> logger;
 	
@@ -21,14 +20,16 @@ public class JsonConverter : IConverter
 		object vlaue)
 	{
 		logger.LogInformation("[JsonConverter->ToString] Serializing object to string...");
-		
 		return JsonSerializer.Serialize(vlaue);
 	}
 
 
 	public T ToObject<T>(
-		string value) =>
-		JsonSerializer.Deserialize<T>(value) ?? throw new NullReferenceException("JsonSerializer.Deserialize<T> returned null.");
+		string value)
+	{
+		logger.LogInformation("[JsonConverter->ToString] Deserializing string to object...");
+		return JsonSerializer.Deserialize<T>(value) ?? throw new NullReferenceException("JsonSerializer.Deserialize<T> returned null.");
+	}
 	
 	public bool TryToObject<T>(
 		string value,
@@ -36,8 +37,7 @@ public class JsonConverter : IConverter
 	{
 		try
 		{
-			logger.LogInformation("[JsonConverter-ToObject] Deserializing string to object...");
-			
+			logger.LogInformation("[JsonConverter-ToObject] Trying to deserialize string to object...");
 			result = JsonSerializer.Deserialize<T>(value) ?? throw new NullReferenceException("JsonSerializer.Deserialize<T> returned null.");
 			return true;
 		}

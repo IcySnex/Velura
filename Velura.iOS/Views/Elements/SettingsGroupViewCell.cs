@@ -1,30 +1,32 @@
 using ObjCRuntime;
 
-namespace Velura.iOS.Views.Cells;
+namespace Velura.iOS.Views.Elements;
 
-public sealed class SettingViewCell : UITableViewCell
+public sealed class SettingsGroupViewCell : UITableViewCell
 {
-	public SettingViewCell(
+	public SettingsGroupViewCell(
 		NativeHandle handle) : base(handle) =>
 		Initialize();
 
-	public SettingViewCell(
+	public SettingsGroupViewCell(
 		NSString cellId) : base(UITableViewCellStyle.Default, cellId) =>
 		Initialize();
 
 
-	UILabel titleLabel = default!;
+	UILabel nameLabel = default!;
 	UIImageView imageView = default!;
 	
 	void Initialize()
 	{
+		TranslatesAutoresizingMaskIntoConstraints = false;
 		Accessory = UITableViewCellAccessory.DisclosureIndicator;
 		
 		
-		titleLabel = new()
+		nameLabel = new()
 		{
 			TranslatesAutoresizingMaskIntoConstraints = false
 		};
+		ContentView.AddSubview(nameLabel);
 		
 		imageView = new()
 		{
@@ -37,31 +39,30 @@ public sealed class SettingViewCell : UITableViewCell
 				MasksToBounds = true
 			}
 		};
-		
-		ContentView.AddSubview(titleLabel);
 		ContentView.AddSubview(imageView);
 
-		NSLayoutConstraint.ActivateConstraints(new[]
-		{
+		NSLayoutConstraint.ActivateConstraints([
 			imageView.LeadingAnchor.ConstraintEqualTo(ContentView.LeadingAnchor, 15),
 			imageView.CenterYAnchor.ConstraintEqualTo(ContentView.CenterYAnchor),
 			imageView.WidthAnchor.ConstraintEqualTo(30),
 			imageView.HeightAnchor.ConstraintEqualTo(30),
-			titleLabel.LeadingAnchor.ConstraintEqualTo(imageView.TrailingAnchor, 15),
-			titleLabel.CenterYAnchor.ConstraintEqualTo(ContentView.CenterYAnchor),
-			titleLabel.TrailingAnchor.ConstraintEqualTo(ContentView.TrailingAnchor, 15)
+			nameLabel.LeadingAnchor.ConstraintEqualTo(imageView.TrailingAnchor, 15),
+			nameLabel.CenterYAnchor.ConstraintEqualTo(ContentView.CenterYAnchor),
+			nameLabel.TrailingAnchor.ConstraintEqualTo(ContentView.TrailingAnchor, 15)
 
-		});
+		]);
 	}
 
 	public void UpdateCell(
-		string title,
+		string name,
 		UIImage? image,
 		UIColor imageBackgroundColor,
-		UIColor imageForegroundColor)
+		UIColor? imageTintColor = null)
 	{
-		titleLabel.Text = title;
-		imageView.Image = image?.Scale(new (20, 20)).ApplyTintColor(imageForegroundColor, UIImageRenderingMode.Automatic);
+		nameLabel.Text = name;
+		imageView.Image = imageTintColor is null ? image : image?.ImageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate);
 		imageView.BackgroundColor = imageBackgroundColor;
+		imageView.TintColor = imageTintColor;
+
 	}
 }
