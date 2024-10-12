@@ -1,28 +1,27 @@
 using Velura.Models.Abstract;
+using Velura.Models.Attributes;
 using Velura.Services.Abstract;
 
 namespace Velura.Models;
 
+[Details("App", "Includes all configurable settings of this app.")]
+[Image("gear", "#8e8e8e", "#ffffff")]
 public class Config(
 	ISimpleStorage simpleStorage) : ConfigGroup(simpleStorage, "Config")
 {
-	[Details("General", "This contains general stuff like user or syncing settings.")]
-	[Image("gear", "#0b84ff", "#ffffff")]
 	public ConfigGeneral General { get; } = new(simpleStorage);
 	
-	[Details("User", "This contains user specific settings.")]
-	[Image("person.fill", "#30b556", "#ffffff")]
-	public ConfigUser User { get; } = new(simpleStorage);
-
-	[Details("Advanced", "This contains advanced settings, I wouldnt touch those.")]
-	[Image("exclamationmark.triangle.fill", "#111111", "#ffffff")]
 	public ConfigAdvanced Advanced { get; } = new(simpleStorage);
 }
 
 
+[Details("General", "This contains general stuff like user or syncing settings.")]
+[Image("house", "#0b84ff", "#ffffff")]
 public class ConfigGeneral(
 	ISimpleStorage simpleStorage) : ConfigGroup(simpleStorage, "General")
 {
+	public ConfigUser User { get; } = new(simpleStorage);
+
 	[Details("Sync", "U wanna sync everything?")]
 	public bool Sync
 	{
@@ -31,8 +30,10 @@ public class ConfigGeneral(
 	}
 }
 
+[Details("User", "This contains user specific settings.")]
+[Image("person.fill", "#30b556", "#ffffff")]
 public class ConfigUser(
-	ISimpleStorage simpleStorage) : ConfigGroup(simpleStorage, "User")
+	ISimpleStorage simpleStorage) : ConfigGroup(simpleStorage, "General.User")
 {
 	[Details("Username", "This is the username LOL.")]
 	public string Userrname
@@ -49,6 +50,8 @@ public class ConfigUser(
 	}
 }
 
+[Details("Advanced", "This contains advanced settings, I wouldnt touch those.")]
+[Image("exclamationmark.triangle.fill", "#ff6479", "#ffffff")]
 public class ConfigAdvanced(
 	ISimpleStorage simpleStorage) : ConfigGroup(simpleStorage, "Advanced")
 {

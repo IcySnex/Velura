@@ -1,58 +1,49 @@
+using Cirrious.FluentLayouts.Touch;
 using ObjCRuntime;
 
 namespace Velura.iOS.Views.Elements;
 
 public sealed class SettingsGroupViewCell : UITableViewCell
 {
-	public SettingsGroupViewCell(
-		NativeHandle handle) : base(handle) =>
-		Initialize();
-
-	public SettingsGroupViewCell(
-		NSString cellId) : base(UITableViewCellStyle.Default, cellId) =>
-		Initialize();
-
-
-	UILabel nameLabel = default!;
-	UIImageView imageView = default!;
+	readonly UILabel nameLabel;
+	readonly UIImageView imageView;
 	
-	void Initialize()
+	public SettingsGroupViewCell(
+		NativeHandle handle) : base(handle)
 	{
-		TranslatesAutoresizingMaskIntoConstraints = false;
+		// Properties
 		Accessory = UITableViewCellAccessory.DisclosureIndicator;
-		
-		
-		nameLabel = new()
-		{
-			TranslatesAutoresizingMaskIntoConstraints = false
-		};
+
+		// UI
+		nameLabel = new();
 		ContentView.AddSubview(nameLabel);
 		
 		imageView = new()
 		{
-			TranslatesAutoresizingMaskIntoConstraints = false,
 			ContentMode = UIViewContentMode.Center,
 			ClipsToBounds = true,
 			Layer =
 			{
 				CornerRadius = 8,
 				MasksToBounds = true
-			}
+			},
 		};
 		ContentView.AddSubview(imageView);
 
-		NSLayoutConstraint.ActivateConstraints([
-			imageView.LeadingAnchor.ConstraintEqualTo(ContentView.LeadingAnchor, 15),
-			imageView.CenterYAnchor.ConstraintEqualTo(ContentView.CenterYAnchor),
-			imageView.WidthAnchor.ConstraintEqualTo(30),
-			imageView.HeightAnchor.ConstraintEqualTo(30),
-			nameLabel.LeadingAnchor.ConstraintEqualTo(imageView.TrailingAnchor, 15),
-			nameLabel.CenterYAnchor.ConstraintEqualTo(ContentView.CenterYAnchor),
-			nameLabel.TrailingAnchor.ConstraintEqualTo(ContentView.TrailingAnchor, 15)
+		ContentView.SubviewsDoNotTranslateAutoresizingMaskIntoConstraints();
+		ContentView.AddConstraints(
+			imageView.Width().EqualTo(30),
+			imageView.Height().EqualTo(30),
+			imageView.AtLeftOf(ContentView, 15),
+			imageView.WithSameCenterY(ContentView),
 
-		]);
+			nameLabel.ToRightOf(imageView, 15),
+			nameLabel.AtRightOf(ContentView, 15),
+			nameLabel.WithSameCenterY(ContentView)
+		);
 	}
 
+	
 	public void UpdateCell(
 		string name,
 		UIImage? image,
@@ -63,6 +54,5 @@ public sealed class SettingsGroupViewCell : UITableViewCell
 		imageView.Image = imageTintColor is null ? image : image?.ImageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate);
 		imageView.BackgroundColor = imageBackgroundColor;
 		imageView.TintColor = imageTintColor;
-
 	}
 }

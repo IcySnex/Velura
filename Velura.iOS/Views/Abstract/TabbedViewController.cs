@@ -1,5 +1,3 @@
-// ReSharper disable VirtualMemberCallInConstructor
-
 using MvvmCross.Platforms.Ios.Presenters.Attributes;
 using MvvmCross.Platforms.Ios.Views;
 using MvvmCross.ViewModels;

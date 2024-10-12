@@ -2,6 +2,7 @@ using System.Reflection;
 using Microsoft.Extensions.Logging;
 using Velura.Models;
 using Velura.Models.Abstract;
+using Velura.Models.Attributes;
 using Velura.ViewModels.Abstract;
 
 namespace Velura.ViewModels;
@@ -19,47 +20,48 @@ public sealed class SettingsViewModel : ObservableMvxViewModel
 		this.logger = logger;
 		this.Config = config;
 
-		Groups = GetConfigGroups();
+		Group = CreateSettingsGroup(typeof(Config));
 		
 		logger.LogInformation("[SettingsViewModel-.ctor] SettingsViewModel has been initialized.");
 	}
 
-	public readonly IReadOnlyList<(DetailsAttribute Details, ImageAttribute Image, IReadOnlyList<DetailsAttribute> Properties)> Groups;
 
-	List<(DetailsAttribute Details, ImageAttribute Image, IReadOnlyList<DetailsAttribute> Properties)> GetConfigGroups()
+	public readonly SettingsGroup Group;
+
+	SettingsGroup CreateSettingsGroup(
+		Type configGroup)
 	{
-		logger.LogInformation("[SettingsViewModel-GetGroupDetails] Getting config groups...");
-		
-		List<(DetailsAttribute Details, ImageAttribute Image, IReadOnlyList<DetailsAttribute> Properties)> groups = [];
-		foreach (PropertyInfo propertyInfo in typeof(Config).GetProperties())
-		{
-			if (!typeof(ConfigGroup).IsAssignableFrom(propertyInfo.PropertyType))
-				continue;
-			
-			DetailsAttribute? details = propertyInfo.GetCustomAttribute<DetailsAttribute>();
-			ImageAttribute? image = propertyInfo.GetCustomAttribute<ImageAttribute>();
-			if (details is null || image is null)
-			{
-				logger.LogWarning("[SettingsViewModel-GetConfigGroups] The group property '{propertyName}' doesn't have a details or image attribute.", propertyInfo.Name);
-				continue;
-			}
-				
-			List<DetailsAttribute> groupProperties = [];
-			foreach (PropertyInfo groupProperty in propertyInfo.PropertyType.GetProperties())
-			{
-				DetailsAttribute? propertyDetails = groupProperty.GetCustomAttribute<DetailsAttribute>();
-				if (propertyDetails is null)
-				{
-					logger.LogWarning("[SettingsViewModel-GetConfigGroups] The property '{propertyName}' doesn't have a details attribute.", groupProperty.Name);
-					continue;
-				}
-					
-				groupProperties.Add(propertyDetails);
-			}
+		logger.LogInformation("[SettingsViewModel-CreateSettingsGroup] Creating settings group from config group...");
 
-			groups.Add((details, image, groupProperties));
+		DetailsAttribute? details = configGroup.GetCustomAttribute<DetailsAttribute>();
+		ImageAttribute? image = configGroup.GetCustomAttribute<ImageAttribute>();
+		if (details is null || image is null)
+		{
+			Exception ex = new NullReferenceException("The config group doesn't have a details or image attribute.");
+			logger.LogError("[SettingsViewModel-CreateSettingsGroup] Failed to create settings group from config group.");
+			throw ex;
 		}
 		
-		return groups;
+		List<SettingsGroup> subGroupes = [];
+		List<SettingsProperty> properties = [];
+		foreach (PropertyInfo propertyInfo in configGroup.GetProperties())
+		{
+			if (typeof(ConfigGroup).IsAssignableFrom(propertyInfo.PropertyType))
+			{
+				subGroupes.Add(CreateSettingsGroup(propertyInfo.PropertyType));
+				continue;
+			}
+			
+			DetailsAttribute? propertyDetails = propertyInfo.GetCustomAttribute<DetailsAttribute>();
+			if (propertyDetails is null)
+			{
+				logger.LogWarning("[SettingsViewModel-CreateSettingsGroup] The config group property '{propertyName}' doesn't have a details attribute.", propertyInfo.Name);
+				continue;
+			}
+
+			properties.Add(new(propertyDetails, propertyInfo.Name, propertyInfo.PropertyType));
+		}
+		
+		return new(details, image, subGroupes, properties);
 	}
 }
