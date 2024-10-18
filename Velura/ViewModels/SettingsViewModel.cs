@@ -29,7 +29,8 @@ public sealed class SettingsViewModel : ObservableMvxViewModel
 	public readonly SettingsGroup Group;
 
 	SettingsGroup CreateSettingsGroup(
-		Type configGroup)
+		Type configGroup,
+		string? relativePath = null)
 	{
 		logger.LogInformation("[SettingsViewModel-CreateSettingsGroup] Creating settings group from config group...");
 
@@ -46,9 +47,11 @@ public sealed class SettingsViewModel : ObservableMvxViewModel
 		List<SettingsProperty> properties = [];
 		foreach (PropertyInfo propertyInfo in configGroup.GetProperties())
 		{
+			string propertyRelativePath = relativePath is null ? propertyInfo.Name : $"{relativePath}.{propertyInfo.Name}";
+			
 			if (typeof(ConfigGroup).IsAssignableFrom(propertyInfo.PropertyType))
 			{
-				subGroupes.Add(CreateSettingsGroup(propertyInfo.PropertyType));
+				subGroupes.Add(CreateSettingsGroup(propertyInfo.PropertyType, propertyRelativePath));
 				continue;
 			}
 			
@@ -59,7 +62,7 @@ public sealed class SettingsViewModel : ObservableMvxViewModel
 				continue;
 			}
 
-			properties.Add(new(propertyDetails, propertyInfo.Name, propertyInfo.PropertyType));
+			properties.Add(new(propertyDetails, propertyRelativePath, propertyInfo.PropertyType));
 		}
 		
 		return new(details, image, subGroupes, properties);

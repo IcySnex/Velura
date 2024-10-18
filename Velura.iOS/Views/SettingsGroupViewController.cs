@@ -1,3 +1,4 @@
+using MvvmCross.Binding.BindingContext;
 using Velura.iOS.Helpers;
 using Velura.iOS.Views.Elements;
 using Velura.Models;
@@ -6,6 +7,7 @@ namespace Velura.iOS.Views;
 
 public class SettingsGroupViewController : UITableViewController
 {
+	readonly IMvxBindingContextOwner bindingContextOwner;
 	readonly SettingsGroup group;
 	
 	readonly NSString groupCellIdentifier;
@@ -15,24 +17,35 @@ public class SettingsGroupViewController : UITableViewController
 	readonly int propertySectionIndex;
 	
 	public SettingsGroupViewController(
+		IMvxBindingContextOwner bindingContextOwner,
 		SettingsGroup group) : base(UITableViewStyle.InsetGrouped)
 	{
+		this.bindingContextOwner = bindingContextOwner;
 		this.group = group;
 		
+		// Properties
+		Title = group.Details.Name;
+		View!.BackgroundColor = UIColor.SystemGroupedBackground;
+		NavigationItem.LargeTitleDisplayMode = UINavigationItemLargeTitleDisplayMode.Never;
+
+		// Cells
 		groupCellIdentifier = new($"SettingsGroup[{group.Details.Name}]");
 		propertyCellIdentifier = new($"SettingsProperty[{group.Details.Name}]");
 
-		groupSectionIndex = group.Groups.Count > 0 ? 0 : -1;
-		propertySectionIndex = group.Properties.Count > 0 ? groupSectionIndex + 1 : -1;
-		
-		Title = group.Details.Name;
-		
-		View!.BackgroundColor = UIColor.SystemBackground;
-		NavigationItem.LargeTitleDisplayMode = UINavigationItemLargeTitleDisplayMode.Never;
-
-		TableView.KeyboardDismissMode = UIScrollViewKeyboardDismissMode.OnDrag;
+		TableView.RowHeight = UITableView.AutomaticDimension;
+		TableView.EstimatedRowHeight = 60;
 		TableView.RegisterClassForCellReuse(typeof(SettingsGroupViewCell), groupCellIdentifier);
 		TableView.RegisterClassForCellReuse(typeof(SettingsPropertyViewCell), propertyCellIdentifier);
+		
+		groupSectionIndex = group.Groups.Count > 0 ? 0 : -1;
+		propertySectionIndex = group.Properties.Count > 0 ? groupSectionIndex + 1 : -1;
+
+		// Dismiss Keyboard
+		TableView.KeyboardDismissMode = UIScrollViewKeyboardDismissMode.OnDrag;
+		TableView.AddGestureRecognizer(new UITapGestureRecognizer(() => View.EndEditing(true))
+		{
+			CancelsTouchesInView = false,
+		});
 	}
 	
 
@@ -51,7 +64,7 @@ public class SettingsGroupViewController : UITableViewController
 
 		throw new IndexOutOfRangeException($"Invalid cell index path section: {section}. Supported are 0 = Group, 1 = Property.");
 	}
-
+	
 	public override UITableViewCell GetCell(
 		UITableView tableView,
 		NSIndexPath indexPath)
@@ -63,9 +76,9 @@ public class SettingsGroupViewController : UITableViewController
 				
 			cell.UpdateCell(
 				subGroup.Details.Name,
-				UIImage.GetSystemImage(subGroup.Image.ResourceName),
+				UIImage.GetSystemImage(subGroup.Image.ResourceName)!,
 				subGroup.Image.BackgroundColor.ToUIColor(),
-				subGroup.Image.TintColor?.ToUIColor());
+				subGroup.Image.TintColor.ToUIColor());
 			return cell;
 		}
 		if (indexPath.Section == propertySectionIndex)
@@ -73,7 +86,7 @@ public class SettingsGroupViewController : UITableViewController
 			SettingsPropertyViewCell cell = (SettingsPropertyViewCell)tableView.DequeueReusableCell(propertyCellIdentifier, indexPath);
 			SettingsProperty property = group.Properties[indexPath.Row];
 				
-			cell.UpdateCell(property.Details.Name, property.Type);
+			cell.UpdateCell(property, bindingContextOwner);
 			return cell;
 		}
 		
@@ -90,6 +103,6 @@ public class SettingsGroupViewController : UITableViewController
 			return;
 		
 		SettingsGroup selectedGroup = group.Groups[indexPath.Row];
-		NavigationController?.PushViewController(new SettingsGroupViewController(selectedGroup), true);
+		NavigationController?.PushViewController(new SettingsGroupViewController(bindingContextOwner, selectedGroup), true);
 	}
 }

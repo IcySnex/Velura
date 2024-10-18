@@ -1,3 +1,4 @@
+using Velura.Enums;
 using Velura.Models.Abstract;
 using Velura.Models.Attributes;
 using Velura.Services.Abstract;
@@ -11,7 +12,16 @@ public class Config(
 {
 	public ConfigGeneral General { get; } = new(simpleStorage);
 	
+	public ConfigAppearance Appearance { get; } = new(simpleStorage);
+	
 	public ConfigAdvanced Advanced { get; } = new(simpleStorage);
+	
+	[Details("Debug", "Enables debug options for the app. May decrease performance and introduces new bugs.")]
+	public bool IsDebugEnabled
+	{
+		get => GetValue(nameof(IsDebugEnabled), false);
+		set => SetValue(nameof(IsDebugEnabled), value);
+	}
 }
 
 
@@ -23,10 +33,30 @@ public class ConfigGeneral(
 	public ConfigUser User { get; } = new(simpleStorage);
 
 	[Details("Sync", "U wanna sync everything?")]
-	public bool Sync
+	public bool IsSyncEnabled
 	{
-		get => GetValue(nameof(Sync), false);
-		set => SetValue(nameof(Sync), value);
+		get => GetValue(nameof(IsSyncEnabled), false);
+		set => SetValue(nameof(IsSyncEnabled), value);
+	}
+	
+	[Details("Backup", "Automatically backp settings and so lol.")]
+	public bool IsBackupEnabled
+	{
+		get => GetValue(nameof(IsBackupEnabled), false);
+		set => SetValue(nameof(IsBackupEnabled), value);
+	}
+}
+
+[Details("Appearance", "Customize the look and feel of the app.")]
+[Image("paintpalette.fill", "#ff9501", "#ffffff")]
+public class ConfigAppearance(
+	ISimpleStorage simpleStorage) : ConfigGroup(simpleStorage, "Appearance")
+{
+	[Details("Theme", "Choose the app's theme. Light, Dark, or switch automatically based on your system preferences.")]
+	public ThemeMode Theme
+	{
+		get => GetValue(nameof(ThemeMode), ThemeMode.Auto);
+		set => SetValue(nameof(ThemeMode), value);
 	}
 }
 

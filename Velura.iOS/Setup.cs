@@ -1,9 +1,11 @@
 using Microsoft.Extensions.Logging;
+using MvvmCross.Binding.Bindings.Target.Construction;
 using MvvmCross.IoC;
 using MvvmCross.Platforms.Ios.Core;
 using Serilog;
 using Serilog.Core;
 using Serilog.Extensions.Logging;
+using Velura.iOS.Bindings;
 using Velura.iOS.Services;
 using Velura.Services.Abstract;
 
@@ -18,6 +20,16 @@ public class Setup : MvxIosSetup<App>
 		
 		iocProvider.RegisterType<ISimpleStorage, NSUserDefaultsStorage>();
 	}
+	
+	
+	protected override void FillTargetFactories(
+		IMvxTargetBindingFactoryRegistry registry)
+	{
+		base.FillTargetFactories(registry);
+
+		registry.RegisterPropertyInfoBindingFactory(typeof(UITextFieldTextBinding), typeof(UITextField), "Text");
+	}
+
 
 	
 	static string GetLogFilePath()

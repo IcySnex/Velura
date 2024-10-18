@@ -12,6 +12,7 @@ public abstract class TabbedViewController<TViewModel> : MvxViewController<TView
 		string iconName,
 		string selectedIconName)
 	{
+		// Properties
 		Title = title;
 		TabBarItem.Image = UIImage.GetSystemImage(iconName);
 		TabBarItem.SelectedImage = UIImage.GetSystemImage(selectedIconName);
@@ -22,7 +23,7 @@ public abstract class TabbedViewController<TViewModel> : MvxViewController<TView
 	{
 		base.ViewDidLoad();
 		
-		View!.BackgroundColor = UIColor.SystemBackground;
+		View!.BackgroundColor = UIColor.SystemGroupedBackground;
 		NavigationController!.NavigationBar.PrefersLargeTitles = true;
 	}
 }

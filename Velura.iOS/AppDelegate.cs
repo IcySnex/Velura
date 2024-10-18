@@ -12,6 +12,7 @@ public class AppDelegate : MvxApplicationDelegate<Setup, App>
 		bool result = base.FinishedLaunching(application, launchOptions);
 
 		UIWindow.Appearance.TintColor = UIColor.FromName("AccentColor");
+		UISwitch.Appearance.OnTintColor = UIColor.FromName("AccentColor");
 
 		return result;
 	}

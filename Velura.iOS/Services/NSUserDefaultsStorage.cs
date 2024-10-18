@@ -14,14 +14,14 @@ public class NSUserDefaultsStorage : ISimpleStorage
 	{
 		this.logger = logger;
 		
-		logger.LogInformation("[UserDefaultsStorage-.ctor] UserDefaultsStorage has been initialized.");
+		logger.LogInformation("[NSUserDefaultsStorage-.ctor] UserDefaultsStorage has been initialized.");
 	}
 
 
 	public T? GetValue<T>(
 		string key)
 	{
-		logger.LogInformation("[UserDefaultsStorage-GetValue] Getting value with key '{key}'...", key);
+		logger.LogInformation("[NSUserDefaultsStorage-GetValue] Getting value with key '{key}'...", key);
 		NSObject value = userDefaults.ValueForKey(new(key));
 		
 		if (value is null)
@@ -42,14 +42,14 @@ public class NSUserDefaultsStorage : ISimpleStorage
 		string key,
 		T value)
 	{
-		logger.LogInformation("[UserDefaultsStorage-SetValue] Setting value with key '{key}'...", key);
+		logger.LogInformation("[NSUserDefaultsStorage-SetValue] Setting value with key '{key}'...", key);
 		userDefaults.SetValueForKey(NSObject.FromObject(value), new(key));
 	}
 
 	public void RemoveValue(
 		string key)
 	{
-		logger.LogInformation("[UserDefaultsStorage-RemoveValue] Removing value with key '{key}'...", key);
+		logger.LogInformation("[NSUserDefaultsStorage-RemoveValue] Removing value with key '{key}'...", key);
 		userDefaults.RemoveObject(key);
 	}
 }

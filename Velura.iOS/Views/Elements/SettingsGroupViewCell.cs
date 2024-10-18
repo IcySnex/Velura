@@ -1,11 +1,13 @@
 using Cirrious.FluentLayouts.Touch;
 using ObjCRuntime;
+using Velura.iOS.Helpers;
 
 namespace Velura.iOS.Views.Elements;
 
 public sealed class SettingsGroupViewCell : UITableViewCell
 {
 	readonly UILabel nameLabel;
+	readonly UIView imageContainer;
 	readonly UIImageView imageView;
 	
 	public SettingsGroupViewCell(
@@ -15,12 +17,14 @@ public sealed class SettingsGroupViewCell : UITableViewCell
 		Accessory = UITableViewCellAccessory.DisclosureIndicator;
 
 		// UI
-		nameLabel = new();
-		ContentView.AddSubview(nameLabel);
-		
-		imageView = new()
+		nameLabel = new()
 		{
-			ContentMode = UIViewContentMode.Center,
+			Font = UIFont.PreferredBody
+		};
+		ContentView.AddSubview(nameLabel);
+
+		imageContainer = new()
+		{
 			ClipsToBounds = true,
 			Layer =
 			{
@@ -28,14 +32,25 @@ public sealed class SettingsGroupViewCell : UITableViewCell
 				MasksToBounds = true
 			},
 		};
+		ContentView.AddSubview(imageContainer);
+		
+		imageView = new()
+		{
+			ContentMode = UIViewContentMode.Center,
+		};
 		ContentView.AddSubview(imageView);
 
 		ContentView.SubviewsDoNotTranslateAutoresizingMaskIntoConstraints();
 		ContentView.AddConstraints(
-			imageView.Width().EqualTo(30),
+			imageContainer.Height().EqualTo(30),
+			imageContainer.Width().EqualTo(30),
+			imageContainer.AtLeftOf(ContentView, 15),
+			imageContainer.WithSameCenterY(ContentView),
+			
 			imageView.Height().EqualTo(30),
-			imageView.AtLeftOf(ContentView, 15),
-			imageView.WithSameCenterY(ContentView),
+			imageView.Width().EqualTo(30),
+			imageView.WithSameCenterY(imageContainer),
+			imageView.WithSameCenterX(imageContainer),
 
 			nameLabel.ToRightOf(imageView, 15),
 			nameLabel.AtRightOf(ContentView, 15),
@@ -46,13 +61,13 @@ public sealed class SettingsGroupViewCell : UITableViewCell
 	
 	public void UpdateCell(
 		string name,
-		UIImage? image,
+		UIImage image,
 		UIColor imageBackgroundColor,
-		UIColor? imageTintColor = null)
+		UIColor imageTintColor)
 	{
 		nameLabel.Text = name;
-		imageView.Image = imageTintColor is null ? image : image?.ImageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate);
-		imageView.BackgroundColor = imageBackgroundColor;
+		imageView.Image = image.ImageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate);
+		imageContainer.BackgroundColor = imageBackgroundColor;
 		imageView.TintColor = imageTintColor;
 	}
 }

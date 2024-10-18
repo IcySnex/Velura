@@ -9,7 +9,8 @@ public sealed class SettingsViewController() : TabbedViewController<SettingsView
     {
         base.ViewDidLoad();
         
-        SettingsGroupViewController groupViewController = new(ViewModel!.Group);
+        // Settings UI
+        SettingsGroupViewController groupViewController = new(this, ViewModel!.Group);
         groupViewController.NavigationItem.LargeTitleDisplayMode = UINavigationItemLargeTitleDisplayMode.Always;
         
         AddChildViewController(groupViewController);
