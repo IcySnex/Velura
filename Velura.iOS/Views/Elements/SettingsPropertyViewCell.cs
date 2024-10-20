@@ -1,7 +1,4 @@
 using Cirrious.FluentLayouts.Touch;
-using MvvmCross.Binding;
-using MvvmCross.Binding.BindingContext;
-using MvvmCross.Binding.Bindings;
 using ObjCRuntime;
 using Velura.iOS.Delegates;
 using Velura.Models;
@@ -10,7 +7,7 @@ namespace Velura.iOS.Views.Elements;
 
 public sealed class SettingsPropertyViewCell : UITableViewCell
 {
-	readonly IUITextFieldDelegate numbersOnlyDelegate;
+	readonly IUITextFieldDelegate numbersOnlyDelegate = new NumbersOnlyTextFieldDelegate();
 	
 	readonly UIView backgroundView;
 	readonly UILabel nameLabel;
@@ -20,8 +17,6 @@ public sealed class SettingsPropertyViewCell : UITableViewCell
 	public SettingsPropertyViewCell(
 		NativeHandle handle) : base(handle)
 	{
-		numbersOnlyDelegate = new NumbersOnlyTextFieldDelegate();
-		
 		// Properties
 		SelectionStyle = UITableViewCellSelectionStyle.None;
 		BackgroundColor = UIColor.Clear;
@@ -72,24 +67,15 @@ public sealed class SettingsPropertyViewCell : UITableViewCell
 
 	
 	public void UpdateCell(
-<<<<<<< HEAD
 		SettingsProperty property)
 		// IMvxBindingContextOwner bindingContextOwner)
-=======
-		SettingsProperty property,
-		IMvxBindingContextOwner bindingContextOwner)
->>>>>>> db4a7f244f0f55aadc41c2ebbc6a519c78d776ce
 	{
 		nameLabel.Text = property.Details.Name;
 		descriptionLabel.Text = property.Details.Description;
 
 		if (settingView is not null)
 		{
-<<<<<<< HEAD
 			// bindingContextOwner.ClearBindings(property.Path);
-=======
-			bindingContextOwner.ClearBindings(property.Path);
->>>>>>> db4a7f244f0f55aadc41c2ebbc6a519c78d776ce
 			settingView?.RemoveFromSuperview();
 		}
 		
@@ -118,21 +104,12 @@ public sealed class SettingsPropertyViewCell : UITableViewCell
 		{
 			settingView = new UISwitch();
 
-<<<<<<< HEAD
 			// bindingContextOwner.AddBinding(settingView, new MvxBindingDescription(
 			// 	"On",
 			// 	$"Config.{property.Path}",
 			// 	null, null, null,
 			// 	MvxBindingMode.TwoWay
 			// ), property.Path);
-=======
-			bindingContextOwner.AddBinding(settingView, new MvxBindingDescription(
-				"On",
-				$"Config.{property.Path}",
-				null, null, null,
-				MvxBindingMode.TwoWay
-			), property.Path);
->>>>>>> db4a7f244f0f55aadc41c2ebbc6a519c78d776ce
 		}
 		else if (property.Type == typeof(string))
 		{
@@ -145,21 +122,12 @@ public sealed class SettingsPropertyViewCell : UITableViewCell
 				SpellCheckingType = UITextSpellCheckingType.No
 			};
 			
-<<<<<<< HEAD
 			// bindingContextOwner.AddBinding(settingView, new MvxBindingDescription(
 			// 	"Text",
 			// 	$"Config.{property.Path}",
 			// 	null, null, null,
 			// 	MvxBindingMode.TwoWay
 			// ), property.Path);
-=======
-			bindingContextOwner.AddBinding(settingView, new MvxBindingDescription(
-				"Text",
-				$"Config.{property.Path}",
-				null, null, null,
-				MvxBindingMode.TwoWay
-			), property.Path);
->>>>>>> db4a7f244f0f55aadc41c2ebbc6a519c78d776ce
 		}
 		else if (property.Type == typeof(int))
 		{
@@ -174,21 +142,12 @@ public sealed class SettingsPropertyViewCell : UITableViewCell
 				SpellCheckingType = UITextSpellCheckingType.No
 			};
 			
-<<<<<<< HEAD
 			// bindingContextOwner.AddBinding(settingView, new MvxBindingDescription(
 			// 	"Text",
 			// 	$"Config.{property.Path}",
 			// 	null, null, null,
 			// 	MvxBindingMode.TwoWay
 			// ), property.Path);
-=======
-			bindingContextOwner.AddBinding(settingView, new MvxBindingDescription(
-				"Text",
-				$"Config.{property.Path}",
-				null, null, null,
-				MvxBindingMode.TwoWay
-			), property.Path);
->>>>>>> db4a7f244f0f55aadc41c2ebbc6a519c78d776ce
 		}
 		else
 		{

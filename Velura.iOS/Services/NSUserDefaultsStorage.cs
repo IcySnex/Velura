@@ -14,11 +14,7 @@ public class NSUserDefaultsStorage : ISimpleStorage
 	{
 		this.logger = logger;
 		
-<<<<<<< HEAD
 		logger.LogInformation("[NSUserDefaultsStorage-.ctor] NSUserDefaultsStorage has been initialized.");
-=======
-		logger.LogInformation("[NSUserDefaultsStorage-.ctor] UserDefaultsStorage has been initialized.");
->>>>>>> db4a7f244f0f55aadc41c2ebbc6a519c78d776ce
 	}
 
 

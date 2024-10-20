@@ -49,11 +49,7 @@ public sealed class ConfigGeneral(
 
 [Details("Appearance", "Customize the look and feel of the app.")]
 [Image("paintpalette.fill", "#ff9501", "#ffffff")]
-<<<<<<< HEAD
 public sealed class ConfigAppearance(
-=======
-public class ConfigAppearance(
->>>>>>> db4a7f244f0f55aadc41c2ebbc6a519c78d776ce
 	ISimpleStorage simpleStorage) : ConfigGroup(simpleStorage, "Appearance")
 {
 	[Details("Theme", "Choose the app's theme. Light, Dark, or switch automatically based on your system preferences.")]
