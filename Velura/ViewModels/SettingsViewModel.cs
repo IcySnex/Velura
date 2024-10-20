@@ -1,35 +1,35 @@
 using System.Reflection;
+using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.Extensions.Logging;
 using Velura.Models;
 using Velura.Models.Abstract;
 using Velura.Models.Attributes;
-using Velura.ViewModels.Abstract;
 
 namespace Velura.ViewModels;
 
-public sealed class SettingsViewModel : ObservableMvxViewModel
+public sealed class SettingsViewModel : ObservableObject
 {
 	readonly ILogger<SettingsViewModel> logger;
-	
-	public Config Config { get; }
 
+	public Config Config { get; }
+	
 	public SettingsViewModel(
 		ILogger<SettingsViewModel> logger,
 		Config config)
 	{
 		this.logger = logger;
 		this.Config = config;
-
-		Group = CreateSettingsGroup(typeof(Config));
 		
+		Group = CreateSettingsGroup(typeof(Config));
+
 		logger.LogInformation("[SettingsViewModel-.ctor] SettingsViewModel has been initialized.");
 	}
-
-
+	
 	public readonly SettingsGroup Group;
 
 	SettingsGroup CreateSettingsGroup(
-		Type configGroup)
+		Type configGroup,
+		string? relativePath = null)
 	{
 		logger.LogInformation("[SettingsViewModel-CreateSettingsGroup] Creating settings group from config group...");
 
@@ -46,9 +46,11 @@ public sealed class SettingsViewModel : ObservableMvxViewModel
 		List<SettingsProperty> properties = [];
 		foreach (PropertyInfo propertyInfo in configGroup.GetProperties())
 		{
+			string propertyRelativePath = relativePath is null ? propertyInfo.Name : $"{relativePath}.{propertyInfo.Name}";
+			
 			if (typeof(ConfigGroup).IsAssignableFrom(propertyInfo.PropertyType))
 			{
-				subGroupes.Add(CreateSettingsGroup(propertyInfo.PropertyType));
+				subGroupes.Add(CreateSettingsGroup(propertyInfo.PropertyType, propertyRelativePath));
 				continue;
 			}
 			
@@ -59,7 +61,7 @@ public sealed class SettingsViewModel : ObservableMvxViewModel
 				continue;
 			}
 
-			properties.Add(new(propertyDetails, propertyInfo.Name, propertyInfo.PropertyType));
+			properties.Add(new(propertyDetails, propertyRelativePath, propertyInfo.PropertyType));
 		}
 		
 		return new(details, image, subGroupes, properties);

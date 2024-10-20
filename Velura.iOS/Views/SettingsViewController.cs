@@ -1,15 +1,18 @@
-using Velura.iOS.Views.Abstract;
+using Microsoft.Extensions.DependencyInjection;
 using Velura.ViewModels;
 
 namespace Velura.iOS.Views;
 
-public sealed class SettingsViewController() : TabbedViewController<SettingsViewModel>("Settings", "gearshape", "gearshape.fill")
+public class SettingsViewController : UIViewController
 {
-    public override void ViewDidLoad()
-    {
-        base.ViewDidLoad();
-        
-        SettingsGroupViewController groupViewController = new(ViewModel!.Group);
+	readonly SettingsViewModel viewModel = App.Provider.GetRequiredService<SettingsViewModel>();
+	
+	public override void ViewDidLoad()
+	{
+		base.ViewDidLoad();
+
+        // UI
+        SettingsGroupViewController groupViewController = new(viewModel.Group);//this, viewModel.Group);
         groupViewController.NavigationItem.LargeTitleDisplayMode = UINavigationItemLargeTitleDisplayMode.Always;
         
         AddChildViewController(groupViewController);
@@ -18,5 +21,5 @@ public sealed class SettingsViewController() : TabbedViewController<SettingsView
         groupViewController.View!.Frame = View.Bounds;
         groupViewController.View!.AutoresizingMask = UIViewAutoresizing.FlexibleDimensions;
         groupViewController.DidMoveToParentViewController(this);
-    }
+	}
 }

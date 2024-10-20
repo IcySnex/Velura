@@ -1,9 +1,21 @@
-using Velura.iOS.Views.Abstract;
+using Microsoft.Extensions.DependencyInjection;
 using Velura.ViewModels;
 
 namespace Velura.iOS.Views;
 
-public sealed class HomeViewController() : TabbedViewController<HomeViewModel>("Home", "house", "house.fill")
+public class HomeViewController : UIViewController
 {
+	readonly HomeViewModel viewModel = App.Provider.GetRequiredService<HomeViewModel>();
 	
+	public override void ViewDidLoad()
+	{
+		base.ViewDidLoad();
+
+		UILabel label = new()
+		{
+			Text = viewModel.HelloText,
+			TextColor = UIColor.Label,
+		};
+		View!.AddSubview(label);
+	}
 }

@@ -1,73 +1,62 @@
-using CoreAnimation;
-using MvvmCross.Platforms.Ios.Presenters.Attributes;
-using MvvmCross.Platforms.Ios.Views;
-using Velura.ViewModels;
+using Microsoft.Extensions.Logging;
+using Velura.iOS.Delegates;
 
 namespace Velura.iOS.Views;
 
-[MvxRootPresentation]
-public sealed class MainViewController : MvxTabBarViewController<MainViewModel>, IUITabBarControllerDelegate
+public class MainViewController : UITabBarController
 {
-	public MainViewController()
-	{
-		Title = "Velura";
-	}
+	readonly IUITabBarControllerDelegate animatedBounceDelegate = new AnimatedBounceTabBarDelegate();
 	
-	bool isInitialized = false;
+	readonly ILogger<MainViewController> logger;
 	
-	public override async void ViewWillAppear(
-		bool animated)
+	public MainViewController(
+		ILogger<MainViewController> logger)
 	{
-		base.ViewWillAppear(animated);
-
-		if (isInitialized || ViewModel is null)
-			return;
+		this.logger = logger;
 		
-		await ViewModel.SetupTabsAsync();
-		isInitialized = true;
-	}
-	
-	
-	public override void ViewDidLoad()
-	{
-		base.ViewDidLoad();
-
-		Delegate = this;
+		// Properties
+		Title = "Velura";
+		Delegate = animatedBounceDelegate;
 		
 		if (UIDevice.CurrentDevice.CheckSystemVersion(18, 0))
 			Mode = UITabBarControllerMode.TabSidebar;
+
+		// Views
+		ViewControllers =
+		[
+			CreateNavController<HomeViewController>("Home", "house", "house.fill"),
+			CreateNavController<SearchViewController>("Search", "magnifyingglass", "text.magnifyingglass"),
+			CreateNavController<SettingsViewController>("Settings", "gearshape", "gearshape.fill"),
+		];
+		logger.LogInformation("[MainViewController-.ctor] MainViewController has been initialized and UI has been created.");
 	}
-	
-	[Export("tabBarController:shouldSelectViewController:")]
-	public new bool ShouldSelectViewController(
-		UITabBarController tabBarController,
-		UIViewController viewController)
+
+
+	UINavigationController CreateNavController<TViewController>(
+		string title,
+		string iconName,
+		string selectedIconName) where TViewController : UIViewController, new()
 	{
-		if (UIDevice.CurrentDevice.UserInterfaceIdiom != UIUserInterfaceIdiom.Phone || viewController?.TabBarItem is null || tabBarController.ViewControllers is null)
-			return true;
-
-		int tabIndex = Array.IndexOf(tabBarController.ViewControllers, viewController);
-		if (tabIndex == -1)
-			return true;
-
-		UIView? tabBarIcon = tabBarController.TabBar.Subviews[tabIndex + 1].Subviews.FirstOrDefault()?.Subviews.FirstOrDefault()?.Subviews.FirstOrDefault();
-		if (tabBarIcon is null)
-			return true;
+		TViewController viewController = new()
+		{
+			Title = title,
+			TabBarItem =
+			{
+				Image = UIImage.GetSystemImage(iconName),
+				SelectedImage = UIImage.GetSystemImage(selectedIconName)
+			}
+		};
+		viewController.View!.BackgroundColor = UIColor.SystemGroupedBackground;
 		
-		BounceAnimation(tabBarIcon);
-		return true;
+		UINavigationController navigationWrapper = new(viewController)
+		{
+			NavigationBar =
+			{
+				PrefersLargeTitles = true
+			}
+		};
+		
+		logger.LogInformation("[MainViewController-CreateNavController] Created wrapper NavController for TViewController: {title}.", title);
+		return navigationWrapper;
 	}
-	
-	static void BounceAnimation(
-		UIView view)
-    {
-        CABasicAnimation animation = CABasicAnimation.FromKeyPath("transform.scale");
-        animation.Duration = 0.1;
-        animation.From = NSNumber.FromFloat(1.0f);
-        animation.To = NSNumber.FromFloat(1.2f);
-        animation.AutoReverses = true;
-        animation.TimingFunction = CAMediaTimingFunction.FromName(CAMediaTimingFunction.EaseOut);
-        
-        view.Layer.AddAnimation(animation, "bounce");
-    }
 }
