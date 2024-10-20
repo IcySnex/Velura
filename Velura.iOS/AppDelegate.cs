@@ -1,18 +1,26 @@
-using MvvmCross.Platforms.Ios.Core;
+using Microsoft.Extensions.DependencyInjection;
+using Velura.iOS.Views;
 
 namespace Velura.iOS;
 
-[Register(nameof(AppDelegate))]
-public class AppDelegate : MvxApplicationDelegate<Setup, App>
+[Register("AppDelegate")]
+public class AppDelegate : UIApplicationDelegate
 {
+	public override UIWindow? Window { get; set; }
+
 	public override bool FinishedLaunching(
 		UIApplication application,
 		NSDictionary launchOptions)
 	{
-		bool result = base.FinishedLaunching(application, launchOptions);
-
+		IOSApp.Initialize();
+		
+		Window = new(UIScreen.MainScreen.Bounds);
+		Window.RootViewController = App.Provider.GetRequiredService<MainViewController>();
+		Window.MakeKeyAndVisible();
+		
 		UIWindow.Appearance.TintColor = UIColor.FromName("AccentColor");
-
-		return result;
+		UISwitch.Appearance.OnTintColor = UIColor.FromName("AccentColor");
+		
+		return true;
 	}
 }

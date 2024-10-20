@@ -1,8 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Velura", "Velura\Velura.csproj", "{351CF294-2FF8-49E4-BF2A-1D69E1CAF4AF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Velura.iOS", "Velura.iOS\Velura.iOS.csproj", "{87B0AA5C-2ED1-4041-B015-34F93C3D5E9B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Velura.iOS", "Velura.iOS\Velura.iOS.csproj", "{8570E8E5-0975-4E2A-A907-C3031CB8382A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Velura", "Velura\Velura.csproj", "{CCCBB2F9-EE0E-4389-B879-88381258AAA8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -10,13 +10,15 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{351CF294-2FF8-49E4-BF2A-1D69E1CAF4AF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{351CF294-2FF8-49E4-BF2A-1D69E1CAF4AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{351CF294-2FF8-49E4-BF2A-1D69E1CAF4AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{351CF294-2FF8-49E4-BF2A-1D69E1CAF4AF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8570E8E5-0975-4E2A-A907-C3031CB8382A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8570E8E5-0975-4E2A-A907-C3031CB8382A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8570E8E5-0975-4E2A-A907-C3031CB8382A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8570E8E5-0975-4E2A-A907-C3031CB8382A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{87B0AA5C-2ED1-4041-B015-34F93C3D5E9B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{87B0AA5C-2ED1-4041-B015-34F93C3D5E9B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{87B0AA5C-2ED1-4041-B015-34F93C3D5E9B}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{87B0AA5C-2ED1-4041-B015-34F93C3D5E9B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{87B0AA5C-2ED1-4041-B015-34F93C3D5E9B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{87B0AA5C-2ED1-4041-B015-34F93C3D5E9B}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{CCCBB2F9-EE0E-4389-B879-88381258AAA8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CCCBB2F9-EE0E-4389-B879-88381258AAA8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CCCBB2F9-EE0E-4389-B879-88381258AAA8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CCCBB2F9-EE0E-4389-B879-88381258AAA8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

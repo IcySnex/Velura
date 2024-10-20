@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <TargetFramework>net8.0-ios</TargetFramework>
-        <SupportedOSPlatformVersion>15.0</SupportedOSPlatformVersion>
+        <SupportedOSPlatformVersion>16.0</SupportedOSPlatformVersion>
         <OutputType>Exe</OutputType>
         
         <Nullable>enable</Nullable>
@@ -10,23 +10,18 @@
     
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
       <CodesignKey>Apple Development: kevin.batj@icloud.com (QJ83QQLPNF)</CodesignKey>
-      <CodesignProvision>iOS Team Provisioning Profile: com.icysnex.velura</CodesignProvision>
+      <MtouchDebug>true</MtouchDebug>
+      <IOSDebugOverWiFi>true</IOSDebugOverWiFi>
     </PropertyGroup>
-    
-    <ItemGroup>
-      <ImageAsset Remove="Assets.xcassets\AppIcon.appiconset\Icon1024.png" />
-    </ItemGroup>
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+      <CodesignKey>Apple Development: kevin.batj@icloud.com (QJ83QQLPNF)</CodesignKey>
+    </PropertyGroup>
     
     <ItemGroup>
       <ProjectReference Include="..\Velura\Velura.csproj" />
     </ItemGroup>
-    
     <ItemGroup>
       <PackageReference Include="Cirrious.FluentLayout" Version="3.0.0" />
-      <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.0" />
-      <PackageReference Include="MvvmCross" Version="9.2.0" />
-      <PackageReference Include="Serilog" Version="4.0.2" />
-      <PackageReference Include="Serilog.Extensions.Logging" Version="8.0.0" />
       <PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
       <PackageReference Include="Serilog.Sinks.Xamarin" Version="1.0.0" />
     </ItemGroup>
