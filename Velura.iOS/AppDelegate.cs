@@ -20,7 +20,12 @@ public class AppDelegate : UIApplicationDelegate
 		
 		UIWindow.Appearance.TintColor = UIColor.FromName("AccentColor");
 		UISwitch.Appearance.OnTintColor = UIColor.FromName("AccentColor");
+<<<<<<< HEAD
 		
 		return true;
+=======
+
+		return result;
+>>>>>>> db4a7f244f0f55aadc41c2ebbc6a519c78d776ce
 	}
 }

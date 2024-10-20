@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 // using MvvmCross.Binding.BindingContext;
+=======
+using MvvmCross.Binding.BindingContext;
+>>>>>>> db4a7f244f0f55aadc41c2ebbc6a519c78d776ce
 using Velura.iOS.Helpers;
 using Velura.iOS.Views.Elements;
 using Velura.Models;
@@ -7,7 +11,11 @@ namespace Velura.iOS.Views;
 
 public class SettingsGroupViewController : UITableViewController
 {
+<<<<<<< HEAD
 	// readonly IMvxBindingContextOwner bindingContextOwner;
+=======
+	readonly IMvxBindingContextOwner bindingContextOwner;
+>>>>>>> db4a7f244f0f55aadc41c2ebbc6a519c78d776ce
 	readonly SettingsGroup group;
 	
 	readonly NSString groupCellIdentifier;
@@ -17,10 +25,17 @@ public class SettingsGroupViewController : UITableViewController
 	readonly int propertySectionIndex;
 	
 	public SettingsGroupViewController(
+<<<<<<< HEAD
 		// IMvxBindingContextOwner bindingContextOwner,
 		SettingsGroup group) : base(UITableViewStyle.InsetGrouped)
 	{
 		// this.bindingContextOwner = bindingContextOwner;
+=======
+		IMvxBindingContextOwner bindingContextOwner,
+		SettingsGroup group) : base(UITableViewStyle.InsetGrouped)
+	{
+		this.bindingContextOwner = bindingContextOwner;
+>>>>>>> db4a7f244f0f55aadc41c2ebbc6a519c78d776ce
 		this.group = group;
 		
 		// Properties
@@ -85,8 +100,13 @@ public class SettingsGroupViewController : UITableViewController
 		{
 			SettingsPropertyViewCell cell = (SettingsPropertyViewCell)tableView.DequeueReusableCell(propertyCellIdentifier, indexPath);
 			SettingsProperty property = group.Properties[indexPath.Row];
+<<<<<<< HEAD
 
 			cell.UpdateCell(property);//, bindingContextOwner);
+=======
+				
+			cell.UpdateCell(property, bindingContextOwner);
+>>>>>>> db4a7f244f0f55aadc41c2ebbc6a519c78d776ce
 			return cell;
 		}
 		
@@ -103,6 +123,10 @@ public class SettingsGroupViewController : UITableViewController
 			return;
 		
 		SettingsGroup selectedGroup = group.Groups[indexPath.Row];
+<<<<<<< HEAD
 		NavigationController?.PushViewController(new SettingsGroupViewController(selectedGroup), true);//bindingContextOwner, selectedGroup), true);
+=======
+		NavigationController?.PushViewController(new SettingsGroupViewController(bindingContextOwner, selectedGroup), true);
+>>>>>>> db4a7f244f0f55aadc41c2ebbc6a519c78d776ce
 	}
 }
