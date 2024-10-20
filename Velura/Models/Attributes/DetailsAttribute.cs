@@ -1,7 +1,7 @@
 namespace Velura.Models.Attributes;
 
 [AttributeUsage(AttributeTargets.Property | AttributeTargets.Class)]
-public class DetailsAttribute(
+public sealed class DetailsAttribute(
 	string name,
 	string description) : Attribute
 {

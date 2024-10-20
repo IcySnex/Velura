@@ -2,7 +2,7 @@ using Velura.Models.Attributes;
 
 namespace Velura.Models;
 
-public class SettingsGroup(
+public sealed class SettingsGroup(
 	DetailsAttribute details,
 	ImageAttribute image,
 	IReadOnlyList<SettingsGroup> groups,

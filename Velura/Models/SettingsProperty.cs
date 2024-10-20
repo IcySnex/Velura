@@ -2,7 +2,7 @@ using Velura.Models.Attributes;
 
 namespace Velura.Models;
 
-public class SettingsProperty(
+public sealed class SettingsProperty(
 	DetailsAttribute details,
 	string path,
 	Type type)

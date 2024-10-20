@@ -1,3 +1,4 @@
+using Velura.Enums;
 using Velura.Models.Abstract;
 using Velura.Models.Attributes;
 using Velura.Services.Abstract;
@@ -6,40 +7,69 @@ namespace Velura.Models;
 
 [Details("App", "Includes all configurable settings of this app.")]
 [Image("gear", "#8e8e8e", "#ffffff")]
-public class Config(
+public sealed class Config(
 	ISimpleStorage simpleStorage) : ConfigGroup(simpleStorage, "Config")
 {
 	public ConfigGeneral General { get; } = new(simpleStorage);
 	
+	public ConfigAppearance Appearance { get; } = new(simpleStorage);
+	
 	public ConfigAdvanced Advanced { get; } = new(simpleStorage);
+	
+	[Details("Debug", "Enables debug options for the app. May decrease performance and introduces new bugs.")]
+	public bool IsDebugEnabled
+	{
+		get => GetValue(nameof(IsDebugEnabled), false);
+		set => SetValue(nameof(IsDebugEnabled), value);
+	}
 }
 
 
 [Details("General", "This contains general stuff like user or syncing settings.")]
 [Image("house", "#0b84ff", "#ffffff")]
-public class ConfigGeneral(
+public sealed class ConfigGeneral(
 	ISimpleStorage simpleStorage) : ConfigGroup(simpleStorage, "General")
 {
 	public ConfigUser User { get; } = new(simpleStorage);
 
 	[Details("Sync", "U wanna sync everything?")]
-	public bool Sync
+	public bool IsSyncEnabled
 	{
-		get => GetValue(nameof(Sync), false);
-		set => SetValue(nameof(Sync), value);
+		get => GetValue(nameof(IsSyncEnabled), false);
+		set => SetValue(nameof(IsSyncEnabled), value);
+	}
+	
+	[Details("Backup", "Automatically backp settings and so lol.")]
+	public bool IsBackupEnabled
+	{
+		get => GetValue(nameof(IsBackupEnabled), false);
+		set => SetValue(nameof(IsBackupEnabled), value);
+	}
+}
+
+[Details("Appearance", "Customize the look and feel of the app.")]
+[Image("paintpalette.fill", "#ff9501", "#ffffff")]
+public sealed class ConfigAppearance(
+	ISimpleStorage simpleStorage) : ConfigGroup(simpleStorage, "Appearance")
+{
+	[Details("Theme", "Choose the app's theme. Light, Dark, or switch automatically based on your system preferences.")]
+	public ThemeMode Theme
+	{
+		get => GetValue(nameof(ThemeMode), ThemeMode.Auto);
+		set => SetValue(nameof(ThemeMode), value);
 	}
 }
 
 [Details("User", "This contains user specific settings.")]
 [Image("person.fill", "#30b556", "#ffffff")]
-public class ConfigUser(
+public sealed class ConfigUser(
 	ISimpleStorage simpleStorage) : ConfigGroup(simpleStorage, "General.User")
 {
 	[Details("Username", "This is the username LOL.")]
-	public string Userrname
+	public string Username
 	{
-		get => GetValue(nameof(Userrname), "Bob");
-		set => SetValue(nameof(Userrname), value);
+		get => GetValue(nameof(Username), "Bob");
+		set => SetValue(nameof(Username), value);
 	}
 	
 	[Details("Age", "How old are youuu?")]
@@ -52,7 +82,7 @@ public class ConfigUser(
 
 [Details("Advanced", "This contains advanced settings, I wouldnt touch those.")]
 [Image("exclamationmark.triangle.fill", "#ff6479", "#ffffff")]
-public class ConfigAdvanced(
+public sealed class ConfigAdvanced(
 	ISimpleStorage simpleStorage) : ConfigGroup(simpleStorage, "Advanced")
 {
 	[Details("Some Key", "This is just some random ahh key.")]
