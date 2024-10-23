@@ -27,8 +27,8 @@ public class SearchViewController : UIViewController
 
 		// Binding
 		BindingSet<SearchViewModel> set = new(viewModel);
-		Binding<SearchViewModel> labelBinding = set.Bind(label, nameof(viewModel.HelloText), nameof(label.Text));
-		Binding<SearchViewModel> textFieldBinding = set.Bind(textField, nameof(viewModel.HelloText), nameof(textField.Text), BindingMode.TwoWay, UpdateSourceTrigger.LostFocus);
+		Binding<SearchViewModel> labelBinding = set.Bind(label, nameof(label.Text), nameof(viewModel.HelloText));
+		Binding<SearchViewModel> textFieldBinding = set.Bind(textField, nameof(textField.Text), nameof(viewModel.HelloText));
 
 		
 		UIButtonConfiguration buttonConfiguration = UIButtonConfiguration.FilledButtonConfiguration;

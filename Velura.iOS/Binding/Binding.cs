@@ -1,36 +1,68 @@
 using System.ComponentModel;
 using System.Reflection;
+using Velura.iOS.Binding.Targets.Abstract;
 
 namespace Velura.iOS.Binding;
 
 public class Binding<TViewModel>(
-	TViewModel source,
 	UIView target,
+	TViewModel source,
 	string sourcePropertyPath,
-	string targetPropertyPath,
 	BindingMode mode,
-	UpdateSourceTrigger updateSourceTrigger) where TViewModel : INotifyPropertyChanged
+	UpdateSourceTrigger updateSourceTrigger,
+	BindingMapper mapper) : IDisposable where TViewModel : INotifyPropertyChanged
 {
-	readonly PropertyInfo sourceProperty = source.GetType().GetProperty(sourcePropertyPath) ?? throw new InvalidOperationException($"Invalid source property path: {sourcePropertyPath}");
-	readonly PropertyInfo targetProperty = target.GetType().GetProperty(targetPropertyPath) ?? throw new InvalidOperationException($"Invalid target property path: {targetPropertyPath}");
-
-	public TViewModel Source { get; } = source;
-	public UIView Target { get; } = target;
-	public string SourcePropertyName => sourceProperty.Name;
-	public string TargetPropertyName => targetProperty.Name;
+	public UIView Target { get; private set; } = target;
+	public TViewModel Source { get; private set; } = source;
+	public string SourcePropertyPath { get; } = sourcePropertyPath;
 	public BindingMode Mode { get; } = mode;
 	public UpdateSourceTrigger UpdateSourceTrigger { get; } = updateSourceTrigger;
 
+	readonly BindingMapper mapper = mapper;
+	
+	
+	readonly PropertyInfo? sourcePropertyInfo = typeof(TViewModel).GetProperty(sourcePropertyPath);
 
 	public void UpdateSource()
 	{
-		object? newValue = targetProperty.GetValue(Target);
-		sourceProperty.SetValue(Source, newValue);
+		object? newValue = mapper.GetValue(Target);
+		sourcePropertyInfo!.SetValue(Source, newValue);
 	}
 
 	public void UpdateTarget()
 	{
-		object? newValue = sourceProperty.GetValue(Source);
-		targetProperty.SetValue(Target, newValue);
+		object? newValue = sourcePropertyInfo!.GetValue(Source);
+		mapper.SetValue(Target, newValue);
 	}
+
+	
+	bool isDisposed = false;
+	
+	protected virtual void Dispose(
+		bool disposing)
+	{
+		if (isDisposed)
+			return;
+		
+		if (disposing)
+		{
+			// Dispose managed state
+			mapper.Unsubscribe(Target);
+		}
+		
+		// Free unmanaged resources/Set large fields to null
+		Target = default!;
+		Source = default!;
+		
+		isDisposed = true;
+	}
+
+	public void Dispose()
+	{
+		Dispose(true);
+		GC.SuppressFinalize(this);
+	}
+	
+	~Binding() =>
+		Dispose(false);
 }

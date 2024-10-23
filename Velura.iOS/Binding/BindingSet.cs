@@ -3,10 +3,10 @@ using Velura.iOS.Binding.Targets.Abstract;
 
 namespace Velura.iOS.Binding;
 
-public class BindingSet<TViewModel> where TViewModel : INotifyPropertyChanged
+public class BindingSet<TViewModel> : IDisposable where TViewModel : INotifyPropertyChanged
 {
-	readonly TViewModel viewModel;
-	readonly List<Binding<TViewModel>> bindings = [];
+	TViewModel viewModel;
+	List<Binding<TViewModel>> bindings = [];
 
 	public BindingSet(
 		TViewModel viewModel)
@@ -14,61 +14,96 @@ public class BindingSet<TViewModel> where TViewModel : INotifyPropertyChanged
 		this.viewModel = viewModel;
 		viewModel.PropertyChanged += OnViewModelPropertyChanged;
 	}
+	
 
 	
 	void OnViewModelPropertyChanged(
 		object? sender,
 		PropertyChangedEventArgs e)
 	{
-		IEnumerable<Binding<TViewModel>> affectedBindings = bindings.Where(b => b.SourcePropertyName == e.PropertyName && b.Mode is BindingMode.OneWay or BindingMode.TwoWay);
+		IEnumerable<Binding<TViewModel>> affectedBindings = bindings.Where(b => 
+			b.SourcePropertyPath == e.PropertyName &&
+			(b.Mode is BindingMode.OneWay || b.Mode is BindingMode.TwoWay) &&
+			b.UpdateSourceTrigger != UpdateSourceTrigger.Explicit);
+
 		foreach (Binding<TViewModel> binding in affectedBindings)
-			if (binding.UpdateSourceTrigger != UpdateSourceTrigger.Explicit)
-				binding.UpdateTarget();
+			binding.UpdateTarget();
 	}
 
 	
 	public Binding<TViewModel> Bind(
 		UIView target,
-		string sourcePropertyPath,
 		string targetPropertyPath,
+		string sourcePropertyPath,
 		BindingMode mode = BindingMode.OneWay,
 		UpdateSourceTrigger updateSourceTrigger = UpdateSourceTrigger.PropertyChanged)
 	{
-		Binding<TViewModel> binding = new(viewModel, target, sourcePropertyPath, targetPropertyPath, mode, updateSourceTrigger);
+		BindingMapper mapper = BindingMapper.Get(target.GetType(), targetPropertyPath, mode);
+		
+		Binding<TViewModel> binding = new(target, viewModel, sourcePropertyPath, mode, updateSourceTrigger, mapper);
 		bindings.Add(binding);
 
-		if (updateSourceTrigger is UpdateSourceTrigger.Explicit)
-			return binding;
-
-		if (mode is BindingMode.TwoWay or BindingMode.OneWayToSource && IBindingTarget.Implementations.TryGetValue(target.GetType(), out IBindingTarget? bindingTarget))
-			bindingTarget.Subscribe(binding);
-		
-		switch (mode)
+		if (updateSourceTrigger != UpdateSourceTrigger.Explicit)
 		{
-			case BindingMode.OneWay or BindingMode.TwoWay or BindingMode.OneTime:
-				binding.UpdateTarget();
-				break;
-			case BindingMode.OneWayToSource:
-				binding.UpdateSource();
-				break;
-		}
+			if (mode is BindingMode.TwoWay or BindingMode.OneWayToSource)
+				mapper.Subscribe(target, updateSourceTrigger);
 
+			switch (mode)
+			{
+				case BindingMode.OneWay or BindingMode.TwoWay or BindingMode.OneTime:
+					binding.UpdateTarget();
+					break;
+				case BindingMode.OneWayToSource:
+					binding.UpdateSource();
+					break;
+			}
+		}
 		return binding;
 	}
 
 	public void Unbind(
 		Binding<TViewModel> binding)
 	{
+		binding.Dispose();
 		bindings.Remove(binding);
-		
-		if (binding.Mode is BindingMode.TwoWay or BindingMode.OneWayToSource && IBindingTarget.Implementations.TryGetValue(binding.Target.GetType(), out IBindingTarget? bindingTarget))
-			bindingTarget.Unsubscribe(binding);
 	}
-
 
 	public void Clear()
 	{
 		foreach (Binding<TViewModel> binding in bindings)
-			Unbind(binding);
+			binding.Dispose();
+		bindings.Clear();
 	}
+	
+	
+	bool isDisposed = false;
+	
+	protected virtual void Dispose(
+		bool disposing)
+	{
+		if (isDisposed)
+			return;
+		
+		if (disposing)
+		{
+			// Dispose managed state
+			Clear();
+			viewModel.PropertyChanged -= OnViewModelPropertyChanged;
+		}
+		
+		// Free unmanaged resources/Set large fields to null
+		viewModel = default!;
+		bindings =  default!;
+		
+		isDisposed = true;
+	}
+
+	public void Dispose()
+	{
+		Dispose(true);
+		GC.SuppressFinalize(this);
+	}
+	
+	~BindingSet() =>
+		Dispose(false);
 }
