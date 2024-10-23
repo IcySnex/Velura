@@ -1,9 +1,9 @@
 using System.ComponentModel;
-using Velura.iOS.Binding.Targets.Abstract;
+using Velura.iOS.Binding.Abstract;
 
 namespace Velura.iOS.Binding;
 
-public class BindingSet<TViewModel> : IDisposable where TViewModel : INotifyPropertyChanged
+public sealed class BindingSet<TViewModel> : IDisposable where TViewModel : INotifyPropertyChanged
 {
 	TViewModel viewModel;
 	List<Binding<TViewModel>> bindings = [];
@@ -38,15 +38,17 @@ public class BindingSet<TViewModel> : IDisposable where TViewModel : INotifyProp
 		BindingMode mode = BindingMode.OneWay,
 		UpdateSourceTrigger updateSourceTrigger = UpdateSourceTrigger.PropertyChanged)
 	{
-		BindingMapper mapper = BindingMapper.Get(target.GetType(), targetPropertyPath, mode);
+		BindingMapper? mapper = IOSApp.BindingMappers.FirstOrDefault(bm => bm.TargetType == target.GetType() && bm.PropertyPath == targetPropertyPath && bm.SupportedMode.HasFlag(mode));
+		if (mapper is null && mode is not (BindingMode.OneWay or BindingMode.OneTime))
+			throw new InvalidOperationException($"Could not find BindingMapper for target type '{target.GetType().Name}' with property path '{targetPropertyPath}'. Default bindings only support BindingMode.Oneway or BindingMode.OneTime.");
 		
-		Binding<TViewModel> binding = new(target, viewModel, sourcePropertyPath, mode, updateSourceTrigger, mapper);
+		Binding<TViewModel> binding = new(target, viewModel, targetPropertyPath, sourcePropertyPath, mode, updateSourceTrigger, mapper);
 		bindings.Add(binding);
 
-		if (updateSourceTrigger != UpdateSourceTrigger.Explicit)
+		if (updateSourceTrigger is not UpdateSourceTrigger.Explicit)
 		{
 			if (mode is BindingMode.TwoWay or BindingMode.OneWayToSource)
-				mapper.Subscribe(target, updateSourceTrigger);
+				mapper!.Subscribe(target, updateSourceTrigger);
 
 			switch (mode)
 			{
@@ -77,8 +79,8 @@ public class BindingSet<TViewModel> : IDisposable where TViewModel : INotifyProp
 	
 	
 	bool isDisposed = false;
-	
-	protected virtual void Dispose(
+
+	void Dispose(
 		bool disposing)
 	{
 		if (isDisposed)

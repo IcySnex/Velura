@@ -1,5 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
+using Velura.iOS.Binding.Abstract;
+using Velura.iOS.Binding.Mappers;
 using Velura.iOS.Services;
 using Velura.iOS.Views;
 using Velura.Services.Abstract;
@@ -8,6 +10,8 @@ namespace Velura.iOS;
 
 public sealed class IOSApp : App
 {
+	public static IReadOnlyList<BindingMapper> BindingMappers { get; private set; } = default!;
+	
 	IOSApp() 
 	{ }
 
@@ -27,11 +31,23 @@ public sealed class IOSApp : App
 				retainedFileCountLimit: 10,
 				outputTemplate: preferredTemplate);
 
+	
 	protected override void RegisterPlatformServices(
 		IServiceCollection services)
 	{
 		services.AddSingleton<MainViewController>();
 		services.AddSingleton<INavigation, Navigation>();
 		services.AddSingleton<ISimpleStorage, NSUserDefaultsStorage>();
+	}
+
+
+	protected override void FinishAppInitialization()
+	{
+		BindingMappers =
+		[
+			new UISwitchOnMapper(),
+			new UITextFieldTextMapper(),
+			new UIButtonTitleMapper()
+		];
 	}
 }

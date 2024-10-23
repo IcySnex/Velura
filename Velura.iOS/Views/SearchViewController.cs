@@ -5,7 +5,7 @@ using Velura.ViewModels;
 
 namespace Velura.iOS.Views;
 
-public class SearchViewController : UIViewController
+public sealed class SearchViewController : UIViewController
 {
 	readonly SearchViewModel viewModel = App.Provider.GetRequiredService<SearchViewModel>();
 
@@ -22,13 +22,23 @@ public class SearchViewController : UIViewController
 
 		UITextField textField = new()
 		{
-			TextColor = UIColor.Label
+			TextColor = UIColor.Label,
+			BorderStyle = UITextBorderStyle.RoundedRect,
+			BackgroundColor = UIColor.SecondarySystemBackground
+		};
+
+		UITextField secondTextField = new()
+		{
+			TextColor = UIColor.Label,
+			BorderStyle = UITextBorderStyle.RoundedRect,
+			BackgroundColor = UIColor.SecondarySystemBackground
 		};
 
 		// Binding
 		BindingSet<SearchViewModel> set = new(viewModel);
 		Binding<SearchViewModel> labelBinding = set.Bind(label, nameof(label.Text), nameof(viewModel.HelloText));
-		Binding<SearchViewModel> textFieldBinding = set.Bind(textField, nameof(textField.Text), nameof(viewModel.HelloText));
+		Binding<SearchViewModel> textFieldBinding = set.Bind(textField, nameof(textField.Text), nameof(viewModel.HelloText), BindingMode.TwoWay);
+		Binding<SearchViewModel> secondTextFieldBinding = set.Bind(secondTextField, nameof(textField.Text), nameof(viewModel.HelloText), BindingMode.TwoWay);
 
 		
 		UIButtonConfiguration buttonConfiguration = UIButtonConfiguration.FilledButtonConfiguration;
@@ -37,13 +47,14 @@ public class SearchViewController : UIViewController
 		{
 			Configuration = buttonConfiguration
 		};
-		button.TouchUpInside += (_, _) => viewModel.SayHelloCommand.Execute("Sup Gang!");
+		button.TouchUpInside += (_, _) => set.Unbind(textFieldBinding);
 
 		
 		
 		// Layout
 		View!.AddSubview(label);
 		View!.AddSubview(textField);
+		View!.AddSubview(secondTextField);
 		View!.AddSubview(button);
 		
 		View.SubviewsDoNotTranslateAutoresizingMaskIntoConstraints();
@@ -54,7 +65,10 @@ public class SearchViewController : UIViewController
 			textField.Below(label, 4),
 			textField.AtLeftOfSafeArea(View),
 			
-			button.Below(textField, 4),
+			secondTextField.Below(textField, 4),
+			secondTextField.AtLeftOfSafeArea(View),
+			
+			button.Below(secondTextField, 4),
 			button.AtLeftOfSafeArea(View)
 		);
 		

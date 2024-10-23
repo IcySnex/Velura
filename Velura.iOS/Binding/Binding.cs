@@ -1,44 +1,76 @@
 using System.ComponentModel;
 using System.Reflection;
-using Velura.iOS.Binding.Targets.Abstract;
+using Velura.iOS.Binding.Abstract;
 
 namespace Velura.iOS.Binding;
 
-public class Binding<TViewModel>(
-	UIView target,
-	TViewModel source,
-	string sourcePropertyPath,
-	BindingMode mode,
-	UpdateSourceTrigger updateSourceTrigger,
-	BindingMapper mapper) : IDisposable where TViewModel : INotifyPropertyChanged
+public sealed class Binding<TViewModel> : IDisposable where TViewModel : INotifyPropertyChanged
 {
-	public UIView Target { get; private set; } = target;
-	public TViewModel Source { get; private set; } = source;
-	public string SourcePropertyPath { get; } = sourcePropertyPath;
-	public BindingMode Mode { get; } = mode;
-	public UpdateSourceTrigger UpdateSourceTrigger { get; } = updateSourceTrigger;
+	readonly BindingMapper? mapper;
 
-	readonly BindingMapper mapper = mapper;
-	
-	
-	readonly PropertyInfo? sourcePropertyInfo = typeof(TViewModel).GetProperty(sourcePropertyPath);
+	readonly PropertyInfo? targetPropertyInfo = null;
+	readonly PropertyInfo sourcePropertyInfo;
 
+	public Binding(
+		UIView target,
+		TViewModel source,
+		string targetPropertyPath,
+		string sourcePropertyPath,
+		BindingMode mode,
+		UpdateSourceTrigger updateSourceTrigger,
+		BindingMapper? mapper = null)
+	{
+		Target = target;
+		Source = source;
+		TargetPropertyPath = targetPropertyPath;
+		SourcePropertyPath = sourcePropertyPath;
+		Mode = mode;
+		UpdateSourceTrigger = updateSourceTrigger;
+		
+		this.mapper = mapper;
+		if (mapper is not null)
+			mapper.ValueChanged += OnBindingTargetValueChanged;
+		else
+			targetPropertyInfo = target.GetType().GetProperty(targetPropertyPath) ?? throw new InvalidOperationException($"Property path '{targetPropertyPath}' is invalid for type '{target.GetType().Name}'.");
+		sourcePropertyInfo = typeof(TViewModel).GetProperty(sourcePropertyPath) ?? throw new InvalidOperationException($"Property path '{sourcePropertyPath}' is invalid for type '{typeof(TViewModel).Name}'.");
+	}
+	
+	public UIView Target { get; private set; }
+	public TViewModel Source { get; private set; }
+	public string TargetPropertyPath { get; }
+	public string SourcePropertyPath { get; }
+	public BindingMode Mode { get; }
+	public UpdateSourceTrigger UpdateSourceTrigger { get; }
+
+	
 	public void UpdateSource()
 	{
-		object? newValue = mapper.GetValue(Target);
-		sourcePropertyInfo!.SetValue(Source, newValue);
+		object? newValue = mapper?.GetValue(Target) ?? targetPropertyInfo!.GetValue(Target);
+		sourcePropertyInfo.SetValue(Source, newValue);
 	}
 
 	public void UpdateTarget()
 	{
-		object? newValue = sourcePropertyInfo!.GetValue(Source);
-		mapper.SetValue(Target, newValue);
+		object? newValue = sourcePropertyInfo.GetValue(Source);
+		if (mapper is not null)
+			mapper.SetValue(Target, newValue);
+		else
+			targetPropertyInfo!.SetValue(Target, newValue);
 	}
 
+
+	void OnBindingTargetValueChanged(
+		object? sender,
+		EventArgs args)
+	{
+		if (Target == sender)
+			UpdateSource();
+	}
+	
 	
 	bool isDisposed = false;
-	
-	protected virtual void Dispose(
+
+	void Dispose(
 		bool disposing)
 	{
 		if (isDisposed)
@@ -47,7 +79,11 @@ public class Binding<TViewModel>(
 		if (disposing)
 		{
 			// Dispose managed state
-			mapper.Unsubscribe(Target);
+			if (mapper is not null)
+			{
+				mapper.Unsubscribe(Target);
+				mapper.ValueChanged -= OnBindingTargetValueChanged;
+			}
 		}
 		
 		// Free unmanaged resources/Set large fields to null

@@ -23,12 +23,14 @@ public abstract class App
 			builder.ClearProviders();
 			builder.AddSerilog();
 		});
+		
 		RegisterPlatformServices(services);
 		RegisterServices(services);
 		RegisterViewModels(services);
-		
 		Provider = services.BuildServiceProvider();
 
+		FinishAppInitialization();
+		
 		ILogger<App> logger = Provider.GetRequiredService<ILogger<App>>();
 		logger.LogInformation("[App-.ctor] App has been initialized.");
 	}
@@ -41,6 +43,7 @@ public abstract class App
 			.MinimumLevel.Information()
 			.WriteTo.Debug(
 				outputTemplate: preferredTemplate);
+	
 	
 	protected virtual void RegisterPlatformServices(
 		IServiceCollection services)
@@ -59,4 +62,8 @@ public abstract class App
 		services.AddSingleton<SearchViewModel>();
 		services.AddSingleton<SettingsViewModel>();
 	}
+	
+	
+	protected virtual void FinishAppInitialization()
+	{ }
 }
