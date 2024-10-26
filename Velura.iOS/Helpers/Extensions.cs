@@ -23,4 +23,22 @@ public static class Extensions
         
 		view.Layer.AddAnimation(animation, "bounce");
 	}
+	
+	
+	public static UIImage Apply(
+		this UIImage image,
+		CGSize size,
+		UIColor? backgroundColor = null,
+		UIColor? tintColor = null) =>
+		new UIGraphicsImageRenderer(size).CreateImage(context =>
+		{
+			if (backgroundColor is not null)
+			{
+				backgroundColor.SetFill();
+				context.FillRect(new(0, 0, size.Width, size.Height));
+			}
+
+			UIImage imageToDraw = tintColor is null ? image : image.ApplyTintColor(tintColor, UIImageRenderingMode.AlwaysTemplate);
+			imageToDraw.Draw(new CGPoint((size.Width - image.Size.Width) / 2, (size.Height - image.Size.Height) / 2));
+		});
 }

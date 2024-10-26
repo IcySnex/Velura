@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.Reflection;
 using Velura.iOS.Binding.Abstract;
 
 namespace Velura.iOS.Binding;
@@ -16,7 +17,6 @@ public sealed class BindingSet<TViewModel> : IDisposable where TViewModel : INot
 	}
 	
 
-	
 	void OnViewModelPropertyChanged(
 		object? sender,
 		PropertyChangedEventArgs e)
@@ -40,7 +40,7 @@ public sealed class BindingSet<TViewModel> : IDisposable where TViewModel : INot
 	{
 		BindingMapper? mapper = IOSApp.BindingMappers.FirstOrDefault(bm => bm.TargetType == target.GetType() && bm.PropertyPath == targetPropertyPath && bm.SupportedMode.HasFlag(mode));
 		if (mapper is null && mode is not (BindingMode.OneWay or BindingMode.OneTime))
-			throw new InvalidOperationException($"Could not find BindingMapper for target type '{target.GetType().Name}' with property path '{targetPropertyPath}'. Default bindings only support BindingMode.Oneway or BindingMode.OneTime.");
+			throw new InvalidOperationException($"Could not find BindingMapper for target type '{target.GetType()?.Name}' with property path '{targetPropertyPath}'. Default bindings only support BindingMode.Oneway or BindingMode.OneTime.");
 		
 		Binding<TViewModel> binding = new(target, viewModel, targetPropertyPath, sourcePropertyPath, mode, updateSourceTrigger, mapper);
 		bindings.Add(binding);
@@ -75,6 +75,18 @@ public sealed class BindingSet<TViewModel> : IDisposable where TViewModel : INot
 		foreach (Binding<TViewModel> binding in bindings)
 			binding.Dispose();
 		bindings.Clear();
+	}
+
+
+	public BindingSet<TSubViewModel> CreateSubSet<TSubViewModel>(
+		string propertyPath) where TSubViewModel : INotifyPropertyChanged
+	{
+		PropertyInfo propertyInfo = typeof(TViewModel).GetProperty(propertyPath) ?? throw new InvalidOperationException($"Property path '{propertyPath}' is invalid for type '{typeof(TViewModel).Name}'.");
+
+		if (propertyInfo.GetValue(viewModel) is not TSubViewModel subViewModel)
+			throw new InvalidOperationException($"Property value is not of type '{typeof(TSubViewModel).Name}'.");
+
+		return new(subViewModel);
 	}
 	
 	

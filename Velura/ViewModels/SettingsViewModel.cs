@@ -28,8 +28,7 @@ public sealed class SettingsViewModel : ObservableObject
 	public readonly SettingsGroup Group;
 
 	SettingsGroup CreateSettingsGroup(
-		Type configGroup,
-		string? relativePath = null)
+		Type configGroup)
 	{
 		logger.LogInformation("[SettingsViewModel-CreateSettingsGroup] Creating settings group from config group...");
 
@@ -46,11 +45,9 @@ public sealed class SettingsViewModel : ObservableObject
 		List<SettingsProperty> properties = [];
 		foreach (PropertyInfo propertyInfo in configGroup.GetProperties())
 		{
-			string propertyRelativePath = relativePath is null ? propertyInfo.Name : $"{relativePath}.{propertyInfo.Name}";
-			
 			if (typeof(ConfigGroup).IsAssignableFrom(propertyInfo.PropertyType))
 			{
-				subGroupes.Add(CreateSettingsGroup(propertyInfo.PropertyType, propertyRelativePath));
+				subGroupes.Add(CreateSettingsGroup(propertyInfo.PropertyType));
 				continue;
 			}
 			
@@ -61,7 +58,7 @@ public sealed class SettingsViewModel : ObservableObject
 				continue;
 			}
 
-			properties.Add(new(propertyDetails, propertyRelativePath, propertyInfo.PropertyType));
+			properties.Add(new(propertyDetails, propertyInfo.Name, propertyInfo.PropertyType));
 		}
 		
 		return new(details, image, subGroupes, properties);

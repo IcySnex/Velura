@@ -32,7 +32,7 @@ public sealed class Binding<TViewModel> : IDisposable where TViewModel : INotify
 			mapper.ValueChanged += OnBindingTargetValueChanged;
 		else
 			targetPropertyInfo = target.GetType().GetProperty(targetPropertyPath) ?? throw new InvalidOperationException($"Property path '{targetPropertyPath}' is invalid for type '{target.GetType().Name}'.");
-		sourcePropertyInfo = typeof(TViewModel).GetProperty(sourcePropertyPath) ?? throw new InvalidOperationException($"Property path '{sourcePropertyPath}' is invalid for type '{typeof(TViewModel).Name}'.");
+		sourcePropertyInfo = source.GetType().GetProperty(sourcePropertyPath) ?? throw new InvalidOperationException($"Property path '{sourcePropertyPath}' is invalid for type '{source.GetType().Name}'.");
 	}
 	
 	public UIView Target { get; private set; }

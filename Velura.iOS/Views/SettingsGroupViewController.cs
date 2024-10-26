@@ -1,27 +1,24 @@
-// using MvvmCross.Binding.BindingContext;
-using Velura.iOS.Helpers;
+using Velura.iOS.Binding;
 using Velura.iOS.Views.Elements;
 using Velura.Models;
+using Velura.Models.Abstract;
 
 namespace Velura.iOS.Views;
 
-public class SettingsGroupViewController : UITableViewController
+public class SettingsGroupViewController<TConfigGroup> : UITableViewController where TConfigGroup : ConfigGroup
 {
-	// readonly IMvxBindingContextOwner bindingContextOwner;
 	readonly SettingsGroup group;
+	readonly BindingSet<TConfigGroup> bindingSet;
 	
-	readonly NSString groupCellIdentifier;
-	readonly NSString propertyCellIdentifier;
-
 	readonly int groupSectionIndex;
 	readonly int propertySectionIndex;
 	
 	public SettingsGroupViewController(
-		// IMvxBindingContextOwner bindingContextOwner,
-		SettingsGroup group) : base(UITableViewStyle.InsetGrouped)
+		SettingsGroup group,
+		BindingSet<TConfigGroup> bindingSet) : base(UITableViewStyle.InsetGrouped)
 	{
-		// this.bindingContextOwner = bindingContextOwner;
 		this.group = group;
+		this.bindingSet = bindingSet;
 		
 		// Properties
 		Title = group.Details.Name;
@@ -29,13 +26,7 @@ public class SettingsGroupViewController : UITableViewController
 		NavigationItem.LargeTitleDisplayMode = UINavigationItemLargeTitleDisplayMode.Never;
 
 		// Cells
-		groupCellIdentifier = new($"SettingsGroup[{group.Details.Name}]");
-		propertyCellIdentifier = new($"SettingsProperty[{group.Details.Name}]");
-
-		TableView.RowHeight = UITableView.AutomaticDimension;
-		TableView.EstimatedRowHeight = 60;
-		TableView.RegisterClassForCellReuse(typeof(SettingsGroupViewCell), groupCellIdentifier);
-		TableView.RegisterClassForCellReuse(typeof(SettingsPropertyViewCell), propertyCellIdentifier);
+		TableView.RegisterClassForCellReuse(typeof(SettingsItemViewCell), nameof(SettingsItemViewCell));
 		
 		groupSectionIndex = group.Groups.Count > 0 ? 0 : -1;
 		propertySectionIndex = group.Properties.Count > 0 ? groupSectionIndex + 1 : -1;
@@ -69,28 +60,14 @@ public class SettingsGroupViewController : UITableViewController
 		UITableView tableView,
 		NSIndexPath indexPath)
 	{
-		if (indexPath.Section == groupSectionIndex)
-		{
-			SettingsGroupViewCell cell = (SettingsGroupViewCell)tableView.DequeueReusableCell(groupCellIdentifier, indexPath);
-			SettingsGroup subGroup = group.Groups[indexPath.Row];
-				
-			cell.UpdateCell(
-				subGroup.Details.Name,
-				UIImage.GetSystemImage(subGroup.Image.ResourceName)!,
-				subGroup.Image.BackgroundColor.ToUIColor(),
-				subGroup.Image.TintColor.ToUIColor());
-			return cell;
-		}
-		if (indexPath.Section == propertySectionIndex)
-		{
-			SettingsPropertyViewCell cell = (SettingsPropertyViewCell)tableView.DequeueReusableCell(propertyCellIdentifier, indexPath);
-			SettingsProperty property = group.Properties[indexPath.Row];
-
-			cell.UpdateCell(property);//, bindingContextOwner);
-			return cell;
-		}
+		SettingsItemViewCell cell = (SettingsItemViewCell)tableView.DequeueReusableCell(nameof(SettingsItemViewCell), indexPath);
 		
-		throw new IndexOutOfRangeException($"Invalid cell index path section: {indexPath.Section}. Supported are 0 = Group, 1 = Property.");
+		if (indexPath.Section == groupSectionIndex)
+			cell.UpdateCell(group.Groups[indexPath.Row]);
+		if (indexPath.Section == propertySectionIndex)
+			cell.UpdateCell(group.Properties[indexPath.Row], bindingSet);
+
+		return cell;
 	}
 
 	public override void RowSelected(
@@ -103,6 +80,7 @@ public class SettingsGroupViewController : UITableViewController
 			return;
 		
 		SettingsGroup selectedGroup = group.Groups[indexPath.Row];
-		NavigationController?.PushViewController(new SettingsGroupViewController(selectedGroup), true);//bindingContextOwner, selectedGroup), true);
+		BindingSet<ConfigGroup> subBindingSet = bindingSet.CreateSubSet<ConfigGroup>(selectedGroup.Details.Name.Replace(" ", string.Empty));
+		NavigationController?.PushViewController(new SettingsGroupViewController<ConfigGroup>(selectedGroup, subBindingSet), true);
 	}
 }
