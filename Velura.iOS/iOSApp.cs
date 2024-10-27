@@ -11,8 +11,9 @@ namespace Velura.iOS;
 public sealed class IOSApp : App
 {
 	public static IReadOnlyList<BindingMapper> BindingMappers { get; private set; } = default!;
+
 	
-	IOSApp() 
+	IOSApp()
 	{ }
 
 	public static IOSApp Initialize() =>

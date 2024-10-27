@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<linker>
+    <assembly fullname="Microsoft.iOS">
+        <type fullname="UIKit.UISwitch">
+            <method name="set_On" />
+            <method name="get_On" />
+        </type>
+    </assembly>
+</linker>
