@@ -35,10 +35,12 @@ public abstract class BindingMapper
 		ValueChanged?.Invoke(sender, args);
 
 
-	public virtual extern void Subscribe(
+	public virtual void Subscribe(
 		UIView target,
-		UpdateSourceTrigger updateSourceTrigger);
+		UpdateSourceTrigger updateSourceTrigger)
+	{ }
 
-	public virtual extern void Unsubscribe(
-		UIView target);
+	public virtual void Unsubscribe(
+		UIView target)
+	{ }
 }
