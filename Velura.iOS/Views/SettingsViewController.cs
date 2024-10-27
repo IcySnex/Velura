@@ -8,13 +8,15 @@ public class SettingsViewController : UIViewController
 {
 	readonly SettingsViewModel viewModel = App.Provider.GetRequiredService<SettingsViewModel>();
 	readonly Config config = App.Provider.GetRequiredService<Config>();
+
+	readonly Dictionary<string, SettingsGroupViewController> viewControllersCache = [];
 	
 	public override void ViewDidLoad()
 	{
 		base.ViewDidLoad();
 
         // UI
-        SettingsGroupViewController groupViewController = new(viewModel.Group, new(config));
+        SettingsGroupViewController groupViewController = new(viewModel.Group, new(config), viewControllersCache);
         groupViewController.NavigationItem.LargeTitleDisplayMode = UINavigationItemLargeTitleDisplayMode.Always;
         
         AddChildViewController(groupViewController);

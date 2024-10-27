@@ -9,16 +9,19 @@ public class SettingsGroupViewController : UITableViewController
 {
 	readonly SettingsGroup group;
 	readonly BindingSet<ConfigGroup> bindingSet;
-	
+	readonly Dictionary<string, SettingsGroupViewController> viewControllersCache;
+
 	readonly int groupSectionIndex;
 	readonly int propertySectionIndex;
 	
 	public SettingsGroupViewController(
 		SettingsGroup group,
-		BindingSet<ConfigGroup> bindingSet) : base(UITableViewStyle.InsetGrouped)
+		BindingSet<ConfigGroup> bindingSet,
+		Dictionary<string, SettingsGroupViewController> viewControllersCache) : base(UITableViewStyle.InsetGrouped)
 	{
 		this.group = group;
 		this.bindingSet = bindingSet;
+		this.viewControllersCache = viewControllersCache;
 		
 		// Properties
 		Title = group.Details.Name;
@@ -80,7 +83,26 @@ public class SettingsGroupViewController : UITableViewController
 			return;
 		
 		SettingsGroup selectedGroup = group.Groups[indexPath.Row];
-		BindingSet<ConfigGroup> subBindingSet = bindingSet.CreateSubSet<ConfigGroup>(selectedGroup.Details.Name.Replace(" ", string.Empty));
-		NavigationController?.PushViewController(new SettingsGroupViewController(selectedGroup, subBindingSet), true);
+		string selectedGroupName = selectedGroup.Details.Name.Replace(" ", string.Empty);
+		
+		if (!viewControllersCache.TryGetValue(selectedGroupName, out SettingsGroupViewController? viewController))
+		{
+			viewController = new(selectedGroup, bindingSet.CreateSubSet<ConfigGroup>(selectedGroupName), viewControllersCache);
+			viewControllersCache[selectedGroupName] = viewController;
+		}
+		NavigationController?.PushViewController(viewController, true);
+	}
+
+
+	protected override void Dispose(
+		bool disposing)
+	{
+		if (disposing)
+		{
+			// Dispose managed state
+			bindingSet.Dispose();
+		}
+		
+		base.Dispose(disposing);
 	}
 }

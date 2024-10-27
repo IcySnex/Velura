@@ -20,6 +20,7 @@ public sealed class SettingsItemViewCell : UITableViewCell
 	readonly FluentLayout[] noImageConstraints;
 	readonly FluentLayout[] withImageConstraints;
 
+	BindingSet<ConfigGroup>? controlBindingSet = null;
 	Binding<ConfigGroup>? controlBinding = null;
 	readonly IBindingConverter enumStringConverter = new EnumStringBindingConverter();
 	
@@ -167,8 +168,10 @@ public sealed class SettingsItemViewCell : UITableViewCell
 		SettingsProperty property,
 		BindingSet<ConfigGroup> bindingSet)
 	{
+		controlBindingSet = bindingSet;
+		
 		if (controlBinding is not null)
-			bindingSet.Unbind(controlBinding);
+			controlBindingSet.Unbind(controlBinding);
 		
 		UIView view;
 		if (property.Type.IsEnum)
