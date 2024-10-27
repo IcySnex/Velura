@@ -191,21 +191,23 @@ public sealed class SettingsItemViewCell : UITableViewCell
 		{
 			view = new UITextField()
 			{
+				Font = UIFont.PreferredBody,
 				Placeholder = "Change Value...",
 				TextAlignment = UITextAlignment.Right,
 				AutocorrectionType = UITextAutocorrectionType.No,
 				AutocapitalizationType = UITextAutocapitalizationType.None
 			};
-			controlBinding = bindingSet.Bind(view, nameof(UITextField.Text), property.Path, BindingMode.TwoWay);
+			controlBinding = bindingSet.Bind(view, nameof(UITextField.Text), property.Path, BindingMode.TwoWay, UpdateSourceTrigger.LostFocus);
 		}
 		else if (property.Type == typeof(int))
 		{
 			view = new UINumberField()
 			{
+				Font = UIFont.PreferredBody,
 				Placeholder = "Change Value...",
 				TextAlignment = UITextAlignment.Right
 			};
-			controlBinding = bindingSet.Bind(view, nameof(UINumberField.Number), property.Path, BindingMode.TwoWay);
+			controlBinding = bindingSet.Bind(view, nameof(UINumberField.Number), property.Path, BindingMode.TwoWay, UpdateSourceTrigger.LostFocus);
 		}
 		else
 			throw new NotSupportedException($"Unexpected setting type was passed. '{property.Type}' is not supported.");
