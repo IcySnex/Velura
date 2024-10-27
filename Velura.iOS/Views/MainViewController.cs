@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Logging;
+using Velura.Helpers;
 using Velura.iOS.Helpers;
 
 namespace Velura.iOS.Views;
@@ -39,9 +40,9 @@ public class MainViewController : UITabBarController, IUITabBarControllerDelegat
 		// Views
 		ViewControllers =
 		[
-			CreateNavController<HomeViewController>("Home", "house", "house.fill"),
-			CreateNavController<SearchViewController>("Search", "magnifyingglass", "text.magnifyingglass"),
-			CreateNavController<SettingsViewController>("Settings", "gearshape", "gearshape.fill"),
+			CreateNavController<HomeViewController>("home_title".L10N(), "house", "house.fill"),
+			CreateNavController<SearchViewController>("search_title".L10N(), "magnifyingglass", "text.magnifyingglass"),
+			CreateNavController<SettingsViewController>("settings_title".L10N(), "gearshape", "gearshape.fill"),
 		];
 		logger.LogInformation("[MainViewController-.ctor] MainViewController has been initialized and UI has been created.");
 	}

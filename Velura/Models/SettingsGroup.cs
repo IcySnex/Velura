@@ -6,7 +6,8 @@ public sealed class SettingsGroup(
 	DetailsAttribute details,
 	ImageAttribute image,
 	IReadOnlyList<SettingsGroup> groups,
-	IReadOnlyList<SettingsProperty> properties)
+	IReadOnlyList<SettingsProperty> properties,
+	string path)
 {
 	public DetailsAttribute Details { get; } = details;
 
@@ -15,4 +16,6 @@ public sealed class SettingsGroup(
 	public IReadOnlyList<SettingsGroup> Groups { get; } = groups;
 
 	public IReadOnlyList<SettingsProperty> Properties { get; } = properties;
+	
+	public string Path { get; } = path;
 }

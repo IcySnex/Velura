@@ -83,12 +83,10 @@ public class SettingsGroupViewController : UITableViewController
 			return;
 		
 		SettingsGroup selectedGroup = group.Groups[indexPath.Row];
-		string selectedGroupName = selectedGroup.Details.Name.Replace(" ", string.Empty);
-		
-		if (!viewControllersCache.TryGetValue(selectedGroupName, out SettingsGroupViewController? viewController))
+		if (!viewControllersCache.TryGetValue(selectedGroup.Path, out SettingsGroupViewController? viewController))
 		{
-			viewController = new(selectedGroup, bindingSet.CreateSubSet<ConfigGroup>(selectedGroupName), viewControllersCache);
-			viewControllersCache[selectedGroupName] = viewController;
+			viewController = new(selectedGroup, bindingSet.CreateSubSet<ConfigGroup>(selectedGroup.Path), viewControllersCache);
+			viewControllersCache[selectedGroup.Path] = viewController;
 		}
 		NavigationController?.PushViewController(viewController, true);
 	}

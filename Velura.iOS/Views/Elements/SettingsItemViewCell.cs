@@ -1,5 +1,7 @@
+using System.Reflection;
 using Cirrious.FluentLayouts.Touch;
 using ObjCRuntime;
+using Velura.Helpers;
 using Velura.iOS.Binding;
 using Velura.iOS.Binding.Abstract;
 using Velura.iOS.Binding.Converters;
@@ -7,6 +9,7 @@ using Velura.iOS.Helpers;
 using Velura.iOS.Views.UI;
 using Velura.Models;
 using Velura.Models.Abstract;
+using Velura.Models.Attributes;
 
 namespace Velura.iOS.Views.Elements;
 
@@ -88,7 +91,7 @@ public sealed class SettingsItemViewCell : UITableViewCell
 
 		// Initialize
 		SetIsClickable(false);
-		SetText("Text", "Secondary Text");
+		SetText("placeholder".L10N(), "placeholder".L10N());
 		SetImage(null);
 		SetControl(null);
 	}
@@ -178,7 +181,11 @@ public sealed class SettingsItemViewCell : UITableViewCell
 		{
 			view = new UISelectionButton()
 			{
-				Items = Enum.GetNames(property.Type)
+				Items = Enum.GetValues(property.Type).Cast<Enum>().Select(e =>
+				{
+					string enumName = e.ToString();
+					return property.Type.GetField(enumName)?.GetCustomAttribute<NameAttribute>()?.Name ?? enumName;
+				})
 			};
 			controlBinding = bindingSet.Bind(view, nameof(UISelectionButton.SelectedItem), property.Path, BindingMode.TwoWay, converter: enumStringConverter);
 		}
@@ -192,7 +199,7 @@ public sealed class SettingsItemViewCell : UITableViewCell
 			view = new UITextField()
 			{
 				Font = UIFont.PreferredBody,
-				Placeholder = "Change Value...",
+				Placeholder = "edit".L10N() + "...",
 				TextAlignment = UITextAlignment.Right,
 				AutocorrectionType = UITextAutocorrectionType.No,
 				AutocapitalizationType = UITextAutocapitalizationType.None
@@ -204,7 +211,7 @@ public sealed class SettingsItemViewCell : UITableViewCell
 			view = new UINumberField()
 			{
 				Font = UIFont.PreferredBody,
-				Placeholder = "Change Value...",
+				Placeholder =  "edit".L10N() + "...",
 				TextAlignment = UITextAlignment.Right
 			};
 			controlBinding = bindingSet.Bind(view, nameof(UINumberField.Number), property.Path, BindingMode.TwoWay, UpdateSourceTrigger.LostFocus);

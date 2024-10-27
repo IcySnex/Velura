@@ -1,3 +1,4 @@
+using System.Resources;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Serilog;
@@ -9,6 +10,8 @@ namespace Velura;
 public abstract class App
 {
 	public static IServiceProvider Provider { get; private set; } = default!;
+	
+	public static ResourceManager Localization { get; private set; } = default!;
 
 	protected App()
 	{
@@ -23,6 +26,8 @@ public abstract class App
 			builder.ClearProviders();
 			builder.AddSerilog();
 		});
+		
+		Localization = new("Velura.Resources.Localization", typeof(App).Assembly);
 		
 		RegisterPlatformServices(services);
 		RegisterServices(services);
@@ -62,8 +67,9 @@ public abstract class App
 		services.AddSingleton<SearchViewModel>();
 		services.AddSingleton<SettingsViewModel>();
 	}
-	
-	
+
+
 	protected virtual void FinishAppInitialization()
-	{ }
+	{
+	}
 }

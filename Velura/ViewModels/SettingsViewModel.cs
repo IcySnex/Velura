@@ -16,7 +16,7 @@ public sealed class SettingsViewModel : ObservableObject
 	{
 		this.logger = logger;
 		
-		Group = CreateSettingsGroup(typeof(Config));
+		Group = CreateSettingsGroup(typeof(Config), "Config");
 
 		logger.LogInformation("[SettingsViewModel-.ctor] SettingsViewModel has been initialized.");
 	}
@@ -24,7 +24,8 @@ public sealed class SettingsViewModel : ObservableObject
 	public readonly SettingsGroup Group;
 
 	SettingsGroup CreateSettingsGroup(
-		Type configGroup)
+		Type configGroup,
+		string path)
 	{
 		logger.LogInformation("[SettingsViewModel-CreateSettingsGroup] Creating settings group from config group...");
 
@@ -43,7 +44,7 @@ public sealed class SettingsViewModel : ObservableObject
 		{
 			if (typeof(ConfigGroup).IsAssignableFrom(propertyInfo.PropertyType))
 			{
-				subGroups.Add(CreateSettingsGroup(propertyInfo.PropertyType));
+				subGroups.Add(CreateSettingsGroup(propertyInfo.PropertyType, propertyInfo.Name));
 				continue;
 			}
 			
@@ -57,6 +58,6 @@ public sealed class SettingsViewModel : ObservableObject
 			properties.Add(new(propertyDetails, propertyInfo.Name, propertyInfo.PropertyType));
 		}
 		
-		return new(details, image, subGroups, properties);
+		return new(details, image, subGroups, properties, path);
 	}
 }

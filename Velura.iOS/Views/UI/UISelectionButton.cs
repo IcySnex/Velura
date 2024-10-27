@@ -42,8 +42,8 @@ public class UISelectionButton : UIButton
 		}
 	}
 
-	string[]? items;
-	public string[]? Items
+	IEnumerable<string>? items;
+	public IEnumerable<string>? Items
 	{
 		get => items;
 		set

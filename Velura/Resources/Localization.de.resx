@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+    <!-- Home -->
+    <data name="home_title">Startseite</data>
+
+    
+    <!-- Search -->
+    <data name="search_title">Suche</data>
+
+    
+    <!-- Settings -->
+    <data name="settings_title">Einstellungen</data>
+
+    
+    <!-- Config -->
+    <data name="config">Konfiguration</data>
+    <data name="config_app_description">Beinhaltet alle konfigurierbaren Einstellungen der App.</data>
+
+    <data name="config_general">Allgemein</data>
+    <data name="config_general_description">Verwalte deine allgemeine Einstellungen, wie XYZ.</data>
+    
+    <data name="config_appearance">Erscheinungsbild</data>
+    <data name="config_appearance_description">Passe das Erscheinungsbild der App an, sodass es dir gefällt.</data>
+    <data name="config_appearance_theme">Farbschema</data>
+    <data name="config_appearance_theme_description">Das Farbschema unterstützt Hell, Dunkel oder Automatisch, basierend auf deinen Systemeinstellungen.</data>
+
+    <data name="config_advanced">Fortgeschritten</data>
+    <data name="config_advanced_description">Settings, only for advanced users - I wouldn't dare go in here. SCARY!</data>
+
+
+    <!-- Enums -->
+    <data name="enum_theme_auto">Automatisch</data>
+    <data name="enum_theme_light">Hell</data>
+    <data name="enum_theme_dark">Dunkel</data>
+
+
+    <!-- Misc -->
+    <data name="edit">Bearbeiten</data>
+    <data name="placeholder">Platzhalter</data>
+</root>

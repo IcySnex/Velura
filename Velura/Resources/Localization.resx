@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+    <!-- Home -->
+    <data name="home_title">Home</data>
+
+    <!-- Search -->
+    <data name="search_title">Search</data>
+
+    <!-- Settings -->
+    <data name="settings_title">Settings</data>
+
+    
+    <!-- Config -->
+    <data name="config">Config</data>
+    <data name="config_app_description">Contains all configurable settings of the app.</data>
+
+    <data name="config_general">General</data>
+    <data name="config_general_description">Manage your general settings, like XYZ.</data>
+
+    <data name="config_appearance">Appearance</data>
+    <data name="config_appearance_description">Customize the visual style of the app to suit your preferences.</data>
+    <data name="config_appearance_theme">Theme</data>
+    <data name="config_appearance_theme_description">The theme supports light, dark, or automatic based on your system settings.</data>
+
+    <data name="config_advanced">Advanced</data>
+    <data name="config_advanced_description">Settings made for only advanced users - I wouldn't dare come in here. SCARY!</data>
+
+    
+    <!-- Enums -->
+    <data name="enum_theme_auto">Automatic</data>
+    <data name="enum_theme_light">Light</data>
+    <data name="enum_theme_dark">Dark</data>
+    
+    
+    <!-- Misc -->
+    <data name="edit">Edit</data>
+    <data name="placeholder">Placeholder</data>
+</root>

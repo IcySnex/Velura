@@ -1,7 +1,7 @@
 namespace Velura.Models.Attributes;
 
-[AttributeUsage(AttributeTargets.Property | AttributeTargets.Class)]
-public sealed class ImageAttribute(
+[AttributeUsage(AttributeTargets.All)]
+public class ImageAttribute(
 	string resourceName,
 	string backgroundColor,
 	string tintColor) : Attribute
