@@ -10,15 +10,11 @@ namespace Velura.ViewModels;
 public sealed class SettingsViewModel : ObservableObject
 {
 	readonly ILogger<SettingsViewModel> logger;
-
-	public Config Config { get; }
 	
 	public SettingsViewModel(
-		ILogger<SettingsViewModel> logger,
-		Config config)
+		ILogger<SettingsViewModel> logger)
 	{
 		this.logger = logger;
-		this.Config = config;
 		
 		Group = CreateSettingsGroup(typeof(Config));
 
@@ -41,13 +37,13 @@ public sealed class SettingsViewModel : ObservableObject
 			throw ex;
 		}
 		
-		List<SettingsGroup> subGroupes = [];
+		List<SettingsGroup> subGroups = [];
 		List<SettingsProperty> properties = [];
 		foreach (PropertyInfo propertyInfo in configGroup.GetProperties())
 		{
 			if (typeof(ConfigGroup).IsAssignableFrom(propertyInfo.PropertyType))
 			{
-				subGroupes.Add(CreateSettingsGroup(propertyInfo.PropertyType));
+				subGroups.Add(CreateSettingsGroup(propertyInfo.PropertyType));
 				continue;
 			}
 			
@@ -61,6 +57,6 @@ public sealed class SettingsViewModel : ObservableObject
 			properties.Add(new(propertyDetails, propertyInfo.Name, propertyInfo.PropertyType));
 		}
 		
-		return new(details, image, subGroupes, properties);
+		return new(details, image, subGroups, properties);
 	}
 }

@@ -1,14 +1,20 @@
 using System.ComponentModel;
 using System.Reflection;
 using Velura.iOS.Binding.Abstract;
+using Velura.iOS.Binding.Converters;
+using Velura.iOS.Helpers;
 
 namespace Velura.iOS.Binding;
 
 public sealed class Binding<TViewModel> : IDisposable where TViewModel : INotifyPropertyChanged
 {
+	static readonly IBindingConverter DefaultConverter = new DefaultBindingConverter();
+	
+	
+	readonly IBindingConverter? converter;
 	readonly BindingMapper? mapper;
 
-	readonly PropertyInfo? targetPropertyInfo = null;
+	readonly PropertyInfo? targetPropertyInfo;
 	readonly PropertyInfo sourcePropertyInfo;
 
 	public Binding(
@@ -18,6 +24,7 @@ public sealed class Binding<TViewModel> : IDisposable where TViewModel : INotify
 		string sourcePropertyPath,
 		BindingMode mode,
 		UpdateSourceTrigger updateSourceTrigger,
+		IBindingConverter? converter = null,
 		BindingMapper? mapper = null)
 	{
 		Target = target;
@@ -26,13 +33,15 @@ public sealed class Binding<TViewModel> : IDisposable where TViewModel : INotify
 		SourcePropertyPath = sourcePropertyPath;
 		Mode = mode;
 		UpdateSourceTrigger = updateSourceTrigger;
-		
+		 
+		this.converter = converter;
 		this.mapper = mapper;
+		
 		if (mapper is not null)
 			mapper.ValueChanged += OnBindingTargetValueChanged;
 		else
-			targetPropertyInfo = target.GetType().GetProperty(targetPropertyPath) ?? throw new InvalidOperationException($"Property path '{targetPropertyPath}' is invalid for type '{target.GetType().Name}'.");
-		sourcePropertyInfo = source.GetType().GetProperty(sourcePropertyPath) ?? throw new InvalidOperationException($"Property path '{sourcePropertyPath}' is invalid for type '{source.GetType().Name}'.");
+			targetPropertyInfo = target.GetProperty(targetPropertyPath);
+		sourcePropertyInfo = source.GetProperty(sourcePropertyPath);
 	}
 	
 	public UIView Target { get; private set; }
@@ -46,12 +55,16 @@ public sealed class Binding<TViewModel> : IDisposable where TViewModel : INotify
 	public void UpdateSource()
 	{
 		object? newValue = mapper?.GetValue(Target) ?? targetPropertyInfo!.GetValue(Target);
+		newValue = converter is null ? DefaultConverter.ConvertBack(newValue, sourcePropertyInfo.PropertyType) : converter.ConvertBack(newValue, sourcePropertyInfo.PropertyType);
+		
 		sourcePropertyInfo.SetValue(Source, newValue);
 	}
 
 	public void UpdateTarget()
 	{
 		object? newValue = sourcePropertyInfo.GetValue(Source);
+		newValue = converter is null ? DefaultConverter.Convert(newValue, targetPropertyInfo?.PropertyType!) : converter.Convert(newValue, targetPropertyInfo?.PropertyType!);
+		
 		if (mapper is not null)
 			mapper.SetValue(Target, newValue);
 		else

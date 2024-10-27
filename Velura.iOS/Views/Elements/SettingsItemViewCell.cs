@@ -1,8 +1,10 @@
 using Cirrious.FluentLayouts.Touch;
 using ObjCRuntime;
 using Velura.iOS.Binding;
-using Velura.iOS.Delegates;
+using Velura.iOS.Binding.Abstract;
+using Velura.iOS.Binding.Converters;
 using Velura.iOS.Helpers;
+using Velura.iOS.Views.UI;
 using Velura.Models;
 using Velura.Models.Abstract;
 
@@ -10,8 +12,6 @@ namespace Velura.iOS.Views.Elements;
 
 public sealed class SettingsItemViewCell : UITableViewCell
 {
-	readonly IUITextFieldDelegate numbersOnlyDelegate = new NumbersOnlyTextFieldDelegate();
-	
 	readonly UILabel textLabel;
 	readonly UILabel secondaryTextLabel;
 	readonly UIImageView imageView;
@@ -20,7 +20,8 @@ public sealed class SettingsItemViewCell : UITableViewCell
 	readonly FluentLayout[] noImageConstraints;
 	readonly FluentLayout[] withImageConstraints;
 
-	object? controlBinding = null;
+	Binding<ConfigGroup>? controlBinding = null;
+	readonly IBindingConverter enumStringConverter = new EnumStringBindingConverter();
 	
 	public SettingsItemViewCell(
 		NativeHandle handle) : base(handle)
@@ -162,33 +163,21 @@ public sealed class SettingsItemViewCell : UITableViewCell
 		SetImage(UIImage.GetSystemImage(group.Image.ResourceName), group.Image.BackgroundColor.ToUIColor(), group.Image.TintColor.ToUIColor());
 	}
 	
-	public void UpdateCell<TConfigGroup>(
+	public void UpdateCell(
 		SettingsProperty property,
-		BindingSet<TConfigGroup> bindingSet) where TConfigGroup : ConfigGroup
+		BindingSet<ConfigGroup> bindingSet)
 	{
-		if (controlBinding is Binding<TConfigGroup> binding)
-			bindingSet.Unbind(binding);
+		if (controlBinding is not null)
+			bindingSet.Unbind(controlBinding);
 		
 		UIView view;
 		if (property.Type.IsEnum)
 		{
-			Enum[] enumValues = Enum.GetValues(property.Type).Cast<Enum>().ToArray();
-			string selectedValue = enumValues[0].ToString();
-		
-			UIButtonConfiguration buttonConfiguration = UIButtonConfiguration.PlainButtonConfiguration;
-			buttonConfiguration.Title = selectedValue;
-			buttonConfiguration.Indicator = UIButtonConfigurationIndicator.Popup;
-			
-			view = new UIButton()
+			view = new UISelectionButton()
 			{
-				Configuration = buttonConfiguration,
-				ChangesSelectionAsPrimaryAction = true,
-				ShowsMenuAsPrimaryAction = true,
-				Menu = UIMenu.Create("", enumValues.Select(enumValue => UIAction.Create(enumValue.ToString(), null, null, _ =>
-				{
-					buttonConfiguration.Title = enumValue.ToString();
-				})).ToArray<UIMenuElement>())
+				Items = Enum.GetNames(property.Type)
 			};
+			controlBinding = bindingSet.Bind(view, nameof(UISelectionButton.SelectedItem), property.Path, BindingMode.TwoWay, converter: enumStringConverter);
 		}
 		else if (property.Type == typeof(bool))
 		{
@@ -202,24 +191,18 @@ public sealed class SettingsItemViewCell : UITableViewCell
 				Placeholder = "Change Value...",
 				TextAlignment = UITextAlignment.Right,
 				AutocorrectionType = UITextAutocorrectionType.No,
-				AutocapitalizationType = UITextAutocapitalizationType.None,
-				SpellCheckingType = UITextSpellCheckingType.No
+				AutocapitalizationType = UITextAutocapitalizationType.None
 			};
 			controlBinding = bindingSet.Bind(view, nameof(UITextField.Text), property.Path, BindingMode.TwoWay);
 		}
 		else if (property.Type == typeof(int))
 		{
-			view = new UITextField()
+			view = new UINumberField()
 			{
-				KeyboardType = UIKeyboardType.NumberPad,
-				Delegate = numbersOnlyDelegate,
 				Placeholder = "Change Value...",
-				TextAlignment = UITextAlignment.Right,
-				AutocorrectionType = UITextAutocorrectionType.No,
-				AutocapitalizationType = UITextAutocapitalizationType.None,
-				SpellCheckingType = UITextSpellCheckingType.No
+				TextAlignment = UITextAlignment.Right
 			};
-			controlBinding = bindingSet.Bind(view, nameof(UITextField.Text), property.Path, BindingMode.TwoWay);
+			controlBinding = bindingSet.Bind(view, nameof(UINumberField.Number), property.Path, BindingMode.TwoWay);
 		}
 		else
 			throw new NotSupportedException($"Unexpected setting type was passed. '{property.Type}' is not supported.");

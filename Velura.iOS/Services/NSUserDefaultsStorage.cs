@@ -30,6 +30,7 @@ public class NSUserDefaultsStorage : ISimpleStorage
 		return value switch
 		{
 			NSString s => (T)(object)s.ToString(),
+			NSNumber n when typeof(T).IsEnum => (T)Enum.ToObject(typeof(T), n.Int32Value),
 			NSNumber n when typeof(T) == typeof(bool) => (T)(object)n.BoolValue,
 			NSNumber n when typeof(T) == typeof(int) => (T)(object)n.Int32Value,
 			NSNumber n when typeof(T) == typeof(float) => (T)(object)n.FloatValue,

@@ -14,7 +14,7 @@ public class SettingsViewController : UIViewController
 		base.ViewDidLoad();
 
         // UI
-        SettingsGroupViewController<Config> groupViewController = new(viewModel.Group, new(config));
+        SettingsGroupViewController groupViewController = new(viewModel.Group, new(config));
         groupViewController.NavigationItem.LargeTitleDisplayMode = UINavigationItemLargeTitleDisplayMode.Always;
         
         AddChildViewController(groupViewController);

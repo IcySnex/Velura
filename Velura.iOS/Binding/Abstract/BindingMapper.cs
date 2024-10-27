@@ -1,4 +1,5 @@
 using System.Reflection;
+using Velura.iOS.Helpers;
 
 namespace Velura.iOS.Binding.Abstract;
 
@@ -13,7 +14,7 @@ public abstract class BindingMapper
 	
 	PropertyInfo? propertyInfo = null;
 	
-	protected PropertyInfo PropertyInfo => propertyInfo ??= TargetType.GetProperty(PropertyPath) ?? throw new InvalidOperationException($"Property path '{PropertyPath}' is invalid for type '{TargetType.Name}'.");
+	protected PropertyInfo PropertyInfo => propertyInfo ??= Extensions.GetProperty(TargetType, PropertyPath);
 
 	
 	public virtual object? GetValue(

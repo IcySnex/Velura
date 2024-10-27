@@ -28,7 +28,7 @@ public sealed class Config(
 [Details("General", "This contains general stuff like user or syncing settings.")]
 [Image("house", "#0b84ff", "#ffffff")]
 public sealed class ConfigGeneral(
-	ISimpleStorage simpleStorage) : ConfigGroup(simpleStorage, "General")
+	ISimpleStorage simpleStorage) : ConfigGroup(simpleStorage, "Config.General")
 {
 	public ConfigUser User { get; } = new(simpleStorage);
 
@@ -39,7 +39,7 @@ public sealed class ConfigGeneral(
 		set => SetValue(nameof(IsSyncEnabled), value);
 	}
 	
-	[Details("Backup", "Automatically backp settings and so lol.")]
+	[Details("Backup", "Automatically backup settings and so lol.")]
 	public bool IsBackupEnabled
 	{
 		get => GetValue(nameof(IsBackupEnabled), false);
@@ -50,7 +50,7 @@ public sealed class ConfigGeneral(
 [Details("Appearance", "Customize the look and feel of the app.")]
 [Image("paintpalette.fill", "#ff9501", "#ffffff")]
 public sealed class ConfigAppearance(
-	ISimpleStorage simpleStorage) : ConfigGroup(simpleStorage, "Appearance")
+	ISimpleStorage simpleStorage) : ConfigGroup(simpleStorage, "Config.Appearance")
 {
 	[Details("Theme", "Choose the app's theme. Light, Dark, or switch automatically based on your system preferences.")]
 	public ThemeMode Theme
@@ -63,7 +63,7 @@ public sealed class ConfigAppearance(
 [Details("User", "This contains user specific settings.")]
 [Image("person.fill", "#30b556", "#ffffff")]
 public sealed class ConfigUser(
-	ISimpleStorage simpleStorage) : ConfigGroup(simpleStorage, "General.User")
+	ISimpleStorage simpleStorage) : ConfigGroup(simpleStorage, "Config.General.User")
 {
 	[Details("Username", "This is the username LOL.")]
 	public string Username
@@ -80,10 +80,10 @@ public sealed class ConfigUser(
 	}
 }
 
-[Details("Advanced", "This contains advanced settings, I wouldnt touch those.")]
+[Details("Advanced", "This contains advanced settings, I wouldn't touch those.")]
 [Image("exclamationmark.triangle.fill", "#ff6479", "#ffffff")]
 public sealed class ConfigAdvanced(
-	ISimpleStorage simpleStorage) : ConfigGroup(simpleStorage, "Advanced")
+	ISimpleStorage simpleStorage) : ConfigGroup(simpleStorage, "Config.Advanced")
 {
 	[Details("Some Key", "This is just some random ahh key.")]
 	public string SomeKey

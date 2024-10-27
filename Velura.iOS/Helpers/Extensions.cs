@@ -1,3 +1,4 @@
+using System.Reflection;
 using CoreAnimation;
 using Velura.Models;
 
@@ -5,6 +6,43 @@ namespace Velura.iOS.Helpers;
 
 public static class Extensions
 {
+	public static PropertyInfo GetProperty(
+		this Type type,
+		string propertyPath) =>
+		type.GetProperty(propertyPath) ?? throw new InvalidOperationException($"Property path '{propertyPath}' is invalid for type '{type.Name}'.");
+
+	public static PropertyInfo GetProperty(
+		this object instance,
+		string propertyPath) =>
+		GetProperty(instance.GetType(), propertyPath);
+	
+	public static T GetValue<T>(
+		this PropertyInfo property,
+		object instance)
+	{
+		if (property.GetValue(instance) is T value)
+			return value;
+		
+		throw new InvalidOperationException($"Property value of '{property.Name}' is not of expected type '{typeof(T).Name}'.");
+	}
+	
+	public static object? GetPropertyValue(
+		this object instance,
+		string propertyPath)
+	{
+		PropertyInfo property = instance.GetProperty(propertyPath);
+		return property.GetValue(instance);
+	}
+	
+	public static T GetPropertyValue<T>(
+		this object instance,
+		string propertyPath)
+	{
+		PropertyInfo property = instance.GetProperty(propertyPath);
+		return property.GetValue<T>(instance);
+	}
+	
+	
 	public static UIColor ToUIColor(
 		this Color color) =>
 		UIColor.FromRGBA(color.Red, color.Green, color.Blue, color.Alpha);

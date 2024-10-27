@@ -1,12 +1,13 @@
 using Velura.iOS.Binding.Abstract;
+using Velura.iOS.Views.UI;
 
 namespace Velura.iOS.Binding.Mappers;
 
-public sealed class UITextFieldTextMapper : BindingMapper
+public sealed class UINumberFieldNumberMapper : BindingMapper
 {
-	public override Type TargetType => typeof(UITextField);
+	public override Type TargetType => typeof(UINumberField);
 
-	public override string PropertyPath => nameof(UITextField.Text);
+	public override string PropertyPath => nameof(UINumberField.Number);
 	
 	public override BindingMode SupportedMode => BindingMode.OneWay | BindingMode.OneWayToSource | BindingMode.TwoWay | BindingMode.OneTime;
 

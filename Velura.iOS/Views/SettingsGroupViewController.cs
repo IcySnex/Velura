@@ -5,17 +5,17 @@ using Velura.Models.Abstract;
 
 namespace Velura.iOS.Views;
 
-public class SettingsGroupViewController<TConfigGroup> : UITableViewController where TConfigGroup : ConfigGroup
+public class SettingsGroupViewController : UITableViewController
 {
 	readonly SettingsGroup group;
-	readonly BindingSet<TConfigGroup> bindingSet;
+	readonly BindingSet<ConfigGroup> bindingSet;
 	
 	readonly int groupSectionIndex;
 	readonly int propertySectionIndex;
 	
 	public SettingsGroupViewController(
 		SettingsGroup group,
-		BindingSet<TConfigGroup> bindingSet) : base(UITableViewStyle.InsetGrouped)
+		BindingSet<ConfigGroup> bindingSet) : base(UITableViewStyle.InsetGrouped)
 	{
 		this.group = group;
 		this.bindingSet = bindingSet;
@@ -81,6 +81,6 @@ public class SettingsGroupViewController<TConfigGroup> : UITableViewController w
 		
 		SettingsGroup selectedGroup = group.Groups[indexPath.Row];
 		BindingSet<ConfigGroup> subBindingSet = bindingSet.CreateSubSet<ConfigGroup>(selectedGroup.Details.Name.Replace(" ", string.Empty));
-		NavigationController?.PushViewController(new SettingsGroupViewController<ConfigGroup>(selectedGroup, subBindingSet), true);
+		NavigationController?.PushViewController(new SettingsGroupViewController(selectedGroup, subBindingSet), true);
 	}
 }

@@ -47,7 +47,8 @@ public sealed class IOSApp : App
 		[
 			new UISwitchOnMapper(),
 			new UITextFieldTextMapper(),
-			new UIButtonTitleMapper()
+			new UINumberFieldNumberMapper(),
+			new UISelectionButtonSelectedItemMapper()
 		];
 	}
 }
