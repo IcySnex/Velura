@@ -1,40 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
 <root>
     <!-- Home -->
-    <data name="home_title">Startseite</data>
+    <data name="home_title">
+        <value>Startseite</value>
+    </data>
 
-    
     <!-- Search -->
-    <data name="search_title">Suche</data>
+    <data name="search_title">
+        <value>Suche</value>
+    </data>
 
-    
     <!-- Settings -->
-    <data name="settings_title">Einstellungen</data>
+    <data name="settings_title">
+        <value>Einstellungen</value>
+    </data>
 
-    
     <!-- Config -->
-    <data name="config">Konfiguration</data>
-    <data name="config_app_description">Beinhaltet alle konfigurierbaren Einstellungen der App.</data>
+    <data name="config">
+        <value>Konfiguration</value>
+    </data>
+    <data name="config_app_description">
+        <value>Beinhaltet alle konfigurierbaren Einstellungen der App.</value>
+    </data>
 
-    <data name="config_general">Allgemein</data>
-    <data name="config_general_description">Verwalte deine allgemeine Einstellungen, wie XYZ.</data>
-    
-    <data name="config_appearance">Erscheinungsbild</data>
-    <data name="config_appearance_description">Passe das Erscheinungsbild der App an, sodass es dir gefällt.</data>
-    <data name="config_appearance_theme">Farbschema</data>
-    <data name="config_appearance_theme_description">Das Farbschema unterstützt Hell, Dunkel oder Automatisch, basierend auf deinen Systemeinstellungen.</data>
+    <data name="config_general">
+        <value>Allgemein</value>
+    </data>
+    <data name="config_general_description">
+        <value>Verwalte deine allgemeine Einstellungen, wie XYZ.</value>
+    </data>
 
-    <data name="config_advanced">Fortgeschritten</data>
-    <data name="config_advanced_description">Settings, only for advanced users - I wouldn't dare go in here. SCARY!</data>
+    <data name="config_appearance">
+        <value>Erscheinungsbild</value>
+    </data>
+    <data name="config_appearance_description">
+        <value>Passe das Erscheinungsbild der App an, sodass es dir gefällt.</value>
+    </data>
+    <data name="config_appearance_theme">
+        <value>Farbschema</value>
+    </data>
+    <data name="config_appearance_theme_description">
+        <value>Das Farbschema unterstützt Hell, Dunkel oder Automatisch, basierend auf deinen Systemeinstellungen.</value>
+    </data>
 
+    <data name="config_advanced">
+        <value>Fortgeschritten</value>
+    </data>
+    <data name="config_advanced_description">
+        <value>Einstellungen, nur für Fortgeschrittene - Ich würde mich nicht hier rein trauen. GRUSELIG!</value>
+    </data>
 
     <!-- Enums -->
-    <data name="enum_theme_auto">Automatisch</data>
-    <data name="enum_theme_light">Hell</data>
-    <data name="enum_theme_dark">Dunkel</data>
-
+    <data name="enum_theme_auto">
+        <value>Automatisch</value>
+    </data>
+    <data name="enum_theme_light">
+        <value>Hell</value>
+    </data>
+    <data name="enum_theme_dark">
+        <value>Dunkel</value>
+    </data>
 
     <!-- Misc -->
-    <data name="edit">Bearbeiten</data>
-    <data name="placeholder">Platzhalter</data>
+    <data name="edit">
+        <value>Bearbeiten</value>
+    </data>
+    <data name="placeholder">
+        <value>Platzhalter</value>
+    </data>
 </root>

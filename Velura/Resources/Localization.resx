@@ -1,38 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
 <root>
     <!-- Home -->
-    <data name="home_title">Home</data>
+    <data name="home_title">
+        <value>Home</value>
+    </data>
 
     <!-- Search -->
-    <data name="search_title">Search</data>
+    <data name="search_title">
+        <value>Search</value>
+    </data>
 
     <!-- Settings -->
-    <data name="settings_title">Settings</data>
+    <data name="settings_title">
+        <value>Settings</value>
+    </data>
 
-    
     <!-- Config -->
-    <data name="config">Config</data>
-    <data name="config_app_description">Contains all configurable settings of the app.</data>
+    <data name="config">
+        <value>Config</value>
+    </data>
+    <data name="config_app_description">
+        <value>Contains all configurable settings of the app.</value>
+    </data>
 
-    <data name="config_general">General</data>
-    <data name="config_general_description">Manage your general settings, like XYZ.</data>
+    <data name="config_general">
+        <value>General</value>
+    </data>
+    <data name="config_general_description">
+        <value>Manage your general settings, like XYZ.</value>
+    </data>
 
-    <data name="config_appearance">Appearance</data>
-    <data name="config_appearance_description">Customize the visual style of the app to suit your preferences.</data>
-    <data name="config_appearance_theme">Theme</data>
-    <data name="config_appearance_theme_description">The theme supports light, dark, or automatic based on your system settings.</data>
+    <data name="config_appearance">
+        <value>Appearance</value>
+    </data>
+    <data name="config_appearance_description">
+        <value>Customize the visual style of the app to suit your preferences.</value>
+    </data>
+    <data name="config_appearance_theme">
+        <value>Theme</value>
+    </data>
+    <data name="config_appearance_theme_description">
+        <value>The theme supports light, dark, or automatic based on your system settings.</value>
+    </data>
 
-    <data name="config_advanced">Advanced</data>
-    <data name="config_advanced_description">Settings made for only advanced users - I wouldn't dare come in here. SCARY!</data>
+    <data name="config_advanced">
+        <value>Advanced</value>
+    </data>
+    <data name="config_advanced_description">
+        <value>Settings made for only advanced users - I wouldn't dare come in here. SCARY!</value>
+    </data>
 
-    
     <!-- Enums -->
-    <data name="enum_theme_auto">Automatic</data>
-    <data name="enum_theme_light">Light</data>
-    <data name="enum_theme_dark">Dark</data>
-    
-    
+    <data name="enum_theme_auto">
+        <value>Automatic</value>
+    </data>
+    <data name="enum_theme_light">
+        <value>Light</value>
+    </data>
+    <data name="enum_theme_dark">
+        <value>Dark</value>
+    </data>
+
     <!-- Misc -->
-    <data name="edit">Edit</data>
-    <data name="placeholder">Placeholder</data>
+    <data name="edit">
+        <value>Edit</value>
+    </data>
+    <data name="placeholder">
+        <value>Placeholder</value>
+    </data>
 </root>
