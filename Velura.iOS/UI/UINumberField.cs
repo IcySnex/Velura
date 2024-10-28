@@ -1,4 +1,4 @@
-namespace Velura.iOS.Views.UI;
+namespace Velura.iOS.UI;
 
 
 public class UINumberField : UITextField, IUITextFieldDelegate

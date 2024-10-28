@@ -6,7 +6,7 @@ using Velura.iOS.Binding;
 using Velura.iOS.Binding.Abstract;
 using Velura.iOS.Binding.Converters;
 using Velura.iOS.Helpers;
-using Velura.iOS.Views.UI;
+using Velura.iOS.UI;
 using Velura.Models;
 using Velura.Models.Abstract;
 using Velura.Models.Attributes;

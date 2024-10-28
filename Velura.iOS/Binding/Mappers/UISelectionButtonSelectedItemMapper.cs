@@ -1,5 +1,5 @@
 using Velura.iOS.Binding.Abstract;
-using Velura.iOS.Views.UI;
+using Velura.iOS.UI;
 
 namespace Velura.iOS.Binding.Mappers;
 
