@@ -27,7 +27,7 @@ public class SettingsHeaderView : UIView
 			ClipsToBounds = true,
 			Layer =
 			{
-				CornerRadius = 8,
+				CornerRadius = 12,
 				MasksToBounds = true
 			}
 		};

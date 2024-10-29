@@ -47,12 +47,12 @@
         <value>Advanced</value>
     </data>
     <data name="config_advanced_description">
-        <value>Settings made for only advanced users - I wouldn't dare come in here. SCARY!</value>
+        <value>Settings made for only advanced users! I wouldn't dare come in here. SCARY!</value>
     </data>
 
     <!-- Enums -->
     <data name="enum_theme_auto">
-        <value>Automatic</value>
+        <value>Auto</value>
     </data>
     <data name="enum_theme_light">
         <value>Light</value>

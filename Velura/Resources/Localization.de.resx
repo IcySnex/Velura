@@ -47,12 +47,12 @@
         <value>Fortgeschritten</value>
     </data>
     <data name="config_advanced_description">
-        <value>Einstellungen, nur für Fortgeschrittene - Ich würde mich nicht hier rein trauen. GRUSELIG!</value>
+        <value>Einstellungen, nur für Fortgeschrittene! Ich würde mich nicht rein trauen. SCARY!</value>
     </data>
 
     <!-- Enums -->
     <data name="enum_theme_auto">
-        <value>Automatisch</value>
+        <value>Auto</value>
     </data>
     <data name="enum_theme_light">
         <value>Hell</value>

@@ -50,7 +50,7 @@ public sealed class SettingsItemViewCell : UITableViewCell
 			ClipsToBounds = true,
 			Layer =
 			{
-				CornerRadius = 8,
+				CornerRadius = 6,
 				MasksToBounds = true
 			}
 		};
@@ -61,8 +61,8 @@ public sealed class SettingsItemViewCell : UITableViewCell
 		// Layout
 		noImageConstraints =
 		[
-			textLabel.AtLeftOf(ContentView, 15),
-			secondaryTextLabel.AtLeftOf(ContentView, 15),
+			textLabel.AtLeftOf(ContentView, 20),
+			secondaryTextLabel.AtLeftOf(ContentView, 20),
 		];
 		withImageConstraints =
 		[
@@ -73,20 +73,20 @@ public sealed class SettingsItemViewCell : UITableViewCell
 		ContentView.SubviewsDoNotTranslateAutoresizingMaskIntoConstraints();
 		ContentView.AddConstraints(
 			textLabel.AtTopOf(ContentView, 15),
-			textLabel.ToLeftOf(controlView, 15),
+			textLabel.ToLeftOf(controlView, 20),
 
 			secondaryTextLabel.Below(textLabel, 4),
 			secondaryTextLabel.AtBottomOf(ContentView, 15),
-			secondaryTextLabel.ToLeftOf(controlView, 15),
+			secondaryTextLabel.ToLeftOf(controlView, 20),
 
 			imageView.Width().EqualTo(30),
 			imageView.Height().EqualTo(30),
 			imageView.WithSameCenterY(ContentView),
-			imageView.AtLeftOf(ContentView, 15),
+			imageView.AtLeftOf(ContentView, 20),
 
 			controlView.Width().LessThanOrEqualTo().WidthOf(ContentView).WithMultiplier(0.5f),
 			controlView.WithSameCenterY(ContentView),
-			controlView.AtRightOf(ContentView, 15)
+			controlView.AtRightOf(ContentView, 20)
 		);
 
 		// Initialize
@@ -119,7 +119,7 @@ public sealed class SettingsItemViewCell : UITableViewCell
 	{
 		if (image is null)
 		{
-			SeparatorInset = new(0, 15, 0, 0);
+			SeparatorInset = new(0, 20, 0, 0);
 			
 			imageView.Image = null;
 			ContentView.RemoveConstraints(withImageConstraints);
@@ -127,7 +127,7 @@ public sealed class SettingsItemViewCell : UITableViewCell
 			return;
 		}
 		
-		SeparatorInset = new(0, 60, 0, 0);
+		SeparatorInset = new(0, 65, 0, 0);
 
 		imageView.Image = image.Apply(new(30, 30), new(22, 22), backgroundColor, tintColor);
 		ContentView.RemoveConstraints(noImageConstraints);
