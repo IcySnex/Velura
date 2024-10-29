@@ -66,6 +66,7 @@ public static class Extensions
 	public static UIImage Apply(
 		this UIImage image,
 		CGSize size,
+		CGSize imageSize,
 		UIColor? backgroundColor = null,
 		UIColor? tintColor = null) =>
 		new UIGraphicsImageRenderer(size).CreateImage(context =>
@@ -76,7 +77,11 @@ public static class Extensions
 				context.FillRect(new(0, 0, size.Width, size.Height));
 			}
 
+			double ratio = Math.Min(imageSize.Width / image.Size.Width, imageSize.Height / image.Size.Height);
+			double newWidth = image.Size.Width * ratio;
+			double newHeight = image.Size.Height * ratio;
+			
 			UIImage imageToDraw = tintColor is null ? image : image.ApplyTintColor(tintColor, UIImageRenderingMode.AlwaysTemplate);
-			imageToDraw.Draw(new CGPoint((size.Width - image.Size.Width) / 2, (size.Height - image.Size.Height) / 2));
+			imageToDraw.Draw(new CGRect((size.Width - newWidth) / 2, (size.Height - newHeight) / 2, newWidth, newHeight));
 		});
 }

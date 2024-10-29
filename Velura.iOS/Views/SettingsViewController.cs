@@ -1,4 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
+using Velura.iOS.UI;
+using Velura.iOS.Views.Elements;
 using Velura.Models;
 using Velura.ViewModels;
 
@@ -14,10 +16,14 @@ public class SettingsViewController : UIViewController
 	public override void ViewDidLoad()
 	{
 		base.ViewDidLoad();
-
-        // UI
-        SettingsGroupViewController groupViewController = new(viewModel.Group, new(config), viewControllersCache);
-        groupViewController.NavigationItem.LargeTitleDisplayMode = UINavigationItemLargeTitleDisplayMode.Always;
+		
+		SettingsGroupViewController groupViewController = new(viewModel.Group, new(config), viewControllersCache, false);
+        groupViewController.TableView.TableHeaderView = new UIPaddedView()
+        {
+	        Padding = new(16, 0, 16, 32),
+	        ChildView = new ProductHeaderView(),
+        };
+        
         
         AddChildViewController(groupViewController);
         View!.AddSubview(groupViewController.View!);

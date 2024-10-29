@@ -129,7 +129,7 @@ public sealed class SettingsItemViewCell : UITableViewCell
 		
 		SeparatorInset = new(0, 60, 0, 0);
 
-		imageView.Image = image.Apply(new(30, 30), backgroundColor, tintColor);
+		imageView.Image = image.Apply(new(30, 30), new(22, 22), backgroundColor, tintColor);
 		ContentView.RemoveConstraints(noImageConstraints);
 		ContentView.AddConstraints(withImageConstraints);
 	}

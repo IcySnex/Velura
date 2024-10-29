@@ -1,0 +1,98 @@
+using Cirrious.FluentLayouts.Touch;
+using CoreAnimation;
+
+namespace Velura.iOS.Views.Elements;
+
+public class ProductHeaderView : UIView
+{
+	readonly UILabel textLabel;
+	readonly UILabel secondaryTextLabel;
+	
+	public ProductHeaderView()
+	{
+		// Properties
+		BackgroundColor = UIColor.SecondarySystemBackground;
+		Layer.CornerRadius = 8;
+		Layer.MasksToBounds = true;
+
+		// UI
+		UIImageView imageView = new()
+		{
+			Image =  UIImage.FromBundle("icon.png")
+		};
+		textLabel = new()
+		{
+			Text = "Velura",
+			Font = UIFontMetrics.DefaultMetrics.GetScaledFont(UIFont.SystemFontOfSize(20, UIFontWeight.Bold)),
+			AdjustsFontForContentSizeCategory = true,
+			Lines = 1,
+			LineBreakMode = UILineBreakMode.TailTruncation,
+		};
+		secondaryTextLabel = new()
+		{
+			Text = "Your Personal Media Collection - Streamed Just the Way You Want",
+			Font = UIFontMetrics.DefaultMetrics.GetScaledFont(UIFont.SystemFontOfSize(14)),
+			AdjustsFontForContentSizeCategory = true,
+			Lines = 2,
+			LineBreakMode = UILineBreakMode.TailTruncation,
+		};
+		UIImageView chevronView = new()
+		{
+			Image =  UIImage.GetSystemImage("chevron.compact.right")?.ImageWithRenderingMode(UIImageRenderingMode.AlwaysTemplate)
+		};
+		
+		AddSubviews(imageView, textLabel, secondaryTextLabel, chevronView);
+		
+		// Layout
+		this.SubviewsDoNotTranslateAutoresizingMaskIntoConstraints();
+		this.AddConstraints(
+			imageView.Width().EqualTo(70),
+			imageView.Height().EqualTo(70),
+			imageView.WithSameCenterY(this),
+			imageView.AtLeftOf(this, 10),
+			
+			textLabel.ToRightOf(imageView, 10),
+			textLabel.AtRightOf(chevronView, 20),
+			textLabel.AtTopOf(this, 15),
+			
+			secondaryTextLabel.ToRightOf(imageView, 11),
+			secondaryTextLabel.AtRightOf(chevronView, 15),
+			secondaryTextLabel.Below(textLabel, -4),
+			secondaryTextLabel.AtBottomOf(this, 15),
+			
+			chevronView.Width().EqualTo(14),
+			chevronView.Height().EqualTo(16),
+			chevronView.WithSameCenterY(this),
+			chevronView.AtRightOf(this, 17)
+		);
+	}
+
+
+	public override CGSize SizeThatFits(
+		CGSize size)
+	{
+		CGSize textLabelSize = textLabel.SizeThatFits(new(size.Width - 30, float.MaxValue));
+		CGSize secondaryTextLabelSize = secondaryTextLabel.SizeThatFits(new(size.Width - 30, float.MaxValue));
+		
+		return new(size.Width, 20 + textLabelSize.Height - 4 + secondaryTextLabelSize.Height + 20);
+	}
+	
+	
+	public override void TouchesBegan(NSSet touches, UIEvent? evt)
+	{
+		base.TouchesBegan(touches, evt);
+		BackgroundColor = UIColor.TertiarySystemBackground;
+	}
+
+	public override void TouchesEnded(NSSet touches, UIEvent? evt)
+	{
+		base.TouchesEnded(touches, evt);
+		Animate(CATransaction.AnimationDuration, () => BackgroundColor = UIColor.SecondarySystemBackground);
+	}
+
+	public override void TouchesCancelled(NSSet touches, UIEvent? evt)
+	{
+		base.TouchesCancelled(touches, evt);
+		BackgroundColor = UIColor.SecondarySystemBackground;
+	}
+}
