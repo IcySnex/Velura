@@ -49,6 +49,12 @@
     <data name="config_appearance_theme_description">
         <value>Das Farbschema unterstützt Hell, Dunkel oder Automatisch, basierend auf deinen Systemeinstellungen.</value>
     </data>
+    <data name="config_appearance_animatedtabbar">
+        <value>Animierte Tab Bar</value>
+    </data>
+    <data name="config_appearance_animatedtabbar_description">
+        <value>Spielt eine kleine Bounce-Animation ab, beim wechseln der Tabs in der Tab-Leiste.</value>
+    </data>
 
     <data name="config_advanced">
         <value>Fortgeschritten</value>

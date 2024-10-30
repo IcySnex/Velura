@@ -49,6 +49,12 @@
     <data name="config_appearance_theme_description">
         <value>The theme supports light, dark, or automatic based on your system settings.</value>
     </data>
+    <data name="config_appearance_animatedtabbar">
+        <value>Animated Tab Bar</value>
+    </data>
+    <data name="config_appearance_animatedtabbar_description">
+        <value>Plays a little bounce animation when switching tabs in the tab bar.</value>
+    </data>
 
     <data name="config_advanced">
         <value>Advanced</value>

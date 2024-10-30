@@ -1,34 +1,21 @@
 using Microsoft.Extensions.Logging;
 using Velura.Helpers;
 using Velura.iOS.Helpers;
+using Velura.Models;
 
 namespace Velura.iOS.Views;
 
 public class MainViewController : UITabBarController, IUITabBarControllerDelegate
 {
-	public new bool ShouldSelectViewController(
-		UITabBarController tabBarController,
-		UIViewController viewController)
-	{
-		if (UIDevice.CurrentDevice.UserInterfaceIdiom != UIUserInterfaceIdiom.Phone || viewController.TabBarItem is null || tabBarController.ViewControllers is null)
-			return true;
-
-		int tabIndex = Array.IndexOf(tabBarController.ViewControllers, viewController);
-		if (tabIndex == -1)
-			return true;
-
-		UIView? tabBarIcon = tabBarController.TabBar.Subviews[tabIndex + 1].Subviews.FirstOrDefault()?.Subviews.FirstOrDefault()?.Subviews.FirstOrDefault();
-		tabBarIcon?.AnimateBounce();
-		return true;
-	}
-	
-	
 	readonly ILogger<MainViewController> logger;
+	readonly Config config;
 	
 	public MainViewController(
-		ILogger<MainViewController> logger)
+		ILogger<MainViewController> logger,
+		Config config)
 	{
 		this.logger = logger;
+		this.config = config;
 		
 		// Properties
 		Title = "Velura";
@@ -45,6 +32,25 @@ public class MainViewController : UITabBarController, IUITabBarControllerDelegat
 			CreateNavController<SettingsViewController>("settings_title".L10N(), "gearshape", "gearshape.fill"),
 		];
 		logger.LogInformation("[MainViewController-.ctor] MainViewController has been initialized and UI has been created.");
+	}
+
+	
+	public new bool ShouldSelectViewController(
+		UITabBarController tabBarController,
+		UIViewController viewController)
+	{
+		if (!config.Appearance.AnimateTabBar)
+			return true;
+		
+		if (UIDevice.CurrentDevice.UserInterfaceIdiom != UIUserInterfaceIdiom.Phone || viewController.TabBarItem is null || tabBarController.ViewControllers is null)
+			return true;
+		int tabIndex = Array.IndexOf(tabBarController.ViewControllers, viewController);
+		if (tabIndex == -1)
+			return true;
+
+		UIView? tabBarIcon = tabBarController.TabBar.Subviews[tabIndex + 1].Subviews.FirstOrDefault()?.Subviews.FirstOrDefault()?.Subviews.FirstOrDefault();
+		tabBarIcon?.AnimateBounce();
+		return true;
 	}
 
 

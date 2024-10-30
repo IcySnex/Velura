@@ -32,8 +32,15 @@ public sealed class ConfigAppearance(
 	[L10NDetails("config_appearance_theme", "config_appearance_theme_description")]
 	public ThemeMode Theme
 	{
-		get => GetValue(nameof(ThemeMode), ThemeMode.Auto);
-		set => SetValue(nameof(ThemeMode), value);
+		get => GetValue(nameof(Theme), ThemeMode.Auto);
+		set => SetValue(nameof(Theme), value);
+	}
+	
+	[L10NDetails("config_appearance_animatedtabbar", "config_appearance_animatedtabbar_description")]
+	public bool AnimateTabBar
+	{
+		get => GetValue(nameof(AnimateTabBar), true);
+		set => SetValue(nameof(AnimateTabBar), value);
 	}
 }
 
