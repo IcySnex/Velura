@@ -1,5 +1,6 @@
 using Cirrious.FluentLayouts.Touch;
 using CoreAnimation;
+using Velura.Helpers;
 
 namespace Velura.iOS.Views.Elements;
 
@@ -11,7 +12,7 @@ public class ProductHeaderView : UIView
 	public ProductHeaderView()
 	{
 		// Properties
-		BackgroundColor = UIColor.SecondarySystemBackground;
+		BackgroundColor = UIColor.SecondarySystemGroupedBackground;
 		Layer.CornerRadius = 8;
 		Layer.MasksToBounds = true;
 
@@ -22,7 +23,7 @@ public class ProductHeaderView : UIView
 		};
 		textLabel = new()
 		{
-			Text = "Velura",
+			Text = "settings_app_title".L10N(),
 			Font = UIFontMetrics.DefaultMetrics.GetScaledFont(UIFont.SystemFontOfSize(20, UIFontWeight.Bold)),
 			AdjustsFontForContentSizeCategory = true,
 			Lines = 1,
@@ -30,7 +31,7 @@ public class ProductHeaderView : UIView
 		};
 		secondaryTextLabel = new()
 		{
-			Text = "Your Personal Media Collection - Streamed Just the Way You Want",
+			Text = "settings_app_description".L10N(),
 			Font = UIFontMetrics.DefaultMetrics.GetScaledFont(UIFont.SystemFontOfSize(14)),
 			AdjustsFontForContentSizeCategory = true,
 			Lines = 2,
@@ -51,11 +52,11 @@ public class ProductHeaderView : UIView
 			imageView.WithSameCenterY(this),
 			imageView.AtLeftOf(this, 10),
 			
-			textLabel.ToRightOf(imageView, 10),
+			textLabel.ToRightOf(imageView, 5),
 			textLabel.AtRightOf(chevronView, 20),
 			textLabel.AtTopOf(this, 15),
 			
-			secondaryTextLabel.ToRightOf(imageView, 11),
+			secondaryTextLabel.ToRightOf(imageView, 5),
 			secondaryTextLabel.AtRightOf(chevronView, 15),
 			secondaryTextLabel.Below(textLabel, -4),
 			secondaryTextLabel.AtBottomOf(this, 15),
@@ -63,7 +64,7 @@ public class ProductHeaderView : UIView
 			chevronView.Width().EqualTo(14),
 			chevronView.Height().EqualTo(16),
 			chevronView.WithSameCenterY(this),
-			chevronView.AtRightOf(this, 17)
+			chevronView.AtRightOf(this, 16)
 		);
 	}
 
@@ -81,18 +82,18 @@ public class ProductHeaderView : UIView
 	public override void TouchesBegan(NSSet touches, UIEvent? evt)
 	{
 		base.TouchesBegan(touches, evt);
-		BackgroundColor = UIColor.TertiarySystemBackground;
+		BackgroundColor = UIColor.SystemGray4;
 	}
 
 	public override void TouchesEnded(NSSet touches, UIEvent? evt)
 	{
 		base.TouchesEnded(touches, evt);
-		Animate(CATransaction.AnimationDuration, () => BackgroundColor = UIColor.SecondarySystemBackground);
+		Animate(CATransaction.AnimationDuration, () => BackgroundColor = UIColor.SecondarySystemGroupedBackground);
 	}
 
 	public override void TouchesCancelled(NSSet touches, UIEvent? evt)
 	{
 		base.TouchesCancelled(touches, evt);
-		BackgroundColor = UIColor.SecondarySystemBackground;
+		BackgroundColor = UIColor.SecondarySystemGroupedBackground;
 	}
 }

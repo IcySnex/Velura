@@ -14,6 +14,13 @@
     <data name="settings_title">
         <value>Settings</value>
     </data>
+    
+    <data name="settings_app_title">
+        <value>Velura</value>
+    </data>
+    <data name="settings_app_description">
+        <value>Your Personal Media Collection&#xA;Streamed, Just the Way You Want</value>
+    </data>
 
     <!-- Config -->
     <data name="config">

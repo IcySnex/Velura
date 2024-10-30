@@ -15,6 +15,13 @@
         <value>Einstellungen</value>
     </data>
 
+    <data name="settings_app_title">
+        <value>Velura</value>
+    </data>
+    <data name="settings_app_description">
+        <value>Deine persönliche Mediensammlung&#xA;Gestreamt, genauso wie du es willst</value>
+    </data>
+
     <!-- Config -->
     <data name="config">
         <value>Konfiguration</value>

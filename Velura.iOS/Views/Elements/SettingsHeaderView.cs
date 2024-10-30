@@ -16,7 +16,7 @@ public class SettingsHeaderView : UIView
 		UIColor? imageTintColor = null)
 	{
 		// Properties
-		BackgroundColor = UIColor.SecondarySystemBackground;
+		BackgroundColor = UIColor.SecondarySystemGroupedBackground;
 		Layer.CornerRadius = 8;
 		Layer.MasksToBounds = true;
 
