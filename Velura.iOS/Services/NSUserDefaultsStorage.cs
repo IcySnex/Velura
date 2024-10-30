@@ -18,14 +18,15 @@ public class NSUserDefaultsStorage : ISimpleStorage
 	}
 
 
-	public T? GetValue<T>(
-		string key)
+	public T GetValue<T>(
+		string key,
+		T defaultValue = default!)
 	{
 		logger.LogInformation("[NSUserDefaultsStorage-GetValue] Getting value with key '{key}'...", key);
 		NSObject value = userDefaults.ValueForKey(new(key));
-		
+
 		if (value is null)
-			return default;
+			return defaultValue;
 
 		return value switch
 		{
@@ -35,7 +36,7 @@ public class NSUserDefaultsStorage : ISimpleStorage
 			NSNumber n when typeof(T) == typeof(int) => (T)(object)n.Int32Value,
 			NSNumber n when typeof(T) == typeof(float) => (T)(object)n.FloatValue,
 			NSNumber n when typeof(T) == typeof(double) => (T)(object)n.DoubleValue,
-			_ => default
+			_ => defaultValue
 		};
 	}
 

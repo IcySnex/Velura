@@ -12,7 +12,7 @@ public abstract class ConfigGroup(
 	protected T GetValue<T>(
 		string key,
 		T defaultValue = default!) =>
-		simpleStorage.GetValue<T>($"{relativePath}.{key}") ?? defaultValue;
+		simpleStorage.GetValue($"{relativePath}.{key}", defaultValue);
 
 	protected void SetValue<T>(
 		string key,
