@@ -16,8 +16,11 @@ public class UISelectionButton : UIButton
 	public event EventHandler? SelectedItemChanged;
 
 	protected void RaiseSelectedItemChanged(
-		UIAction action) =>
+		UIAction action)
+	{
+		selectedItem = action.Title;
 		SelectedItemChanged?.Invoke(this, EventArgs.Empty);
+	}
 
 
 	string? selectedItem;
