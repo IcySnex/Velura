@@ -3,7 +3,6 @@ using Cirrious.FluentLayouts.Touch;
 using ObjCRuntime;
 using Velura.Helpers;
 using Velura.iOS.Binding;
-using Velura.iOS.Binding.Abstract;
 using Velura.iOS.Binding.Converters;
 using Velura.iOS.Helpers;
 using Velura.iOS.UI;
@@ -25,7 +24,7 @@ public sealed class SettingsItemViewCell : UITableViewCell
 
 	BindingSet<ConfigGroup>? controlBindingSet = null;
 	Binding<ConfigGroup>? controlBinding = null;
-	readonly IBindingConverter enumStringConverter = new EnumStringBindingConverter();
+	readonly EnumL10NNameBindingConverter enumStringConverter = new();
 	
 	public SettingsItemViewCell(
 		NativeHandle handle) : base(handle)

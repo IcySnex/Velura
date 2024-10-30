@@ -54,12 +54,12 @@ public class ProductHeaderView : UIView
 			
 			textLabel.ToRightOf(imageView, 5),
 			textLabel.AtRightOf(chevronView, 20),
-			textLabel.AtTopOf(this, 15),
+			textLabel.AtTopOf(this, 12),
 			
 			secondaryTextLabel.ToRightOf(imageView, 5),
 			secondaryTextLabel.AtRightOf(chevronView, 15),
 			secondaryTextLabel.Below(textLabel, -4),
-			secondaryTextLabel.AtBottomOf(this, 15),
+			secondaryTextLabel.AtBottomOf(this, 16),
 			
 			chevronView.Width().EqualTo(14),
 			chevronView.Height().EqualTo(16),
