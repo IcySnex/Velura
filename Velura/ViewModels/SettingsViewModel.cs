@@ -1,26 +1,49 @@
+using System.ComponentModel;
 using System.Reflection;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.Extensions.Logging;
 using Velura.Models;
 using Velura.Models.Abstract;
 using Velura.Models.Attributes;
+using Velura.Services.Abstract;
 
 namespace Velura.ViewModels;
 
 public sealed class SettingsViewModel : ObservableObject
 {
 	readonly ILogger<SettingsViewModel> logger;
+	readonly IThemeManager themeManager;
+	
+	public Config Config { get; }
 	
 	public SettingsViewModel(
-		ILogger<SettingsViewModel> logger)
+		ILogger<SettingsViewModel> logger,
+		Config config,
+		IThemeManager themeManager)
 	{
 		this.logger = logger;
+		this.Config = config;
+		this.themeManager = themeManager;
+		
+		Config.Appearance.PropertyChanged += OnConfigAppearancePropertyChanged;
+		themeManager.Set(Config.Appearance.Theme);
 		
 		Group = CreateSettingsGroup(typeof(Config), "Config");
 
 		logger.LogInformation("[SettingsViewModel-.ctor] SettingsViewModel has been initialized.");
 	}
-	
+
+	void OnConfigAppearancePropertyChanged(
+		object? _,
+		PropertyChangedEventArgs e)
+	{
+		if (e.PropertyName != nameof(ConfigAppearance.Theme))
+			return;
+		
+		themeManager.Set(Config.Appearance.Theme);
+	}
+
+
 	public readonly SettingsGroup Group;
 
 	SettingsGroup CreateSettingsGroup(

@@ -39,6 +39,7 @@ public sealed class IOSApp : App
 		services.AddSingleton<MainViewController>();
 		services.AddSingleton<INavigation, Navigation>();
 		services.AddSingleton<ISimpleStorage, NSUserDefaultsStorage>();
+		services.AddSingleton<IThemeManager, ThemeManager>();
 	}
 
 

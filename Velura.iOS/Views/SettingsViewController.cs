@@ -1,7 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Velura.iOS.UI;
 using Velura.iOS.Views.Elements;
-using Velura.Models;
 using Velura.ViewModels;
 
 namespace Velura.iOS.Views;
@@ -9,7 +8,6 @@ namespace Velura.iOS.Views;
 public class SettingsViewController : UIViewController
 {
 	readonly SettingsViewModel viewModel = App.Provider.GetRequiredService<SettingsViewModel>();
-	readonly Config config = App.Provider.GetRequiredService<Config>();
 
 	readonly Dictionary<string, SettingsGroupViewController> viewControllersCache = [];
 	
@@ -17,7 +15,7 @@ public class SettingsViewController : UIViewController
 	{
 		base.ViewDidLoad();
 		
-		SettingsGroupViewController groupViewController = new(viewModel.Group, new(config), viewControllersCache, false);
+		SettingsGroupViewController groupViewController = new(viewModel.Group, new(viewModel.Config), viewControllersCache, false);
         groupViewController.TableView.TableHeaderView = new UIPaddedView()
         {
 	        Padding = new(16, 0, 16, 32),
