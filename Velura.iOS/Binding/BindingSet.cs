@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.Windows.Input;
 using Velura.iOS.Binding.Abstract;
 using Velura.iOS.Helpers;
 
@@ -7,7 +8,7 @@ namespace Velura.iOS.Binding;
 public sealed class BindingSet<TViewModel> : IDisposable where TViewModel : INotifyPropertyChanged
 {
 	TViewModel viewModel;
-	List<Binding<TViewModel>> bindings = [];
+	List<CoreBinding> bindings = [];
 
 	public BindingSet(
 		TViewModel viewModel)
@@ -21,29 +22,29 @@ public sealed class BindingSet<TViewModel> : IDisposable where TViewModel : INot
 		object? sender,
 		PropertyChangedEventArgs e)
 	{
-		IEnumerable<Binding<TViewModel>> affectedBindings = bindings.Where(b => 
-			b.SourcePropertyPath == e.PropertyName &&
-			(b.Mode is BindingMode.OneWay || b.Mode is BindingMode.TwoWay) &&
-			b.UpdateSourceTrigger != UpdateSourceTrigger.Explicit);
+		IEnumerable<PropertyBinding<TViewModel>> affectedBindings = bindings.OfType<PropertyBinding<TViewModel>>().Where(binding =>
+			binding.SourcePropertyPath == e.PropertyName &&
+			(binding.Mode is BindingMode.OneWay || binding.Mode is BindingMode.TwoWay) &&
+			binding.UpdateSourceTrigger != UpdateSourceTrigger.Explicit);
 
-		foreach (Binding<TViewModel> binding in affectedBindings)
+		foreach (PropertyBinding<TViewModel> binding in affectedBindings)
 			binding.UpdateTarget();
 	}
 
 	
-	public Binding<TViewModel> Bind(
+	public PropertyBinding<TViewModel> Bind(
 		UIView target,
 		string targetPropertyPath,
 		string sourcePropertyPath,
 		BindingMode mode = BindingMode.OneWay,
 		UpdateSourceTrigger updateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
-		IBindingConverter? converter = null)
+		IPropertyBindingConverter? converter = null)
 	{
-		BindingMapper? mapper = IOSApp.BindingMappers.FirstOrDefault(bm => bm.TargetType == target.GetType() && bm.PropertyPath == targetPropertyPath && bm.SupportedMode.HasFlag(mode));
+		PropertyBindingMapper? mapper = IOSApp.PropertyBindingMappers.FirstOrDefault(bm => bm.TargetType == target.GetType() && bm.PropertyPath == targetPropertyPath && bm.SupportedMode.HasFlag(mode));
 		if (mapper is null && mode is not (BindingMode.OneWay or BindingMode.OneTime))
 			throw new InvalidOperationException($"Could not find BindingMapper for target type '{target.GetType().Name}' with property path '{targetPropertyPath}'. Default bindings only support BindingMode.Oneway or BindingMode.OneTime.");
 		
-		Binding<TViewModel> binding = new(target, viewModel, targetPropertyPath, sourcePropertyPath, mode, updateSourceTrigger, converter, mapper);
+		PropertyBinding<TViewModel> binding = new(target, viewModel, targetPropertyPath, sourcePropertyPath, mode, updateSourceTrigger, converter, mapper);
 		bindings.Add(binding);
 
 		if (updateSourceTrigger is not UpdateSourceTrigger.Explicit)
@@ -64,8 +65,20 @@ public sealed class BindingSet<TViewModel> : IDisposable where TViewModel : INot
 		return binding;
 	}
 
+	public EventBinding Bind(
+		UIView target,
+		string targetEventPath,
+		ICommand action)
+	{
+		EventBinding binding = new(target, targetEventPath, action);
+		bindings.Add(binding);
+
+		return binding;
+	}
+	
+
 	public void Unbind(
-		Binding<TViewModel> binding)
+		CoreBinding binding)
 	{
 		binding.Dispose();
 		bindings.Remove(binding);
@@ -73,7 +86,7 @@ public sealed class BindingSet<TViewModel> : IDisposable where TViewModel : INot
 
 	public void Clear()
 	{
-		foreach (Binding<TViewModel> binding in bindings)
+		foreach (CoreBinding binding in bindings)
 			binding.Dispose();
 		bindings.Clear();
 	}

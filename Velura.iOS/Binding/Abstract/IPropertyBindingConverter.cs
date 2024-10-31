@@ -1,6 +1,6 @@
 namespace Velura.iOS.Binding.Abstract;
 
-public interface IBindingConverter
+public interface IPropertyBindingConverter
 {
 	object? Convert(
 		object? value,

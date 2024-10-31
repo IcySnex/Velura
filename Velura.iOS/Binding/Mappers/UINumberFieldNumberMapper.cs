@@ -3,7 +3,7 @@ using Velura.iOS.UI;
 
 namespace Velura.iOS.Binding.Mappers;
 
-public sealed class UINumberFieldNumberMapper : BindingMapper
+public sealed class UINumberFieldNumberMapper : PropertyBindingMapper
 {
 	public override Type TargetType => typeof(UINumberField);
 

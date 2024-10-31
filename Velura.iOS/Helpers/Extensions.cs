@@ -16,6 +16,16 @@ public static class Extensions
 		string propertyPath) =>
 		GetProperty(instance.GetType(), propertyPath);
 	
+	public static EventInfo GetEvent(
+		this Type type,
+		string eventPath) =>
+		type.GetEvent(eventPath) ?? throw new InvalidOperationException($"Event path '{eventPath}' is invalid for type '{type.Name}'.");
+
+	public static EventInfo GetEvent(
+		this object instance,
+		string eventPath) =>
+		GetEvent(instance.GetType(), eventPath);
+	
 	public static T GetValue<T>(
 		this PropertyInfo property,
 		object instance)

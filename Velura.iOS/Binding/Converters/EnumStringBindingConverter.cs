@@ -5,7 +5,7 @@ using Velura.Models.Attributes;
 
 namespace Velura.iOS.Binding.Converters;
 
-public sealed class EnumL10NNameBindingConverter : IBindingConverter
+public sealed class EnumL10NNameBindingConverter : IPropertyBindingConverter
 {
 	static readonly ConcurrentDictionary<Type, Dictionary<string, string>> LocalizedNameCache = new();
 	

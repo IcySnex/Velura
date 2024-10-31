@@ -3,7 +3,7 @@ using Velura.iOS.Helpers;
 
 namespace Velura.iOS.Binding.Abstract;
 
-public abstract class BindingMapper
+public abstract class PropertyBindingMapper
 {
 	public abstract Type TargetType { get; }
 

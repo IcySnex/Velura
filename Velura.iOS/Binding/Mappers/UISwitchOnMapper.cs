@@ -2,7 +2,7 @@ using Velura.iOS.Binding.Abstract;
 
 namespace Velura.iOS.Binding.Mappers;
 
-public sealed class UISwitchOnMapper : BindingMapper
+public sealed class UISwitchOnMapper : PropertyBindingMapper
 {
 	public override Type TargetType => typeof(UISwitch);
 

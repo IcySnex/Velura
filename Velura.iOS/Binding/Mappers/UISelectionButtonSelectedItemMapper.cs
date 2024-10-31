@@ -3,7 +3,7 @@ using Velura.iOS.UI;
 
 namespace Velura.iOS.Binding.Mappers;
 
-public sealed class UISelectionButtonSelectedItemMapper : BindingMapper
+public sealed class UISelectionButtonSelectedItemMapper : PropertyBindingMapper
 {
 	public override Type TargetType => typeof(UISelectionButton);
 

@@ -6,28 +6,27 @@ using Velura.iOS.Helpers;
 
 namespace Velura.iOS.Binding;
 
-public sealed class Binding<TViewModel> : IDisposable where TViewModel : INotifyPropertyChanged
+public sealed class PropertyBinding<TViewModel> : CoreBinding where TViewModel : INotifyPropertyChanged
 {
-	static readonly IBindingConverter DefaultConverter = new DefaultBindingConverter();
+	static readonly IPropertyBindingConverter DefaultConverter = new ChangeTypeBindingConverter();
 	
 	
-	readonly IBindingConverter? converter;
-	readonly BindingMapper? mapper;
+	readonly IPropertyBindingConverter? converter;
+	readonly PropertyBindingMapper? mapper;
 
 	readonly PropertyInfo? targetPropertyInfo;
 	readonly PropertyInfo sourcePropertyInfo;
 
-	public Binding(
+	public PropertyBinding(
 		UIView target,
 		TViewModel source,
 		string targetPropertyPath,
 		string sourcePropertyPath,
 		BindingMode mode,
 		UpdateSourceTrigger updateSourceTrigger,
-		IBindingConverter? converter = null,
-		BindingMapper? mapper = null)
+		IPropertyBindingConverter? converter = null,
+		PropertyBindingMapper? mapper = null) : base(target)
 	{
-		Target = target;
 		Source = source;
 		TargetPropertyPath = targetPropertyPath;
 		SourcePropertyPath = sourcePropertyPath;
@@ -44,7 +43,6 @@ public sealed class Binding<TViewModel> : IDisposable where TViewModel : INotify
 		sourcePropertyInfo = source.GetProperty(sourcePropertyPath);
 	}
 	
-	public UIView Target { get; private set; }
 	public TViewModel Source { get; private set; }
 	public string TargetPropertyPath { get; }
 	public string SourcePropertyPath { get; }
@@ -81,12 +79,10 @@ public sealed class Binding<TViewModel> : IDisposable where TViewModel : INotify
 	}
 	
 	
-	bool isDisposed = false;
-
-	void Dispose(
+	protected override void Dispose(
 		bool disposing)
 	{
-		if (isDisposed)
+		if (IsDisposed)
 			return;
 		
 		if (disposing)
@@ -103,15 +99,6 @@ public sealed class Binding<TViewModel> : IDisposable where TViewModel : INotify
 		Target = default!;
 		Source = default!;
 		
-		isDisposed = true;
+		base.Dispose(disposing);
 	}
-
-	public void Dispose()
-	{
-		Dispose(true);
-		GC.SuppressFinalize(this);
-	}
-	
-	~Binding() =>
-		Dispose(false);
 }

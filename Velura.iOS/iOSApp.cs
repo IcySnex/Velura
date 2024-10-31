@@ -10,9 +10,8 @@ namespace Velura.iOS;
 
 public sealed class IOSApp : App
 {
-	public static IReadOnlyList<BindingMapper> BindingMappers { get; private set; } = default!;
+	public static IReadOnlyList<PropertyBindingMapper> PropertyBindingMappers { get; private set; } = default!;
 
-	
 	IOSApp()
 	{ }
 
@@ -37,6 +36,7 @@ public sealed class IOSApp : App
 		IServiceCollection services)
 	{
 		services.AddSingleton<MainViewController>();
+		
 		services.AddSingleton<INavigation, Navigation>();
 		services.AddSingleton<ISimpleStorage, NSUserDefaultsStorage>();
 		services.AddSingleton<IThemeManager, ThemeManager>();
@@ -45,7 +45,7 @@ public sealed class IOSApp : App
 
 	protected override void FinishAppInitialization()
 	{
-		BindingMappers =
+		PropertyBindingMappers =
 		[
 			new UISwitchOnMapper(),
 			new UITextFieldTextMapper(),

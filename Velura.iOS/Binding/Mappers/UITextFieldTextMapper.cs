@@ -2,7 +2,7 @@ using Velura.iOS.Binding.Abstract;
 
 namespace Velura.iOS.Binding.Mappers;
 
-public sealed class UITextFieldTextMapper : BindingMapper
+public sealed class UITextFieldTextMapper : PropertyBindingMapper
 {
 	public override Type TargetType => typeof(UITextField);
 

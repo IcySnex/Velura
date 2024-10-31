@@ -2,7 +2,7 @@ using Velura.iOS.Binding.Abstract;
 
 namespace Velura.iOS.Binding.Converters;
 
-public sealed class DefaultBindingConverter : IBindingConverter
+public sealed class ChangeTypeBindingConverter : IPropertyBindingConverter
 {
 	public object? Convert(
 		object? value,

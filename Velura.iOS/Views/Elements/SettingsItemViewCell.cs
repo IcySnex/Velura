@@ -23,7 +23,7 @@ public sealed class SettingsItemViewCell : UITableViewCell
 	readonly FluentLayout[] withImageConstraints;
 
 	BindingSet<ConfigGroup>? controlBindingSet = null;
-	Binding<ConfigGroup>? controlBinding = null;
+	PropertyBinding<ConfigGroup>? controlBinding = null;
 	readonly EnumL10NNameBindingConverter enumStringConverter = new();
 	
 	public SettingsItemViewCell(
