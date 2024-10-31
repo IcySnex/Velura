@@ -1,56 +1,88 @@
-using CommunityToolkit.Mvvm.ComponentModel;
+using System.ComponentModel;
 using Microsoft.Extensions.Logging;
+using Velura.Helpers;
 using Velura.iOS.Views;
 using Velura.Services.Abstract;
+using Velura.ViewModels;
 
 namespace Velura.iOS.Services;
 
 public class Navigation : INavigation
 {
-	// readonly MainViewController mainViewController;
-	// readonly ILogger<Navigation> logger;
+	readonly ILogger<Navigation> logger;
+	
+	readonly Dictionary<Type, UIViewController> viewControllerCache = new();
 	
 	public Navigation(
-		MainViewController mainViewController,
 		ILogger<Navigation> logger)
 	{
-		// this.mainViewController = mainViewController;
-		// this.logger = logger;
+		this.logger = logger;
 		
-		logger.LogInformation("[Navigation-Initialize] Navigation has been initialized.");
+		logger.LogInformation("[Navigation-.ctor] Navigation has been initialized.");
+	}
+	
+	
+	UIViewController GetViewController<TViewModel>() where TViewModel : INotifyPropertyChanged
+	{
+		Type viewModelType = typeof(TViewModel);
+		if (!viewControllerCache.TryGetValue(viewModelType, out UIViewController? cachedViewController))
+		{
+			cachedViewController = viewModelType switch
+			{
+				_ when viewModelType == typeof(AboutViewModel) => new AboutViewController(),
+            
+				_ when viewModelType == typeof(HomeViewModel) => IOSApp.MainViewController.ViewControllers![0],
+				_ when viewModelType == typeof(SearchViewModel) => IOSApp.MainViewController.ViewControllers![1],
+				_ when viewModelType == typeof(SettingsViewModel) => IOSApp.MainViewController.ViewControllers![2],
+
+				_ => null
+			};
+			cachedViewController.ThrowIfNull($"Could not find a suitable ViewController for the given ViewModel of type '{viewModelType.Name}.", logger, "Navigation-GetViewController");
+			
+			viewControllerCache[viewModelType] = cachedViewController!;
+		}
+		
+		return cachedViewController!;
+	}
+	
+	UINavigationController GetCurrentNavigationController()
+	{
+		UINavigationController? navigationController = IOSApp.MainViewController.SelectedViewController as UINavigationController;
+		navigationController.ThrowIfNull("The current selected ViewController does not support navigation", logger, "Navigation-GetCurrentNavigationController");
+		
+		return navigationController!;
 	}
 
-
-	// BaseViewController<TViewModel> CreateViewControllerForViewModel<TViewModel>(
-	// 	TViewModel viewModel) where TViewModel : ObservableObject
-	// {
-	// 	string viewModelName = viewModel.GetType().Name;
-	// 	string viewControllerName = viewModelName.Replace("ViewModel", "ViewController");
-	//
-	// 	Type? viewControllerType = Assembly.GetExecutingAssembly().GetTypes()
-	// 		.FirstOrDefault(type => type.Name.Equals(viewControllerName, StringComparison.OrdinalIgnoreCase) && type.IsSubclassOf(typeof(BaseViewController<TViewModel>)));
-	// 	if (viewControllerType is null)
-	// 	{
-	// 		logger.LogError("[Navigation-CreateViewControllerForViewModel] Failed to navigate to ViewModel: {name}. Could not find ViewController type for ViewModel.", viewModelName);
-	// 		throw new NullReferenceException("Could not find ViewController type for ViewModel.");
-	// 	}
-	// 	
-	// 	BaseViewController<TViewModel>? viewController = (BaseViewController<TViewModel>?)Activator.CreateInstance(viewControllerType);
-	// 	if (viewController is null)
-	// 	{
-	// 		logger.LogError("[Navigation-CreateViewControllerForViewModel] Failed to navigate to ViewModel: {name}. Could not create type for ViewController.", viewModelName);
-	// 		throw new NullReferenceException("Could not find ViewController type for ViewModel.");
-	// 	}
-	//
-	// 	viewController.SetViewModel(viewModel);
-	// 	return viewController;
-	// }
 	
-	
-	public void NavigateTo<TViewModel>(
-		TViewModel viewModel) where TViewModel : ObservableObject
+	public void GoTo<TViewModel>() where TViewModel : INotifyPropertyChanged
 	{
-		// BaseViewController<TViewModel> viewController = CreateViewControllerForViewModel(viewModel);
-		// mainViewController.NavigationController!.PushViewController(viewController, true);
+		logger.LogInformation("[Navigation-GoTo] Going to ViewController...");
+		IOSApp.MainViewController.SelectedViewController = GetViewController<TViewModel>();
+	}
+
+	
+	public void Push<TViewModel>() where TViewModel : INotifyPropertyChanged
+	{
+		logger.LogInformation("[Navigation-Push] Pushing ViewController...");
+		GetCurrentNavigationController().PushViewController(GetViewController<TViewModel>(), true);
+	}
+
+	public void Pop()
+	{
+		logger.LogInformation("[Navigation-GoBack] Popping...");
+		GetCurrentNavigationController().PopViewController(true);
+	}
+
+	
+	public void Present<TViewModel>() where TViewModel : INotifyPropertyChanged
+	{
+		logger.LogInformation("[Navigation-Show] Showing modal...");
+		GetCurrentNavigationController().PresentViewController(GetViewController<TViewModel>(), true, null);
+	}
+
+	public void Dismiss()
+	{
+		logger.LogInformation("[Navigation-Dismiss] Dismissing modal...");
+		GetCurrentNavigationController().DismissViewController(true, null);
 	}
 }

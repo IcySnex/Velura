@@ -1,6 +1,3 @@
-using Microsoft.Extensions.DependencyInjection;
-using Velura.iOS.Views;
-
 namespace Velura.iOS;
 
 [Register("AppDelegate")]
@@ -12,10 +9,10 @@ public class AppDelegate : UIApplicationDelegate
 		UIApplication application,
 		NSDictionary launchOptions)
 	{
-		IOSApp.Initialize();
+		IOSApp _ = new();
 		
 		Window = new(UIScreen.MainScreen.Bounds);
-		Window.RootViewController = App.Provider.GetRequiredService<MainViewController>();
+		Window.RootViewController = IOSApp.MainViewController;
 		Window.MakeKeyAndVisible();
 		
 		UIWindow.Appearance.TintColor = UIColor.FromName("AccentColor");

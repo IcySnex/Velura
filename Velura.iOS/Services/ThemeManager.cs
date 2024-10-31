@@ -8,8 +8,6 @@ public class ThemeManager : IThemeManager
 {
 	readonly ILogger<ThemeManager> logger;
 	
-	readonly UIWindow window = UIApplication.SharedApplication.Delegate.GetWindow();
-	
 	public ThemeManager(
 		ILogger<ThemeManager> logger)
 	{
@@ -23,7 +21,7 @@ public class ThemeManager : IThemeManager
 		ThemeMode mode)
 	{
 		logger.LogInformation("[ThemeManager-Set] Setting theme to '{mode}'...", mode);
-		window.OverrideUserInterfaceStyle = mode switch
+		IOSApp.MainWindow.OverrideUserInterfaceStyle = mode switch
 		{
 			ThemeMode.Light => UIUserInterfaceStyle.Light,
 			ThemeMode.Dark => UIUserInterfaceStyle.Dark,
@@ -34,7 +32,7 @@ public class ThemeManager : IThemeManager
 	public ThemeMode Get()
 	{
 		logger.LogInformation("[ThemeManager-Get] Getting theme....");
-		return window.OverrideUserInterfaceStyle switch
+		return IOSApp.MainWindow.OverrideUserInterfaceStyle switch
 		{
 			UIUserInterfaceStyle.Light => ThemeMode.Light,
 			UIUserInterfaceStyle.Dark => ThemeMode.Dark,

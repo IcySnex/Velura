@@ -12,11 +12,11 @@ public sealed class IOSApp : App
 {
 	public static IReadOnlyList<PropertyBindingMapper> PropertyBindingMappers { get; private set; } = default!;
 
-	IOSApp()
-	{ }
-
-	public static IOSApp Initialize() =>
-		new();
+	static UIWindow? mainWindow;
+	public static UIWindow MainWindow => mainWindow ??= UIApplication.SharedApplication.Delegate.GetWindow();
+	
+	static MainViewController? mainViewController;
+	public static MainViewController MainViewController => mainViewController ??= Provider.GetRequiredService<MainViewController>();
 
 
 	protected override LoggerConfiguration ConfigureLogging(

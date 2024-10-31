@@ -1,10 +1,18 @@
-using CommunityToolkit.Mvvm.ComponentModel;
+using System.ComponentModel;
 
 namespace Velura.Services.Abstract;
 
 public interface INavigation
 {
-	void NavigateTo<TViewModel>(
-		TViewModel viewModel) where TViewModel : ObservableObject;
+	void GoTo<TViewModel>() where TViewModel : INotifyPropertyChanged;
+	
+	
+	void Push<TViewModel>() where TViewModel : INotifyPropertyChanged;
 
+	void Pop();
+	
+	
+	void Present<TViewModel>() where TViewModel : INotifyPropertyChanged;
+
+	void Dismiss();
 }
