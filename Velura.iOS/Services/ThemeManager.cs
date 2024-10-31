@@ -17,7 +17,7 @@ public class ThemeManager : IThemeManager
 	}
 	
 	
-	public void Set(
+	public void SetMode(
 		ThemeMode mode)
 	{
 		logger.LogInformation("[ThemeManager-Set] Setting theme to '{mode}'...", mode);
@@ -28,15 +28,17 @@ public class ThemeManager : IThemeManager
 			_ => UIUserInterfaceStyle.Unspecified
 		};
 	}
+	
 
-	public ThemeMode Get()
+	public void SetPreferLargeTitles(
+		bool enable)
 	{
-		logger.LogInformation("[ThemeManager-Get] Getting theme....");
-		return IOSApp.MainWindow.OverrideUserInterfaceStyle switch
+		foreach (UIViewController viewController in IOSApp.MainViewController.ViewControllers!)
 		{
-			UIUserInterfaceStyle.Light => ThemeMode.Light,
-			UIUserInterfaceStyle.Dark => ThemeMode.Dark,
-			_ => ThemeMode.Auto
-		};
+			if (viewController is not UINavigationController navigationController)
+				return;
+			
+			navigationController.NavigationBar.PrefersLargeTitles = enable;
+		}
 	}
 }

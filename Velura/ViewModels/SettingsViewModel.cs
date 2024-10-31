@@ -30,7 +30,6 @@ public sealed partial class SettingsViewModel : ObservableObject
 		this.themeManager = themeManager;
 		
 		Config.Appearance.PropertyChanged += OnConfigAppearancePropertyChanged;
-		themeManager.Set(Config.Appearance.Theme);
 		
 		Group = CreateSettingsGroup(typeof(Config), "Config");
 
@@ -42,10 +41,16 @@ public sealed partial class SettingsViewModel : ObservableObject
 		object? _,
 		PropertyChangedEventArgs e)
 	{
-		if (e.PropertyName != nameof(ConfigAppearance.Theme))
-			return;
-		
-		themeManager.Set(Config.Appearance.Theme);
+		switch (e.PropertyName)
+		{
+			case nameof(ConfigAppearance.Theme):
+				themeManager.SetMode(Config.Appearance.Theme);
+				return;
+			case nameof(ConfigAppearance.PreferLargeTitles):
+				themeManager.SetPreferLargeTitles(Config.Appearance.PreferLargeTitles);
+				return;
+				
+		}
 	}
 
 

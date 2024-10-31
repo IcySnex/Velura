@@ -4,8 +4,10 @@ namespace Velura.Services.Abstract;
 
 public interface IThemeManager
 {
-	void Set(
+	void SetMode(
 		ThemeMode mode);
 	
-	ThemeMode Get();
+	
+	void SetPreferLargeTitles(
+		bool enable);
 }

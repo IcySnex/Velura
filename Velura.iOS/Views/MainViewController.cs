@@ -2,6 +2,7 @@ using Microsoft.Extensions.Logging;
 using Velura.Helpers;
 using Velura.iOS.Helpers;
 using Velura.Models;
+using Velura.Services.Abstract;
 
 namespace Velura.iOS.Views;
 
@@ -12,7 +13,8 @@ public class MainViewController : UITabBarController, IUITabBarControllerDelegat
 	
 	public MainViewController(
 		ILogger<MainViewController> logger,
-		Config config)
+		Config config,
+		IThemeManager themeManager)
 	{
 		this.logger = logger;
 		this.config = config;
@@ -24,6 +26,8 @@ public class MainViewController : UITabBarController, IUITabBarControllerDelegat
 		if (UIDevice.CurrentDevice.CheckSystemVersion(18, 0))
 			Mode = UITabBarControllerMode.TabSidebar;
 
+		themeManager.SetMode(config.Appearance.Theme);
+		
 		// Views
 		ViewControllers =
 		[
@@ -74,7 +78,7 @@ public class MainViewController : UITabBarController, IUITabBarControllerDelegat
 		{
 			NavigationBar =
 			{
-				PrefersLargeTitles = true
+				PrefersLargeTitles = config.Appearance.PreferLargeTitles
 			}
 		};
 		

@@ -64,6 +64,12 @@
     <data name="config_appearance_animatedtabbar_description">
         <value>Spielt eine kleine Bounce-Animation ab, beim wechseln der Tabs in der Tab-Leiste.</value>
     </data>
+    <data name="config_appearance_preferlargetitles">
+        <value>Bevorzuge große Titel</value>
+    </data>
+    <data name="config_appearance_preferlargetitles_description">
+        <value>Bevorzugt, wann immer möglich, große Seitentitel anstelle von Inline-Seitentiteln.</value>
+    </data>
 
     <data name="config_advanced">
         <value>Fortgeschritten</value>

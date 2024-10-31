@@ -64,6 +64,12 @@
     <data name="config_appearance_animatedtabbar_description">
         <value>Plays a little bounce animation when switching tabs in the tab bar.</value>
     </data>
+    <data name="config_appearance_preferlargetitles">
+        <value>Prefer Large Titles</value>
+    </data>
+    <data name="config_appearance_preferlargetitles_description">
+        <value>Prefers large page titles instead of inline page titles whenever possible.</value>
+    </data>
 
     <data name="config_advanced">
         <value>Advanced</value>

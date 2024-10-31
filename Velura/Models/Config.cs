@@ -42,6 +42,13 @@ public sealed class ConfigAppearance(
 		get => GetValue(nameof(AnimateTabBar), true);
 		set => SetValue(nameof(AnimateTabBar), value);
 	}
+	
+	[L10NDetails("config_appearance_preferlargetitles", "config_appearance_preferlargetitles_description")]
+	public bool PreferLargeTitles
+	{
+		get => GetValue(nameof(PreferLargeTitles), true);
+		set => SetValue(nameof(PreferLargeTitles), value);
+	}
 }
 
 [L10NDetails("config_advanced", "config_advanced_description")]
