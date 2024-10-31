@@ -56,7 +56,7 @@ public class SettingsGroupViewController : UITableViewController, IUIScrollViewD
 			TableView.TableHeaderView = new UIPaddedView()
 			{
 				ChildView = new SettingsHeaderView(group.Details.Name, group.Details.Description, UIImage.GetSystemImage(group.Image.ResourceName), group.Image.BackgroundColor.ToUIColor(), group.Image.TintColor.ToUIColor()),
-				Padding = new(16, 0, 16, 32)
+				Padding = new(0, 16, 32, 16)
 			};
 		}
 	}

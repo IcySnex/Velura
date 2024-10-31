@@ -4,9 +4,9 @@ namespace Velura.iOS.UI;
 
 public class UIPaddedView : UIView
 {
-	CGRect padding = new(0, 0, 0, 0);
+	UIEdgeInsets padding = new(0, 0, 0, 0);
 
-	public CGRect Padding
+	public UIEdgeInsets Padding
 	{
 		get => padding;
 		set
@@ -18,10 +18,10 @@ public class UIPaddedView : UIView
 			
 			this.RemoveConstraints(Constraints);
 			this.AddConstraints(
-				ChildView.AtTopOf(this, value.Y),
-				ChildView.AtBottomOf(this, value.Height),
-				ChildView.AtLeftOf(this, value.X),
-				ChildView.AtRightOf(this, value.Width)
+				ChildView.AtTopOf(this, value.Top),
+				ChildView.AtBottomOf(this, value.Bottom),
+				ChildView.AtLeftOf(this, value.Left),
+				ChildView.AtRightOf(this, value.Right)
 			);
 		}
 	}
@@ -51,12 +51,12 @@ public class UIPaddedView : UIView
 		
 			value.TranslatesAutoresizingMaskIntoConstraints = false;
 			this.AddConstraints(
-				value.AtTopOf(this, Padding.Y),
-				value.AtBottomOf(this, Padding.Height),
-				value.AtLeftOf(this, Padding.X),
-				value.AtRightOf(this, Padding.Width)
+				value.AtTopOf(this, Padding.Top),
+				value.AtBottomOf(this, Padding.Bottom),
+				value.AtLeftOf(this, Padding.Left),
+				value.AtRightOf(this, Padding.Right)
 			);
-			
+
 			LayoutIfNeeded();
 		}
 	}
@@ -70,14 +70,14 @@ public class UIPaddedView : UIView
 			return;
 
 		CGSize preferredChildSize = new(
-			Frame.Width - Padding.X - Padding.Width,
-			Frame.Height - Padding.Y - Padding.Height);
+			Frame.Width - Padding.Left - Padding.Right,
+			Frame.Height - Padding.Top - Padding.Bottom);
 		CGSize actualChildSize = ChildView.SizeThatFits(preferredChildSize);
 		
 		Frame = new(
 			Frame.X,
 			Frame.Y,
-			actualChildSize.Width + Padding.X + Padding.Width,
-			actualChildSize.Height + Padding.Y + Padding.Height);
+			actualChildSize.Width + Padding.Left + Padding.Right,
+			actualChildSize.Height + Padding.Top + Padding.Bottom);
 	}
 }
