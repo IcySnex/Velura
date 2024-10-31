@@ -1,5 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <root>
+    <!-- App -->
+    <data name="app_title">
+        <value>Velura</value>
+    </data>
+    <data name="app_description">
+        <value>Deine persönliche Mediensammlung. Gestreamt, genau wie du es willst.</value>
+    </data>
+    <data name="app_version">
+        <value>Version {0}.{1}.{2}</value>
+    </data>
+
     <!-- Home -->
     <data name="home_title">
         <value>Startseite</value>
@@ -15,11 +26,9 @@
         <value>Einstellungen</value>
     </data>
 
-    <data name="settings_app_title">
-        <value>Velura</value>
-    </data>
-    <data name="settings_app_description">
-        <value>Deine persönliche Mediensammlung&#xA;Gestreamt, genauso wie du es willst</value>
+    <!-- About -->
+    <data name="about_title">
+        <value>Über Velura</value>
     </data>
 
     <!-- Config -->
@@ -50,7 +59,7 @@
         <value>Das Farbschema unterstützt Hell, Dunkel oder Automatisch, basierend auf deinen Systemeinstellungen.</value>
     </data>
     <data name="config_appearance_animatedtabbar">
-        <value>Animierte Tab Bar</value>
+        <value>Animierte Tab-Leiste</value>
     </data>
     <data name="config_appearance_animatedtabbar_description">
         <value>Spielt eine kleine Bounce-Animation ab, beim wechseln der Tabs in der Tab-Leiste.</value>
@@ -77,6 +86,9 @@
     <!-- Misc -->
     <data name="edit">
         <value>Bearbeiten</value>
+    </data>
+    <data name="close">
+        <value>Schließen</value>
     </data>
     <data name="placeholder">
         <value>Platzhalter</value>

@@ -1,5 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <root>
+    <!-- App -->
+    <data name="app_title">
+        <value>Velura</value>
+    </data>
+    <data name="app_description">
+        <value>Your Personal Media Collection. Streamed, Just the Way You Want.</value>
+    </data>
+    <data name="app_version">
+        <value>Version {0}.{1}.{2}</value>
+    </data>
+
     <!-- Home -->
     <data name="home_title">
         <value>Home</value>
@@ -14,12 +25,10 @@
     <data name="settings_title">
         <value>Settings</value>
     </data>
-    
-    <data name="settings_app_title">
-        <value>Velura</value>
-    </data>
-    <data name="settings_app_description">
-        <value>Your Personal Media Collection&#xA;Streamed, Just the Way You Want</value>
+
+    <!-- About -->
+    <data name="about_title">
+        <value>About Velura</value>
     </data>
 
     <!-- Config -->
@@ -77,6 +86,9 @@
     <!-- Misc -->
     <data name="edit">
         <value>Edit</value>
+    </data>
+    <data name="close">
+        <value>Close</value>
     </data>
     <data name="placeholder">
         <value>Placeholder</value>

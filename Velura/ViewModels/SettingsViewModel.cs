@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using System.Reflection;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
 using Velura.Models;
 using Velura.Models.Abstract;
@@ -9,9 +10,10 @@ using Velura.Services.Abstract;
 
 namespace Velura.ViewModels;
 
-public sealed class SettingsViewModel : ObservableObject
+public sealed partial class SettingsViewModel : ObservableObject
 {
 	readonly ILogger<SettingsViewModel> logger;
+	readonly INavigation navigation;
 	readonly IThemeManager themeManager;
 	
 	public Config Config { get; }
@@ -19,10 +21,12 @@ public sealed class SettingsViewModel : ObservableObject
 	public SettingsViewModel(
 		ILogger<SettingsViewModel> logger,
 		Config config,
+		INavigation navigation,
 		IThemeManager themeManager)
 	{
 		this.logger = logger;
 		this.Config = config;
+		this.navigation = navigation;
 		this.themeManager = themeManager;
 		
 		Config.Appearance.PropertyChanged += OnConfigAppearancePropertyChanged;
@@ -33,6 +37,7 @@ public sealed class SettingsViewModel : ObservableObject
 		logger.LogInformation("[SettingsViewModel-.ctor] SettingsViewModel has been initialized.");
 	}
 
+	
 	void OnConfigAppearancePropertyChanged(
 		object? _,
 		PropertyChangedEventArgs e)
@@ -83,4 +88,9 @@ public sealed class SettingsViewModel : ObservableObject
 		
 		return new(details, image, subGroups, properties, path);
 	}
+
+
+	[RelayCommand]
+	void ShowAboutInfo() =>
+		navigation.Present<AboutViewModel>();
 }

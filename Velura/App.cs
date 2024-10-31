@@ -66,10 +66,11 @@ public abstract class App
 		services.AddSingleton<HomeViewModel>();
 		services.AddSingleton<SearchViewModel>();
 		services.AddSingleton<SettingsViewModel>();
+		
+		services.AddSingleton<AboutViewModel>();
 	}
 
 
 	protected virtual void FinishAppInitialization()
-	{
-	}
+	{ }
 }
