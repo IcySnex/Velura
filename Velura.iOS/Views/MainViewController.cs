@@ -1,6 +1,9 @@
 using Microsoft.Extensions.Logging;
 using Velura.Helpers;
 using Velura.iOS.Helpers;
+using Velura.iOS.Views.Home;
+using Velura.iOS.Views.Search;
+using Velura.iOS.Views.Settings;
 using Velura.Models;
 using Velura.Services.Abstract;
 

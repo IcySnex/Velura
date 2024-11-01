@@ -1,6 +1,6 @@
 using Cirrious.FluentLayouts.Touch;
 
-namespace Velura.iOS.Views;
+namespace Velura.iOS.Views.Search;
 
 public sealed class SearchViewController : UIViewController
 {

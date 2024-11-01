@@ -1,9 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
-using Velura.iOS.UI;
-using Velura.iOS.Views.Elements;
 using Velura.ViewModels;
 
-namespace Velura.iOS.Views;
+namespace Velura.iOS.Views.Settings;
 
 public class SettingsViewController : UIViewController
 {

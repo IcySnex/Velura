@@ -1,14 +1,14 @@
 using Cirrious.FluentLayouts.Touch;
 using Velura.iOS.Helpers;
 
-namespace Velura.iOS.Views.Elements;
+namespace Velura.iOS.Views.Settings;
 
-public class SettingsHeaderView : UIView
+public class SettingsGroupHeaderView : UIView
 {
 	readonly UILabel textLabel;
 	readonly UILabel secondaryTextLabel;
 	
-	public SettingsHeaderView(
+	public SettingsGroupHeaderView(
 		string text,
 		string secondaryText,
 		UIImage? image,

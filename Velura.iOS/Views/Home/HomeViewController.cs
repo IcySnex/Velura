@@ -1,7 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Velura.ViewModels;
 
-namespace Velura.iOS.Views;
+namespace Velura.iOS.Views.Home;
 
 public class HomeViewController : UIViewController
 {

@@ -1,11 +1,10 @@
 using Velura.iOS.Binding;
 using Velura.iOS.Helpers;
 using Velura.iOS.UI;
-using Velura.iOS.Views.Elements;
 using Velura.Models;
 using Velura.Models.Abstract;
 
-namespace Velura.iOS.Views;
+namespace Velura.iOS.Views.Settings;
 
 public class SettingsGroupViewController : UITableViewController, IUIScrollViewDelegate
 {
@@ -37,7 +36,7 @@ public class SettingsGroupViewController : UITableViewController, IUIScrollViewD
 		NavigationItem.LargeTitleDisplayMode = UINavigationItemLargeTitleDisplayMode.Never;
 		
 		// TableView
-		TableView.RegisterClassForCellReuse(typeof(SettingsItemViewCell), nameof(SettingsItemViewCell));
+		TableView.RegisterClassForCellReuse(typeof(SettingsGroupItemViewCell), nameof(SettingsGroupItemViewCell));
 
 		TableView.LayoutMargins = UIEdgeInsets.Zero;
 
@@ -104,7 +103,7 @@ public class SettingsGroupViewController : UITableViewController, IUIScrollViewD
 		UITableView tableView,
 		NSIndexPath indexPath)
 	{
-		SettingsItemViewCell cell = (SettingsItemViewCell)tableView.DequeueReusableCell(nameof(SettingsItemViewCell), indexPath);
+		SettingsGroupItemViewCell cell = (SettingsGroupItemViewCell)tableView.DequeueReusableCell(nameof(SettingsGroupItemViewCell), indexPath);
 		
 		if (indexPath.Section == groupSectionIndex)
 			cell.UpdateCell(group.Groups[indexPath.Row]);
@@ -126,13 +125,13 @@ public class SettingsGroupViewController : UITableViewController, IUIScrollViewD
 		SettingsGroup selectedGroup = group.Groups[indexPath.Row];
 		if (!viewControllersCache.TryGetValue(selectedGroup.Path, out SettingsGroupViewController? viewController))
 		{
-			SettingsHeaderView headerView = new(
+			SettingsGroupHeaderView groupHeaderView = new(
 				selectedGroup.Details.Name,
 				selectedGroup.Details.Description,
 				UIImage.GetSystemImage(selectedGroup.Image.ResourceName),
 				selectedGroup.Image.BackgroundColor.ToUIColor(),
 				selectedGroup.Image.TintColor.ToUIColor());
-			viewController = new(selectedGroup, headerView, bindingSet.CreateSubSet<ConfigGroup>(selectedGroup.Path), viewControllersCache);
+			viewController = new(selectedGroup, groupHeaderView, bindingSet.CreateSubSet<ConfigGroup>(selectedGroup.Path), viewControllersCache);
 			
 			viewControllersCache[selectedGroup.Path] = viewController;
 		}

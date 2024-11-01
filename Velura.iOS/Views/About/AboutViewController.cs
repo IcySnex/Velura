@@ -6,7 +6,7 @@ using Velura.Helpers;
 using Velura.iOS.Helpers;
 using Velura.ViewModels;
 
-namespace Velura.iOS.Views;
+namespace Velura.iOS.Views.About;
 
 public class AboutViewController : UIViewController
 {

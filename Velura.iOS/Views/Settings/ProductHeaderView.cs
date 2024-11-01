@@ -3,7 +3,7 @@ using Cirrious.FluentLayouts.Touch;
 using CoreAnimation;
 using Velura.Helpers;
 
-namespace Velura.iOS.Views.Elements;
+namespace Velura.iOS.Views.Settings;
 
 public class ProductHeaderView : UIView
 {

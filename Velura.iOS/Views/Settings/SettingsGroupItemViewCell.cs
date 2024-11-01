@@ -10,9 +10,9 @@ using Velura.Models;
 using Velura.Models.Abstract;
 using Velura.Models.Attributes;
 
-namespace Velura.iOS.Views.Elements;
+namespace Velura.iOS.Views.Settings;
 
-public sealed class SettingsItemViewCell : UITableViewCell
+public sealed class SettingsGroupItemViewCell : UITableViewCell
 {
 	readonly UILabel textLabel;
 	readonly UILabel secondaryTextLabel;
@@ -26,7 +26,7 @@ public sealed class SettingsItemViewCell : UITableViewCell
 	PropertyBinding<ConfigGroup>? controlBinding = null;
 	readonly EnumL10NNameBindingConverter enumStringConverter = new();
 	
-	public SettingsItemViewCell(
+	public SettingsGroupItemViewCell(
 		NativeHandle handle) : base(handle)
 	{
 		// UI

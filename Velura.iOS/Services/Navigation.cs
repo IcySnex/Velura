@@ -2,6 +2,7 @@ using System.ComponentModel;
 using Microsoft.Extensions.Logging;
 using Velura.Helpers;
 using Velura.iOS.Views;
+using Velura.iOS.Views.About;
 using Velura.Services.Abstract;
 using Velura.ViewModels;
 
