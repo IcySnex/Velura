@@ -28,7 +28,14 @@
 
     <!-- About -->
     <data name="about_title">
-        <value>About Velura</value>
+        <value>About</value>
+    </data>
+    
+    <data name="about_privacy">
+        <value>Privacy &amp; Terms</value>
+    </data>
+    <data name="about_dependencies">
+        <value>Dependencies</value>
     </data>
 
     <!-- Config -->

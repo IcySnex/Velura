@@ -1,4 +1,5 @@
 using System.Reflection;
+using System.Windows.Input;
 using CoreAnimation;
 using Velura.Models;
 
@@ -51,7 +52,26 @@ public static class Extensions
 		PropertyInfo property = instance.GetProperty(propertyPath);
 		return property.GetValue<T>(instance);
 	}
-	
+
+
+	public static EventHandler ToEvent(
+		this ICommand command,
+		object? parameter = null) =>
+		(_, _) =>
+		{
+			if (command.CanExecute(parameter))
+				command.Execute(parameter);
+		};
+
+	public static UIAction ToUIAction(
+		this ICommand command,
+		object? parameter = null) =>
+		UIAction.Create(_ =>
+		{
+			if (command.CanExecute(parameter))
+				command.Execute(parameter);
+		});
+		
 	
 	public static UIColor ToUIColor(
 		this Color color) =>

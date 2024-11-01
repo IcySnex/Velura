@@ -28,7 +28,14 @@
 
     <!-- About -->
     <data name="about_title">
-        <value>Über Velura</value>
+        <value>Über</value>
+    </data>
+
+    <data name="about_privacy">
+        <value>Datenschutz &amp; Nutzungsbedingungen</value>
+    </data>
+    <data name="about_dependencies">
+        <value>Abhängigkeiten</value>
     </data>
 
     <!-- Config -->

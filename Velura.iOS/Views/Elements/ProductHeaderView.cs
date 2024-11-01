@@ -98,7 +98,8 @@ public class ProductHeaderView : UIView
 	{
 		base.TouchesEnded(touches, evt);
 		
-		showAboutInfoCommand.Execute(null);
+		if (showAboutInfoCommand.CanExecute(null))
+			showAboutInfoCommand.Execute(null);
 		Animate(CATransaction.AnimationDuration, () => BackgroundColor = UIColor.SecondarySystemGroupedBackground);
 	}
 

@@ -1,6 +1,9 @@
+using System.Diagnostics.CodeAnalysis;
 using Cirrious.FluentLayouts.Touch;
+using CoreAnimation;
 using Microsoft.Extensions.DependencyInjection;
 using Velura.Helpers;
+using Velura.iOS.Helpers;
 using Velura.ViewModels;
 
 namespace Velura.iOS.Views;
@@ -9,45 +12,119 @@ public class AboutViewController : UIViewController
 {
 	readonly AboutViewModel viewModel = App.Provider.GetRequiredService<AboutViewModel>();
 	
+	CAGradientLayer gradientLayer = default!;
+	
 	public override void ViewDidLoad()
 	{
 		base.ViewDidLoad();
 		
 		// Properties
 		Title = "about_title".L10N();
-		View!.BackgroundColor = UIColor.SystemGroupedBackground;
+		NavigationItem.LargeTitleDisplayMode = UINavigationItemLargeTitleDisplayMode.Never;
+		NavigationItem.RightBarButtonItem = new("close".L10N(), UIBarButtonItemStyle.Done, viewModel.CloseAboutInfoCommand.ToEvent());
 
-		// UI
-		UINavigationBar navigationBar = new()
+		// Background
+		gradientLayer = new()
 		{
-			Items =
+			Frame = View!.Bounds,
+			Colors =
 			[
-				new(Title)
-				{
-					RightBarButtonItem = new("close".L10N(), UIBarButtonItemStyle.Done, (_, _) => viewModel.CloseAboutInfoCommand.Execute(null))
-					
-				}
+				UIColor.SystemGray5.CGColor,
+				UIColor.SystemGray6.CGColor,
 			],
+			StartPoint = new(0.5, 0),
+			EndPoint = new(0.5, 1)
 		};
+		View.Layer.AddSublayer(gradientLayer);
 		
-		UILabel label = new()
+		// UI
+		
+		UIImageView iconView = new()
+		{
+			Image =  UIImage.FromBundle("icon.png")
+		};
+		UILabel titleLabel = new()
+		{
+			Text = "app_title".L10N(),
+			Font = UIFontMetrics.DefaultMetrics.GetScaledFont(UIFont.SystemFontOfSize(28, UIFontWeight.Bold)),
+			AdjustsFontForContentSizeCategory = true,
+			TextAlignment = UITextAlignment.Center,
+			Lines = 1,
+			LineBreakMode = UILineBreakMode.TailTruncation,
+		};
+		UILabel descriptionLabel = new()
+		{
+			Text = "app_description".L10N(),
+			Font = UIFontMetrics.DefaultMetrics.GetScaledFont(UIFont.SystemFontOfSize(16)),
+			AdjustsFontForContentSizeCategory = true,
+			TextAlignment = UITextAlignment.Center,
+			Lines = 0,
+			LineBreakMode = UILineBreakMode.TailTruncation,
+		};
+		UILabel versionLabel = new()
 		{
 			Text = viewModel.Version,
-			TextColor = UIColor.Label,
+			TextColor = UIColor.SecondaryLabel,
+			Font = UIFontMetrics.DefaultMetrics.GetScaledFont(UIFont.SystemFontOfSize(14)),
+			AdjustsFontForContentSizeCategory = true,
 		};
 		
-		View.AddSubviews(navigationBar, label);
+		UIButtonConfiguration privacyButtonConfig = UIButtonConfiguration.TintedButtonConfiguration;
+		privacyButtonConfig.Title = "about_privacy".L10N();
+		privacyButtonConfig.ButtonSize = UIButtonConfigurationSize.Large;
+		privacyButtonConfig.CornerStyle = UIButtonConfigurationCornerStyle.Medium;
+		UIButton privacyButton = UIButton.GetButton(privacyButtonConfig, viewModel.CloseAboutInfoCommand.ToUIAction());
+		
+		UIButtonConfiguration dependenciesButtonConfig = UIButtonConfiguration.TintedButtonConfiguration;
+		dependenciesButtonConfig.Title = "about_dependencies".L10N();
+		dependenciesButtonConfig.ButtonSize = UIButtonConfigurationSize.Large;
+		dependenciesButtonConfig.CornerStyle = UIButtonConfigurationCornerStyle.Medium;
+		UIButton dependenciesButton = UIButton.GetButton(dependenciesButtonConfig, viewModel.CloseAboutInfoCommand.ToUIAction());
+		
+		View.AddSubviews(iconView, titleLabel, descriptionLabel, versionLabel, privacyButton, dependenciesButton);
 		
 		// Layout
 		View.SubviewsDoNotTranslateAutoresizingMaskIntoConstraints();
 		View.AddConstraints(
-			navigationBar.Height().EqualTo(54),
-			navigationBar.AtTopOf(View),
-			navigationBar.AtLeftOf(View),
-			navigationBar.AtRightOf(View),
+			iconView.Width().EqualTo(130),
+			iconView.Height().EqualTo(130),
+			iconView.WithSameCenterX(View),
+			iconView.Above(titleLabel),
 			
-			label.Below(navigationBar, 15),
-			label.WithSameCenterX(View)
+			titleLabel.AtLeftOf(View, 30),
+			titleLabel.AtRightOf(View, 30),
+			titleLabel.Above(descriptionLabel),
+			
+			descriptionLabel.AtLeftOf(View, 30),
+			descriptionLabel.AtRightOf(View, 30),
+			descriptionLabel.WithSameCenterY(View).Minus(20),
+			
+			privacyButton.AtLeftOf(View, 30),
+			privacyButton.AtRightOf(View, 30),
+			privacyButton.Below(descriptionLabel, 40),
+			
+			dependenciesButton.AtLeftOf(View, 30),
+			dependenciesButton.AtRightOf(View, 30),
+			dependenciesButton.Below(privacyButton, 10),
+			
+			versionLabel.WithSameCenterX(View),
+			versionLabel.AtBottomOf(View, 30)
 		);
+	}
+	
+	[SuppressMessage("Interoperability", "CA1422:Validate platform compatibility")]
+	public override void TraitCollectionDidChange(
+		UITraitCollection? previousTraitCollection)
+	{
+		base.TraitCollectionDidChange(previousTraitCollection);
+
+		if (!TraitCollection.HasDifferentColorAppearanceComparedTo(previousTraitCollection))
+			return;
+		
+		gradientLayer.Colors =
+		[
+			UIColor.SystemGray5.CGColor,
+			UIColor.SystemGray6.CGColor,
+		];
 	}
 }

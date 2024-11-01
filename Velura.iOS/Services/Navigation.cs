@@ -29,7 +29,7 @@ public class Navigation : INavigation
 		{
 			cachedViewController = viewModelType switch
 			{
-				_ when viewModelType == typeof(AboutViewModel) => new AboutViewController(),
+				_ when viewModelType == typeof(AboutViewModel) => new UINavigationController(new AboutViewController()),
             
 				_ when viewModelType == typeof(HomeViewModel) => IOSApp.MainViewController.ViewControllers![0],
 				_ when viewModelType == typeof(SearchViewModel) => IOSApp.MainViewController.ViewControllers![1],
