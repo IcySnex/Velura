@@ -11,6 +11,9 @@ namespace Velura.iOS.Views.About;
 public class AboutViewController : UIViewController
 {
 	readonly AboutViewModel viewModel = App.Provider.GetRequiredService<AboutViewModel>();
+
+	PrivacyViewController? privacyViewController;
+	DependenciesViewController? dependenciesViewController;
 	
 	CAGradientLayer gradientLayer = default!;
 	
@@ -18,9 +21,11 @@ public class AboutViewController : UIViewController
 	{
 		base.ViewDidLoad();
 		
+		privacyViewController = new();
+		dependenciesViewController = new(viewModel.Dependencies);
+		
 		// Properties
 		Title = "about_title".L10N();
-		NavigationItem.LargeTitleDisplayMode = UINavigationItemLargeTitleDisplayMode.Never;
 		NavigationItem.RightBarButtonItem = new("close".L10N(), UIBarButtonItemStyle.Done, viewModel.CloseAboutInfoCommand.ToEvent());
 
 		// Background
@@ -61,6 +66,12 @@ public class AboutViewController : UIViewController
 			Lines = 0,
 			LineBreakMode = UILineBreakMode.TailTruncation,
 		};
+		UIButton privacyButton = UIButtonConfiguration.TintedButtonConfiguration.CreateButton(
+			title: "about_privacy".L10N(),
+			onPress: _ => NavigationController!.PushViewController(privacyViewController, true));
+		UIButton dependenciesButton = UIButtonConfiguration.TintedButtonConfiguration.CreateButton(
+			title: "about_dependencies".L10N(),
+			onPress: _ => NavigationController!.PushViewController(dependenciesViewController, true));
 		UILabel versionLabel = new()
 		{
 			Text = viewModel.Version,
@@ -69,19 +80,7 @@ public class AboutViewController : UIViewController
 			AdjustsFontForContentSizeCategory = true,
 		};
 		
-		UIButtonConfiguration privacyButtonConfig = UIButtonConfiguration.TintedButtonConfiguration;
-		privacyButtonConfig.Title = "about_privacy".L10N();
-		privacyButtonConfig.ButtonSize = UIButtonConfigurationSize.Large;
-		privacyButtonConfig.CornerStyle = UIButtonConfigurationCornerStyle.Medium;
-		UIButton privacyButton = UIButton.GetButton(privacyButtonConfig, viewModel.CloseAboutInfoCommand.ToUIAction());
-		
-		UIButtonConfiguration dependenciesButtonConfig = UIButtonConfiguration.TintedButtonConfiguration;
-		dependenciesButtonConfig.Title = "about_dependencies".L10N();
-		dependenciesButtonConfig.ButtonSize = UIButtonConfigurationSize.Large;
-		dependenciesButtonConfig.CornerStyle = UIButtonConfigurationCornerStyle.Medium;
-		UIButton dependenciesButton = UIButton.GetButton(dependenciesButtonConfig, viewModel.CloseAboutInfoCommand.ToUIAction());
-		
-		View.AddSubviews(iconView, titleLabel, descriptionLabel, versionLabel, privacyButton, dependenciesButton);
+		View.AddSubviews(iconView, titleLabel, descriptionLabel, privacyButton, dependenciesButton, versionLabel);
 		
 		// Layout
 		View.SubviewsDoNotTranslateAutoresizingMaskIntoConstraints();

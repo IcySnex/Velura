@@ -1,6 +1,7 @@
 using System.Reflection;
 using System.Windows.Input;
 using CoreAnimation;
+using Velura.Helpers;
 using Velura.Models;
 
 namespace Velura.iOS.Helpers;
@@ -71,11 +72,29 @@ public static class Extensions
 			if (command.CanExecute(parameter))
 				command.Execute(parameter);
 		});
+
+
+	public static UIButton CreateButton(
+		this UIButtonConfiguration configuration,
+		string title,
+		string? subTitle = null,
+		UIButtonConfigurationSize buttonSize = UIButtonConfigurationSize.Large,
+		UIButtonConfigurationCornerStyle cornerStyle = UIButtonConfigurationCornerStyle.Medium,
+		UIActionHandler? onPress = null)
+	{
+		configuration.Title = title;
+		configuration.Subtitle = subTitle;
+		configuration.ButtonSize = buttonSize;
+		configuration.CornerStyle = cornerStyle;
 		
+		return UIButton.GetButton(configuration, onPress is null ? null : UIAction.Create(onPress));
+	}
+	
 	
 	public static UIColor ToUIColor(
 		this Color color) =>
 		UIColor.FromRGBA(color.Red, color.Green, color.Blue, color.Alpha);
+	
 	
 	public static void AnimateBounce(
 		this UIView view,

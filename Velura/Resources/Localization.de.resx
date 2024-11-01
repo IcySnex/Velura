@@ -38,6 +38,10 @@
         <value>Abhängigkeiten</value>
     </data>
 
+    <data name="about_dependencies_description">
+        <value>Velura wäre nicht das, was es heute ist, ohne diese tollen Open-Source -Bibliotheken &amp; -Komponenten:</value>
+    </data>
+
     <!-- Config -->
     <data name="config">
         <value>Konfiguration</value>
