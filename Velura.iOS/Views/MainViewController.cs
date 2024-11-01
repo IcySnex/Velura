@@ -43,11 +43,9 @@ public class MainViewController : UITabBarController, IUITabBarControllerDelegat
 		UITabBarController tabBarController,
 		UIViewController viewController)
 	{
-		if (!config.Appearance.AnimateTabBar)
+		if (UIDevice.CurrentDevice.UserInterfaceIdiom != UIUserInterfaceIdiom.Phone || viewController.TabBarItem is null || tabBarController.ViewControllers is null || !config.Appearance.AnimateTabBar)
 			return true;
 		
-		if (UIDevice.CurrentDevice.UserInterfaceIdiom != UIUserInterfaceIdiom.Phone || viewController.TabBarItem is null || tabBarController.ViewControllers is null)
-			return true;
 		int tabIndex = Array.IndexOf(tabBarController.ViewControllers, viewController);
 		if (tabIndex == -1)
 			return true;

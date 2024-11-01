@@ -20,9 +20,9 @@ public class SettingsGroupViewController : UITableViewController, IUIScrollViewD
 	
 	public SettingsGroupViewController(
 		SettingsGroup group,
+		UIView headerView,
 		BindingSet<ConfigGroup> bindingSet,
-		Dictionary<string, SettingsGroupViewController> viewControllersCache,
-		bool createHeader = true) : base(UITableViewStyle.InsetGrouped)
+		Dictionary<string, SettingsGroupViewController> viewControllersCache) : base(UITableViewStyle.InsetGrouped)
 	{
 		this.group = group;
 		this.bindingSet = bindingSet;
@@ -48,18 +48,33 @@ public class SettingsGroupViewController : UITableViewController, IUIScrollViewD
 		});
 		
 		// Title/Header
-		if (createHeader)
-		{
-			titleView = new(group.Details.Name);
-			NavigationItem.TitleView = titleView;
+		titleView = new(group.Details.Name);
+		NavigationItem.TitleView = titleView;
 
-			TableView.TableHeaderView = new UIPaddedView()
-			{
-				Frame = IOSApp.MainWindow.Frame,
-				ChildView = new SettingsHeaderView(group.Details.Name, group.Details.Description, UIImage.GetSystemImage(group.Image.ResourceName), group.Image.BackgroundColor.ToUIColor(), group.Image.TintColor.ToUIColor()),
-				Padding = new(0, 16, 32, 16)
-			};
-		}
+		TableView.TableHeaderView = new UIPaddedView()
+		{
+			Frame = IOSApp.MainWindow.Frame,
+			ChildView = headerView,
+			Padding = new(0, 16, 32, 16)
+		};
+	}
+
+
+	public override void ViewDidLayoutSubviews()
+	{
+		UIEdgeInsets insets = View!.SafeAreaInsets;
+		CGSize maxSize = View!.Frame.Size;
+		
+		CGSize size = TableView.TableHeaderView!.SizeThatFits(new(
+			maxSize.Width - insets.Left,
+			maxSize.Height));
+		TableView.TableHeaderView!.Frame = new(
+			insets.Left,
+			0,
+			maxSize.Width - insets.Left,
+			size.Height);
+		
+		base.ViewDidLayoutSubviews();
 	}
 
 
@@ -111,7 +126,14 @@ public class SettingsGroupViewController : UITableViewController, IUIScrollViewD
 		SettingsGroup selectedGroup = group.Groups[indexPath.Row];
 		if (!viewControllersCache.TryGetValue(selectedGroup.Path, out SettingsGroupViewController? viewController))
 		{
-			viewController = new(selectedGroup, bindingSet.CreateSubSet<ConfigGroup>(selectedGroup.Path), viewControllersCache);
+			SettingsHeaderView headerView = new(
+				selectedGroup.Details.Name,
+				selectedGroup.Details.Description,
+				UIImage.GetSystemImage(selectedGroup.Image.ResourceName),
+				selectedGroup.Image.BackgroundColor.ToUIColor(),
+				selectedGroup.Image.TintColor.ToUIColor());
+			viewController = new(selectedGroup, headerView, bindingSet.CreateSubSet<ConfigGroup>(selectedGroup.Path), viewControllersCache);
+			
 			viewControllersCache[selectedGroup.Path] = viewController;
 		}
 		NavigationController?.PushViewController(viewController, true);

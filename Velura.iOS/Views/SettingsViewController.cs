@@ -16,13 +16,8 @@ public class SettingsViewController : UIViewController
 		base.ViewDidLoad();
 		
 		// UI
-		SettingsGroupViewController groupViewController = new(viewModel.Group, new(viewModel.Config), viewControllersCache, false);
-        groupViewController.TableView.TableHeaderView = new UIPaddedView()
-        {
-	        Frame = IOSApp.MainWindow.Frame,
-	        Padding = new(0, 16, 32, 16),
-	        ChildView = new ProductHeaderView(viewModel.ShowAboutInfoCommand),
-        };
+		ProductHeaderView headerView = new(viewModel.ShowAboutInfoCommand);
+		SettingsGroupViewController groupViewController = new(viewModel.Group, headerView, new(viewModel.Config), viewControllersCache);
         
         AddChildViewController(groupViewController);
         View!.AddSubview(groupViewController.View!);

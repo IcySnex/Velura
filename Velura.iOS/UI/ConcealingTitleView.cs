@@ -2,7 +2,8 @@ namespace Velura.iOS.UI;
 
 public class ConcealingTitleView : UIView
 {
-	readonly float barHeight = 44;
+	const float BarHeight = 44;
+	
 	
 	readonly UILabel label;
 
@@ -19,9 +20,9 @@ public class ConcealingTitleView : UIView
 			LineBreakMode = UILineBreakMode.TailTruncation
 		};
         
-		CGSize labelSize = label.SizeThatFits(new(float.MaxValue, barHeight));
-		Frame = new(0, 0, labelSize.Width, barHeight);
-		label.Frame = new(0, barHeight, labelSize.Width, barHeight);
+		CGSize labelSize = label.SizeThatFits(new(float.MaxValue, BarHeight));
+		Frame = new(0, 0, labelSize.Width, BarHeight);
+		label.Frame = new(0, BarHeight, labelSize.Width, BarHeight);
         
 		AddSubview(label);
 		ClipsToBounds = true;
@@ -30,5 +31,5 @@ public class ConcealingTitleView : UIView
     
 	public void ScrollViewDidScroll(
 		nfloat scrollOffsetY) =>
-		label.Frame = new(0, Math.Max(0, barHeight - scrollOffsetY), label.Frame.Width, barHeight);
+		label.Frame = new(0, Math.Max(0, BarHeight - scrollOffsetY), label.Frame.Width, BarHeight);
 }
