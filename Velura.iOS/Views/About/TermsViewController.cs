@@ -2,13 +2,13 @@ using Velura.Helpers;
 
 namespace Velura.iOS.Views.About;
 
-public class PrivacyViewController : UIViewController
+public class TermsViewController : UIViewController
 {
 	public override void ViewDidLoad()
 	{
 		base.ViewDidLoad();
 		
-		Title = "about_privacy".L10N();
+		Title = "about_terms".L10N();
 		View!.BackgroundColor = UIColor.SystemGroupedBackground;
 	}
 }

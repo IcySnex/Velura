@@ -12,8 +12,8 @@ public class AboutViewController : UIViewController
 {
 	readonly AboutViewModel viewModel = App.Provider.GetRequiredService<AboutViewModel>();
 
-	PrivacyViewController? privacyViewController;
-	DependenciesViewController? dependenciesViewController;
+	TermsViewController termsViewController = default!;
+	DependenciesViewController dependenciesViewController = default!;
 	
 	CAGradientLayer gradientLayer = default!;
 	
@@ -21,7 +21,7 @@ public class AboutViewController : UIViewController
 	{
 		base.ViewDidLoad();
 		
-		privacyViewController = new();
+		termsViewController = new();
 		dependenciesViewController = new(viewModel.Dependencies);
 		
 		// Properties
@@ -67,8 +67,8 @@ public class AboutViewController : UIViewController
 			LineBreakMode = UILineBreakMode.TailTruncation,
 		};
 		UIButton privacyButton = UIButtonConfiguration.TintedButtonConfiguration.CreateButton(
-			title: "about_privacy".L10N(),
-			onPress: _ => NavigationController!.PushViewController(privacyViewController, true));
+			title: "about_terms".L10N(),
+			onPress: _ => NavigationController!.PushViewController(termsViewController, true));
 		UIButton dependenciesButton = UIButtonConfiguration.TintedButtonConfiguration.CreateButton(
 			title: "about_dependencies".L10N(),
 			onPress: _ => NavigationController!.PushViewController(dependenciesViewController, true));

@@ -31,8 +31,8 @@
         <value>Über</value>
     </data>
 
-    <data name="about_privacy">
-        <value>Datenschutz &amp; Nutzungsbedingungen</value>
+    <data name="about_terms">
+        <value>Nutzungsbedingungen</value>
     </data>
     <data name="about_dependencies">
         <value>Abhängigkeiten</value>
