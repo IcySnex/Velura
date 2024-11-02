@@ -1,8 +1,8 @@
-*Effective Date: [Insert Date]
+*Effective Date: [Insert Date]*
 
-These Terms of Use/Privacy Policy (“Terms”) govern your access to and use of Velura, which enables streaming of your personal media content from a local server (e.g. a NAS or SMB), on devices like iPhone, iPad, and Apple TV.
+*These Terms of Use/Privacy Policy (“Terms”) govern your access to and use of Velura, which enables streaming of your personal media content from a local server (e.g. a NAS or SMB), on devices like iPhone, iPad, and Apple TV.*
 
-Please read the Terms carefully. By using this app, you agree to the terms outlined below.*
+*Please read the Terms carefully. By using this app, you agree to the terms outlined below.*
 
 # 1. Age Requirement
 Velura is designed for users aged 13 and older.
