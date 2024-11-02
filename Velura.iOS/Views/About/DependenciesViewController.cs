@@ -61,6 +61,8 @@ public class DependenciesViewController(
 					SFSafariViewController safariViewController = new(new NSUrl(dependency.Url))
 					{
 						ModalPresentationStyle = UIModalPresentationStyle.PageSheet,
+						DismissButtonStyle = SFSafariViewControllerDismissButtonStyle.Close,
+						PreferredControlTintColor = UIColor.FromName("AccentColor")
 					};
 					PresentViewController(safariViewController, true, null);
 				});

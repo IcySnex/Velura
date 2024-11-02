@@ -98,12 +98,12 @@ public class AboutViewController : UIViewController
 			descriptionLabel.AtRightOf(View, 30),
 			descriptionLabel.WithSameCenterY(View).Minus(20),
 			
-			privacyButton.AtLeftOf(View, 30),
-			privacyButton.AtRightOf(View, 30),
+			privacyButton.AtLeftOf(View, 16),
+			privacyButton.AtRightOf(View, 16),
 			privacyButton.Below(descriptionLabel, 40),
 			
-			dependenciesButton.AtLeftOf(View, 30),
-			dependenciesButton.AtRightOf(View, 30),
+			dependenciesButton.AtLeftOf(View, 16),
+			dependenciesButton.AtRightOf(View, 16),
 			dependenciesButton.Below(privacyButton, 10),
 			
 			versionLabel.WithSameCenterX(View),
