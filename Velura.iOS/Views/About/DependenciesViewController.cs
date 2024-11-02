@@ -38,9 +38,8 @@ public class DependenciesViewController(
 			ChildView = new UILabel()
 			{
 				Text = "about_dependencies_description".L10N(),
-				Font = UIFontMetrics.DefaultMetrics.GetScaledFont(UIFont.SystemFontOfSize(16)),
+				Font = UIFont.PreferredBody,
 				AdjustsFontForContentSizeCategory = true,
-				TextAlignment = UITextAlignment.Center,
 				Lines = 0,
 				LineBreakMode = UILineBreakMode.WordWrap,
 			},
