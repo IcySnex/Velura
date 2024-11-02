@@ -21,8 +21,8 @@ public class AboutViewController : UIViewController
 	{
 		base.ViewDidLoad();
 		
-		termsViewController = new();
-		dependenciesViewController = new(viewModel.Dependencies);
+		termsViewController = new(viewModel.Terms);
+		dependenciesViewController = new(viewModel.Dependencies, viewModel.ShowDependencySourceCommand);
 		
 		// Properties
 		Title = "about_title".L10N();
@@ -74,15 +74,30 @@ public class AboutViewController : UIViewController
 			onPress: _ => NavigationController!.PushViewController(dependenciesViewController, true));
 		UILabel versionLabel = new()
 		{
-			Text = viewModel.Version,
+			Text = "about_version".L10N(viewModel.Version),
 			TextColor = UIColor.SecondaryLabel,
 			Font = UIFontMetrics.DefaultMetrics.GetScaledFont(UIFont.SystemFontOfSize(14)),
 			AdjustsFontForContentSizeCategory = true,
 		};
+		UIView footerDivider = new()
+		{
+			BackgroundColor = UIColor.SystemGray,
+			Layer =
+			{
+				CornerRadius = 2
+			}
+		};
+		UIButton supportButton = UIButtonConfiguration.PlainButtonConfiguration.CreateButton(
+			title: "about_contact".L10N(),
+			buttonSize: UIButtonConfigurationSize.Small,
+			onPress: viewModel.ShowContactEmailComposerCommand.ToUIAction(IOSApp.CurrentLogFilePath.Replace("Log-.log", $"Log-{DateTime.Now:yyyyMMdd}.log")));
+		UIView footerView = new();
 		
-		View.AddSubviews(iconView, titleLabel, descriptionLabel, privacyButton, dependenciesButton, versionLabel);
+		footerView.AddSubviews(versionLabel, footerDivider, supportButton);
+		View.AddSubviews(iconView, titleLabel, descriptionLabel, privacyButton, dependenciesButton, footerView);
 		
 		// Layout
+		footerView.SubviewsDoNotTranslateAutoresizingMaskIntoConstraints();
 		View.SubviewsDoNotTranslateAutoresizingMaskIntoConstraints();
 		View.AddConstraints(
 			iconView.Width().EqualTo(130),
@@ -106,10 +121,24 @@ public class AboutViewController : UIViewController
 			dependenciesButton.AtRightOf(View, 16),
 			dependenciesButton.Below(privacyButton, 10),
 			
-			versionLabel.WithSameCenterX(View),
-			versionLabel.AtBottomOf(View, 30)
+			footerView.WithSameCenterX(View),
+			footerView.AtBottomOf(View, 30),
+			footerView.Height().EqualTo(25), 
+			footerView.Width().EqualTo(200),
+			
+			versionLabel.WithSameCenterY(footerView),
+			versionLabel.AtLeftOf(footerView, 16),
+
+			footerDivider.Width().EqualTo(4),
+			footerDivider.Height().EqualTo(4),
+			footerDivider.WithSameCenterY(footerView),
+			footerDivider.ToRightOf(versionLabel, 10),
+
+			supportButton.WithSameCenterY(footerView),
+			supportButton.ToRightOf(footerDivider)
 		);
 	}
+	
 	
 	[SuppressMessage("Interoperability", "CA1422:Validate platform compatibility")]
 	public override void TraitCollectionDidChange(

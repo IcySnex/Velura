@@ -7,9 +7,6 @@
     <data name="app_description">
         <value>Your Personal Media Collection. Streamed, Just the Way You Want.</value>
     </data>
-    <data name="app_version">
-        <value>Version {0}.{1}.{2}</value>
-    </data>
 
     <!-- Home -->
     <data name="home_title">
@@ -37,8 +34,42 @@
     <data name="about_dependencies">
         <value>Dependencies</value>
     </data>
+    <data name="about_version">
+        <value>Version {0}</value>
+    </data>
     <data name="about_contact">
         <value>Contact</value>
+    </data>
+
+    <data name="about_contact_subject">
+        <value>Velura: Contact Request</value>
+    </data>
+    <data name="about_contact_type">
+        <value>Type</value>
+    </data>
+    <data name="about_contact_type_description">
+        <value>e.g. Bug, Suggestion</value>
+    </data>
+    <data name="about_contact_description">
+        <value>Description</value>
+    </data>
+    <data name="about_contact_description_description">
+        <value>Briefly describe your request here</value>
+    </data>
+    <data name="about_contact_moreinfo">
+        <value>Additional Information</value>
+    </data>
+    <data name="about_contact_moreinfo_app">
+        <value>App Version: {0}</value>
+    </data>
+    <data name="about_contact_moreinfo_device">
+        <value>Device Model: {0}</value>
+    </data>
+    <data name="about_contact_moreinfo_os">
+        <value>Operating System: {0}</value>
+    </data>
+    <data name="about_contact_moreinfo_battery">
+        <value>Battery Level: {0}%</value>
     </data>
     
     <data name="about_dependencies_description">
@@ -182,5 +213,20 @@
     </data>
     <data name="placeholder">
         <value>Placeholder</value>
+    </data>
+
+    <data name="alert_confirm">
+        <value>Okay</value>
+    </data>
+    <data name="alert_cancel">
+        <value>Cancel</value>
+    </data>
+    <data name="alert_error">
+        <value>Something went wrong!</value>
+    </data>
+    
+    <!-- Errors -->
+    <data name="error_nomailservices">
+        <value>It looks like mail services are not available on this device.</value>
     </data>
 </root>

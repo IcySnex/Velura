@@ -10,6 +10,8 @@ namespace Velura.iOS;
 
 public sealed class IOSApp : App
 {
+	public static string CurrentLogFilePath { get; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Logs", "Log-.log");
+	
 	public static IReadOnlyList<PropertyBindingMapper> PropertyBindingMappers { get; private set; } = default!;
 
 	static UIWindow? mainWindow;
@@ -26,7 +28,7 @@ public sealed class IOSApp : App
 			.WriteTo.NSLog(
 				outputTemplate: preferredTemplate)
 			.WriteTo.File(
-				path: Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Logs", "Log-.log"),
+				path: CurrentLogFilePath,
 				rollingInterval: RollingInterval.Day,
 				retainedFileCountLimit: 10,
 				outputTemplate: preferredTemplate);
@@ -40,6 +42,9 @@ public sealed class IOSApp : App
 		services.AddSingleton<INavigation, Navigation>();
 		services.AddSingleton<ISimpleStorage, NSUserDefaultsStorage>();
 		services.AddSingleton<IThemeManager, ThemeManager>();
+		services.AddSingleton<ISystemInfo, SystemInfo>();
+		services.AddSingleton<IDialogHandler, DialogHandler>();
+		services.AddSingleton<ILauncher, Launcher>();
 	}
 
 

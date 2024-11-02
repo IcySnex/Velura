@@ -1,5 +1,5 @@
+using System.Windows.Input;
 using Cirrious.FluentLayouts.Touch;
-using SafariServices;
 using Velura.Helpers;
 using Velura.iOS.Helpers;
 using Velura.iOS.UI;
@@ -8,9 +8,11 @@ using Velura.Models;
 namespace Velura.iOS.Views.About;
 
 public class DependenciesViewController(
-	Dependency[] dependencies) : UIViewController
+	Dependency[] dependencies,
+	ICommand showWebpageCommand) : UIViewController
 {
 	readonly Dependency[] dependencies = dependencies;
+	readonly ICommand showWebpageCommand = showWebpageCommand;
 
 	public override void ViewDidLoad()
 	{
@@ -55,16 +57,7 @@ public class DependenciesViewController(
 			UIButton button = UIButtonConfiguration.TintedButtonConfiguration.CreateButton(
 				title: dependency.Name,
 				subTitle: $"v{dependency.Version}, {dependency.Author}",
-				onPress: _ =>
-				{
-					SFSafariViewController safariViewController = new(new NSUrl(dependency.Url))
-					{
-						ModalPresentationStyle = UIModalPresentationStyle.PageSheet,
-						DismissButtonStyle = SFSafariViewControllerDismissButtonStyle.Close,
-						PreferredControlTintColor = UIColor.FromName("AccentColor")
-					};
-					PresentViewController(safariViewController, true, null);
-				});
+				onPress: showWebpageCommand.ToUIAction(dependency.Url));
 			
 			stackView.AddArrangedSubview(button);
 		}

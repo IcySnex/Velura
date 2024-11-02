@@ -7,9 +7,6 @@
     <data name="app_description">
         <value>Deine persönliche Mediensammlung. Gestreamt, genau wie du es willst.</value>
     </data>
-    <data name="app_version">
-        <value>Version {0}.{1}.{2}</value>
-    </data>
 
     <!-- Home -->
     <data name="home_title">
@@ -37,9 +34,42 @@
     <data name="about_dependencies">
         <value>Abhängigkeiten</value>
     </data>
-    
+    <data name="about_version">
+        <value>Version {0}</value>
+    </data>
     <data name="about_contact">
         <value>Kontakt</value>
+    </data>
+
+    <data name="about_contact_subject">
+        <value>Velura: Kontaktanfrage</value>
+    </data>
+    <data name="about_contact_type">
+        <value>Typ</value>
+    </data>
+    <data name="about_contact_type_description">
+        <value>z.B. Fehler, Verbesserungsvorschlag</value>
+    </data>
+    <data name="about_contact_description">
+        <value>Beschreibung</value>
+    </data>
+    <data name="about_contact_description_description">
+        <value>Beschreibe hier kurz dein Anliegen</value>
+    </data>
+    <data name="about_contact_moreinfo">
+        <value>Weitere Informationen</value>
+    </data>
+    <data name="about_contact_moreinfo_app">
+        <value>App Version: {0}</value>
+    </data>
+    <data name="about_contact_moreinfo_device">
+        <value>Gerätemodell: {0}</value>
+    </data>
+    <data name="about_contact_moreinfo_os">
+        <value>Betriebssystem: {0}</value>
+    </data>
+    <data name="about_contact_moreinfo_battery">
+        <value>Batteriestand: {0}%</value>
     </data>
 
     <data name="about_dependencies_description">
@@ -183,5 +213,20 @@
     </data>
     <data name="placeholder">
         <value>Platzhalter</value>
+    </data>
+
+    <data name="alert_confirm">
+        <value>Okay</value>
+    </data>
+    <data name="alert_cancel">
+        <value>Abbrechen</value>
+    </data>
+    <data name="alert_error">
+        <value>Etwas ist schiefgelaufen!</value>
+    </data>
+
+    <!-- Errors -->
+    <data name="error_nomailservices">
+        <value>Es sieht so aus, als ob E-Mail-Dienste auf diesem Gerät nicht verfügbar sind.</value>
     </data>
 </root>

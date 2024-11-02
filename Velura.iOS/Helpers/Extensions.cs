@@ -78,15 +78,24 @@ public static class Extensions
 		string? subTitle = null,
 		UIButtonConfigurationSize buttonSize = UIButtonConfigurationSize.Large,
 		UIButtonConfigurationCornerStyle cornerStyle = UIButtonConfigurationCornerStyle.Medium,
-		UIActionHandler? onPress = null)
+		UIAction? onPress = null)
 	{
 		configuration.Title = title;
 		configuration.Subtitle = subTitle;
 		configuration.ButtonSize = buttonSize;
 		configuration.CornerStyle = cornerStyle;
 		
-		return UIButton.GetButton(configuration, onPress is null ? null : UIAction.Create(onPress));
+		return UIButton.GetButton(configuration, onPress);
 	}
+
+	public static UIButton CreateButton(
+		this UIButtonConfiguration configuration,
+		string title,
+		string? subTitle = null,
+		UIButtonConfigurationSize buttonSize = UIButtonConfigurationSize.Large,
+		UIButtonConfigurationCornerStyle cornerStyle = UIButtonConfigurationCornerStyle.Medium,
+		UIActionHandler? onPress = null) =>
+		configuration.CreateButton(title, subTitle, buttonSize, cornerStyle, onPress is null ? null : UIAction.Create(onPress));
 
 
 	public static UIColor ToUIColor(

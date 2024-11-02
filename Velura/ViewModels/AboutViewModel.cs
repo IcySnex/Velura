@@ -11,19 +11,25 @@ namespace Velura.ViewModels;
 
 public partial class AboutViewModel : ObservableObject
 {
-	public const string ContactEmail = "PLACEHOLDER";
+	public const string ContactEmail = "my@email.com";
 	
 	
 	readonly INavigation navigation;
+	readonly ISystemInfo systemInfo;
+	readonly ILauncher launcher;
 
 	public AboutViewModel(
 		ILogger<AboutViewModel> logger,
-		INavigation navigation)
+		INavigation navigation,
+		ISystemInfo systemInfo,
+		ILauncher launcher)
 	{
 		this.navigation = navigation;
+		this.systemInfo = systemInfo;
+		this.launcher = launcher;
 
 		Version? assemblyVersion = Assembly.GetExecutingAssembly().GetName().Version;
-		Version = assemblyVersion is null ? "app_version".L10N(1, 0, 0) : "app_version".L10N(assemblyVersion.Major, assemblyVersion.Minor, assemblyVersion.Build);
+		Version = assemblyVersion?.ToString(3) ?? "1.0.0";
 
 		Dependencies =
 		[
@@ -89,4 +95,31 @@ public partial class AboutViewModel : ObservableObject
 	[RelayCommand]
 	void CloseAboutInfo() =>
 		navigation.Dismiss();
+
+	
+	[RelayCommand]
+	void ShowDependencySource(
+		string url) =>
+		launcher.ShowWebpage(url);
+
+	[RelayCommand]
+	void ShowContactEmailComposer(
+		string currentLogFilePath)
+	{
+		string body = $"""
+		              {"about_contact_type".L10N()}:
+		              [{"about_contact_type_description".L10N()}...]
+		              
+		              {"about_contact_description".L10N()}:
+		              [{"about_contact_description_description".L10N()}...]
+		              
+		              
+		              {"about_contact_moreinfo".L10N()}:
+		              - {"about_contact_moreinfo_app".L10N(Version)}
+		              - {"about_contact_moreinfo_device".L10N(systemInfo.GetDeviceModel())}
+		              - {"about_contact_moreinfo_os".L10N(systemInfo.GetOS())}
+		              - {"about_contact_moreinfo_battery".L10N(systemInfo.GetBatteryLevel())}
+		              """;
+		launcher.ShowEmailComposer(ContactEmail, "about_contact_subject".L10N(), body, (currentLogFilePath, "text/plain"));
+	}
 }
