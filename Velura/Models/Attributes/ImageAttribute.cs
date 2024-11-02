@@ -8,7 +8,7 @@ public class ImageAttribute(
 {
 	public string ResourceName { get; } = resourceName;
 
-	public Color BackgroundColor { get; } = Color.FromHex(backgroundColor);
+	public string BackgroundColor { get; } = backgroundColor;
 
-	public Color TintColor { get; } = Color.FromHex(tintColor);
+	public string TintColor { get; } = tintColor;
 }

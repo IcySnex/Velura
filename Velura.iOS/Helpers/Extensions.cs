@@ -1,8 +1,6 @@
 using System.Reflection;
 using System.Windows.Input;
 using CoreAnimation;
-using Velura.Helpers;
-using Velura.Models;
 
 namespace Velura.iOS.Helpers;
 
@@ -89,11 +87,18 @@ public static class Extensions
 		
 		return UIButton.GetButton(configuration, onPress is null ? null : UIAction.Create(onPress));
 	}
-	
-	
+
+
 	public static UIColor ToUIColor(
-		this Color color) =>
-		UIColor.FromRGBA(color.Red, color.Green, color.Blue, color.Alpha);
+		this string hex)
+	{
+		byte r = Convert.ToByte(hex[1..3], 16);
+		byte g = Convert.ToByte(hex[3..5], 16);
+		byte b = Convert.ToByte(hex[5..7], 16);
+		byte a = hex.Length == 9 ? Convert.ToByte(hex[7..9], 16) : (byte)255;
+		
+		return UIColor.FromRGBA(r, g, b, a);
+	}
 	
 	
 	public static void AnimateBounce(

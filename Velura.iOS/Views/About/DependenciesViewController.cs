@@ -70,7 +70,6 @@ public class DependenciesViewController(
 		}
 		
 		// Layout
-		View.SubviewsDoNotTranslateAutoresizingMaskIntoConstraints();
 		View.AddConstraints(
 			scrollView.AtLeftOf(View),
 			scrollView.AtRightOf(View),
