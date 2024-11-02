@@ -11,6 +11,7 @@ Velura ist für Nutzer ab 13 Jahren konzipiert.
 Zur Funktionalität benötigt Velura Zugriff auf folgende Berechtigungen:
 - Speicher: Zum Lesen von Dateien auf Ihrem Gerät und Speichern von Metadaten oder Logs.
 - Lokales Netzwerk: Zum Verbinden und Streamen von Mediendateien.
+
 Velura greift nur auf diese Berechtigungen zu, um die Kernfunktionen des Streamings bereitzustellen. Daten werden nicht außerhalb Ihres Geräts übertragen oder an Dritte weitergegeben.
 
 # 3. Benutzerinhalte und Eigentum
