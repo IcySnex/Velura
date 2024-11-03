@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
+using Velura.Helpers;
 using Velura.ViewModels;
 
 namespace Velura.iOS.Views.Settings;
@@ -8,10 +9,20 @@ public class SettingsViewController : UIViewController
 	readonly SettingsViewModel viewModel = App.Provider.GetRequiredService<SettingsViewModel>();
 
 	readonly Dictionary<string, SettingsGroupViewController> viewControllersCache = [];
+
+	public SettingsViewController()
+	{
+		Title = "settings_title".L10N();
+		TabBarItem.Image = UIImage.GetSystemImage("gearshape");
+		TabBarItem.SelectedImage = UIImage.GetSystemImage("gearshape.fill");
+	}
 	
 	public override void ViewDidLoad()
 	{
 		base.ViewDidLoad();
+		
+		// Properties
+		View!.BackgroundColor = UIColor.SystemGroupedBackground;
 		
 		// UI
 		ProductHeaderView headerView = new(viewModel.ShowAboutInfoCommand);

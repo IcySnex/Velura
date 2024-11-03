@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using Microsoft.Extensions.Logging;
 using Velura.Helpers;
+using Velura.iOS.Helpers;
 using Velura.iOS.Views;
 using Velura.iOS.Views.About;
 using Velura.Services.Abstract;
@@ -30,7 +31,7 @@ public class Navigation : INavigation
 		{
 			cachedViewController = viewModelType switch
 			{
-				_ when viewModelType == typeof(AboutViewModel) => new UINavigationController(new AboutViewController()),
+				_ when viewModelType == typeof(AboutViewModel) => new AboutViewController().WrapInNavController(),
             
 				_ when viewModelType == typeof(HomeViewModel) => IOSApp.MainViewController.ViewControllers![0],
 				_ when viewModelType == typeof(SearchViewModel) => IOSApp.MainViewController.ViewControllers![1],

@@ -97,6 +97,18 @@ public static class Extensions
 		UIActionHandler? onPress = null) =>
 		configuration.CreateButton(title, subTitle, buttonSize, cornerStyle, onPress is null ? null : UIAction.Create(onPress));
 
+	
+	public static UINavigationController WrapInNavController(
+		this UIViewController viewController,
+		bool preferLargeTitles = false) =>
+		new(viewController)
+		{
+			NavigationBar =
+			{
+				PrefersLargeTitles = preferLargeTitles
+			}
+		};
+	
 
 	public static UIColor ToUIColor(
 		this string hex)

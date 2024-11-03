@@ -11,7 +11,6 @@ namespace Velura.iOS.Views;
 
 public class MainViewController : UITabBarController, IUITabBarControllerDelegate
 {
-	readonly ILogger<MainViewController> logger;
 	readonly Config config;
 	
 	public MainViewController(
@@ -19,7 +18,6 @@ public class MainViewController : UITabBarController, IUITabBarControllerDelegat
 		Config config,
 		IThemeManager themeManager)
 	{
-		this.logger = logger;
 		this.config = config;
 		
 		// Properties
@@ -34,9 +32,9 @@ public class MainViewController : UITabBarController, IUITabBarControllerDelegat
 		// Views
 		ViewControllers =
 		[
-			CreateNavController<HomeViewController>("home_title".L10N(), "house", "house.fill"),
-			CreateNavController<SearchViewController>("search_title".L10N(), "magnifyingglass", "text.magnifyingglass"),
-			CreateNavController<SettingsViewController>("settings_title".L10N(), "gearshape", "gearshape.fill"),
+			new HomeViewController().WrapInNavController(config.Appearance.PreferLargeTitles),
+			new SearchViewController().WrapInNavController(config.Appearance.PreferLargeTitles),
+			new SettingsViewController().WrapInNavController(config.Appearance.PreferLargeTitles)
 		];
 		logger.LogInformation("[MainViewController-.ctor] MainViewController has been initialized and UI has been created.");
 	}
@@ -56,34 +54,5 @@ public class MainViewController : UITabBarController, IUITabBarControllerDelegat
 		UIView? tabBarIcon = tabBarController.TabBar.Subviews[tabIndex + 1].Subviews.FirstOrDefault()?.Subviews.FirstOrDefault()?.Subviews.FirstOrDefault();
 		tabBarIcon?.AnimateBounce();
 		return true;
-	}
-
-
-	UINavigationController CreateNavController<TViewController>(
-		string title,
-		string iconName,
-		string selectedIconName) where TViewController : UIViewController, new()
-	{
-		TViewController viewController = new()
-		{
-			Title = title,
-			TabBarItem =
-			{
-				Image = UIImage.GetSystemImage(iconName),
-				SelectedImage = UIImage.GetSystemImage(selectedIconName)
-			}
-		};
-		viewController.View!.BackgroundColor = UIColor.SystemGroupedBackground;
-		
-		UINavigationController navigationWrapper = new(viewController)
-		{
-			NavigationBar =
-			{
-				PrefersLargeTitles = config.Appearance.PreferLargeTitles
-			}
-		};
-		
-		logger.LogInformation("[MainViewController-CreateNavController] Created wrapper NavController for TViewController: {title}.", title);
-		return navigationWrapper;
 	}
 }
