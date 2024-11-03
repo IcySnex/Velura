@@ -59,6 +59,8 @@ public abstract class App
 		IServiceCollection services)
 	{
 		services.AddSingleton<Config>();
+		services.AddSingleton<HttpClient>();
+		services.AddSingleton<ImageCache>();
 		services.AddSingleton<Database>();
 	}
 

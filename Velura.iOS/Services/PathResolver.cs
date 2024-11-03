@@ -4,7 +4,14 @@ namespace Velura.iOS.Services;
 
 public sealed class PathResolver : IPathResolver
 {
-	public string CurrentLogFile { get; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Logs", "Log-.log");
+	static readonly string ApplicationFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+	
+	static readonly string CacheFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Cache"); // DEBUG PURPOSES
+	
+	
+	public string CurrentLogFile { get; } = Path.Combine(CacheFolder, "Logs", "Log-.log");
+	
+	public string ImageCacheDirectory { get; } = Path.Combine(CacheFolder, "Images");
 
-	public string Database { get; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Database.db3");
+	public string Database { get; } = Path.Combine(ApplicationFolder, "Database.db3");
 }

@@ -159,4 +159,24 @@ public static class Extensions
 			UIImage imageToDraw = tintColor is null ? image : image.ApplyTintColor(tintColor, UIImageRenderingMode.AlwaysTemplate);
 			imageToDraw.Draw(new CGRect((size.Width - newWidth) / 2, (size.Height - newHeight) / 2, newWidth, newHeight));
 		});
+	
+	public static UIImage Apply(
+		this UIImage image,
+		CGSize size,
+		CGSize imageSize,
+		UIColor backgroundColorStart,
+		UIColor backgroundColorEnd,
+		UIColor? tintColor = null) =>
+		new UIGraphicsImageRenderer(size).CreateImage(context =>
+		{
+			using CGGradient gradient = new(CGColorSpace.CreateDeviceRGB(), [backgroundColorStart.CGColor, backgroundColorEnd.CGColor]);
+			context.CGContext.DrawLinearGradient(gradient, new(0, 0), new(0, size.Height), CGGradientDrawingOptions.None);
+
+			double ratio = Math.Min(imageSize.Width / image.Size.Width, imageSize.Height / image.Size.Height);
+			double newWidth = image.Size.Width * ratio;
+			double newHeight = image.Size.Height * ratio;
+			
+			UIImage imageToDraw = tintColor is null ? image : image.ApplyTintColor(tintColor, UIImageRenderingMode.AlwaysTemplate);
+			imageToDraw.Draw(new CGRect((size.Width - newWidth) / 2, (size.Height - newHeight) / 2, newWidth, newHeight));
+		});
 }
