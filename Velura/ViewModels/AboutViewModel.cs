@@ -36,9 +36,8 @@ public partial class AboutViewModel : ObservableObject
 
 		Dependencies =
 		[
-			new(".NET & C#", "Microsoft", "8.0.0", "https://github.com/dotnet"),
-			new(".NET for iOS", "Microsoft", "8.0.0", "https://github.com/xamarin/xamarin-macios"),
 			new("CommunityToolkit.Mvvm", "Microsoft", "8.3.2", "https://github.com/CommunityToolkit/dotnet"),
+			new("SQLite-net", "Frank A. Krueger", "1.9.172", "https://github.com/praeclarum/sqlite-net"),
 			new("Cirrious.FluentLayout", "Greg Shackles", "3.0.0", "https://github.com/FluentLayout/Cirrious.FluentLayout"),
 			new("Serilog", "Serilog", "4.0.2", "https://github.com/serilog/serilog"),
 			new("Serilog.Extensions.Hosting", "Serilog", "8.0.0", "https://github.com/serilog/serilog-extensions-hosting"),
