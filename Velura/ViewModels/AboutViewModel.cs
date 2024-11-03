@@ -14,16 +14,19 @@ public partial class AboutViewModel : ObservableObject
 	public const string ContactEmail = "my@email.com";
 	
 	
+	readonly IPathResolver pathResolver;
 	readonly INavigation navigation;
 	readonly ISystemInfo systemInfo;
 	readonly ILauncher launcher;
 
 	public AboutViewModel(
 		ILogger<AboutViewModel> logger,
+		IPathResolver pathResolver,
 		INavigation navigation,
 		ISystemInfo systemInfo,
 		ILauncher launcher)
 	{
+		this.pathResolver = pathResolver;
 		this.navigation = navigation;
 		this.systemInfo = systemInfo;
 		this.launcher = launcher;
@@ -103,8 +106,7 @@ public partial class AboutViewModel : ObservableObject
 		launcher.ShowWebpage(url);
 
 	[RelayCommand]
-	void ShowContactEmailComposer(
-		string currentLogFilePath)
+	void ShowContactEmailComposer()
 	{
 		string body = $"""
 		              {"about_contact_type".L10N()}:
@@ -120,6 +122,6 @@ public partial class AboutViewModel : ObservableObject
 		              - {"about_contact_moreinfo_os".L10N(systemInfo.GetOS())}
 		              - {"about_contact_moreinfo_battery".L10N(systemInfo.GetBatteryLevel())}
 		              """;
-		launcher.ShowEmailComposer(ContactEmail, "about_contact_subject".L10N(), body, (currentLogFilePath, "text/plain"));
+		launcher.ShowEmailComposer(ContactEmail, "about_contact_subject".L10N(), body, (pathResolver.CurrentLogFile.Replace("Log-.log", $"Log-{DateTime.Now:yyyyMMdd}.log"), "text/plain"));
 	}
 }

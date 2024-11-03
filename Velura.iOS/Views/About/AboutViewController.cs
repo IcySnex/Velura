@@ -90,7 +90,7 @@ public class AboutViewController : UIViewController
 		UIButton supportButton = UIButtonConfiguration.PlainButtonConfiguration.CreateButton(
 			title: "about_contact".L10N(),
 			buttonSize: UIButtonConfigurationSize.Small,
-			onPress: viewModel.ShowContactEmailComposerCommand.ToUIAction(IOSApp.CurrentLogFilePath.Replace("Log-.log", $"Log-{DateTime.Now:yyyyMMdd}.log")));
+			onPress: viewModel.ShowContactEmailComposerCommand.ToUIAction());
 		UIView footerView = new();
 		
 		footerView.AddSubviews(versionLabel, footerDivider, supportButton);

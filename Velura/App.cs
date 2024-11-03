@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Serilog;
 using Velura.Models;
+using Velura.Services;
 using Velura.ViewModels;
 
 namespace Velura;
@@ -58,6 +59,7 @@ public abstract class App
 		IServiceCollection services)
 	{
 		services.AddSingleton<Config>();
+		services.AddSingleton<Database>();
 	}
 
 	static void RegisterViewModels(
