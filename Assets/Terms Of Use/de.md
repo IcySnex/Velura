@@ -1,8 +1,8 @@
-*Gültig ab: [Datum einfügen]
+*Gültig ab: [Datum einfügen]*
 
-Diese Nutzungsbedingungen/Datenschutzbestimmungen („Bedingungen“) regeln Ihren Zugriff auf und die Nutzung von Velura, einer App, mit der Sie Ihre persönlichen Mediendateien von einem lokalen Server (z.B. einem NAS oder SMB), auf Geräten wie iPhone, iPad und Apple TV streamen können.
+*Diese Nutzungsbedingungen/Datenschutzbestimmungen („Bedingungen“) regeln Ihren Zugriff auf und die Nutzung von Velura, einer App, mit der Sie Ihre persönlichen Mediendateien von einem lokalen Server (z.B. einem NAS oder SMB), auf Geräten wie iPhone, iPad und Apple TV streamen können.*
 
-Bitte lesen Sie die Bedingungen sorgfältig durch. Durch die Nutzung dieser App stimmen Sie den untenstehenden Bedingungen zu.*
+*Bitte lesen Sie die Bedingungen sorgfältig durch. Durch die Nutzung dieser App stimmen Sie den untenstehenden Bedingungen zu.*
 
 # 1. Altersanforderung
 Velura ist für Nutzer ab 13 Jahren konzipiert.
@@ -11,6 +11,7 @@ Velura ist für Nutzer ab 13 Jahren konzipiert.
 Zur Funktionalität benötigt Velura Zugriff auf folgende Berechtigungen:
 - Speicher: Zum Lesen von Dateien auf Ihrem Gerät und Speichern von Metadaten oder Logs.
 - Lokales Netzwerk: Zum Verbinden und Streamen von Mediendateien.
+
 Velura greift nur auf diese Berechtigungen zu, um die Kernfunktionen des Streamings bereitzustellen. Daten werden nicht außerhalb Ihres Geräts übertragen oder an Dritte weitergegeben.
 
 # 3. Benutzerinhalte und Eigentum
