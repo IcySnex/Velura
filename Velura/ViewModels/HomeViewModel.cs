@@ -2,6 +2,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Velura.Helpers;
 using Velura.Models;
 using Velura.Models.Abstract;
 using Velura.Services;
@@ -54,14 +55,12 @@ public partial class HomeViewModel : ObservableObject
 		string name)
 	{
 		ILogger<MediaSectionViewModel> viewModelLogger = App.Provider.GetRequiredService<ILogger<MediaSectionViewModel>>();
-		IReadOnlyList<IMediaContainer> mediaContainers = name switch
+		MediaSectionViewModel viewModel = name switch
 		{
-			nameof(Movies) => Movies,
-			nameof(Shows) => Shows,
-			_ => null
-		} ?? [];
-		
-		MediaSectionViewModel viewModel = new(viewModelLogger, ImageCache, name, mediaContainers);
+			nameof(Movies) => new(viewModelLogger, ImageCache, "media_movies".L10N(), Movies!),
+			nameof(Shows) => new(viewModelLogger, ImageCache, "media_shows".L10N(), Shows!),
+			_ => new(viewModelLogger, ImageCache, name, [])
+		};
 		navigation.Push(viewModel);
 	}
 }

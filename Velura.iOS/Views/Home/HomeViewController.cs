@@ -19,7 +19,7 @@ public class HomeViewController : UICollectionViewController
 
 		NSCollectionLayoutSize headerSize = NSCollectionLayoutSize.Create(
 			NSCollectionLayoutDimension.CreateFractionalWidth(1),
-			NSCollectionLayoutDimension.CreateAbsolute(40)
+			NSCollectionLayoutDimension.CreateAbsolute(32)
 		);
 		NSCollectionLayoutBoundarySupplementaryItem header = NSCollectionLayoutBoundarySupplementaryItem.Create(headerSize, UICollectionElementKindSectionKey.Header, NSRectAlignment.Top);
 		

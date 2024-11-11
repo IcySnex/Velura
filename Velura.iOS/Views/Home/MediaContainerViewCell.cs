@@ -104,7 +104,7 @@ public class MediaContainerViewCell : UICollectionViewCell
 		
 		cachedImage = filePath is null ? PlaceholderImage : UIImage.FromFile(filePath);
 		CreatedUIImageCache[url] = cachedImage;
-		Transition(imageView, 0.1, UIViewAnimationOptions.TransitionCrossDissolve, () => imageView.Image = cachedImage, null);
+		Transition(imageView, 0.15, UIViewAnimationOptions.TransitionCrossDissolve, () => imageView.Image = cachedImage, null);
 	}
 	
 	
