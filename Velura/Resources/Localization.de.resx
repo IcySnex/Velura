@@ -13,6 +13,10 @@
         <value>Startseite</value>
     </data>
 
+    <data name="home_show_all">
+        <value>Alle anzeigen</value>
+    </data>
+    
     <!-- Search -->
     <data name="search_title">
         <value>Suche</value>
@@ -224,7 +228,15 @@
     <data name="alert_error">
         <value>Etwas ist schiefgelaufen!</value>
     </data>
-
+    
+    <!-- Media -->
+    <data name="media_movies">
+        <value>Filme</value>
+    </data>
+    <data name="media_shows">
+        <value>Serien</value>
+    </data>
+    
     <!-- Errors -->
     <data name="error_nomailservices">
         <value>Es sieht so aus, als ob E-Mail-Dienste auf diesem Gerät nicht verfügbar sind.</value>

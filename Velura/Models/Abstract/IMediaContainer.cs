@@ -1,16 +1,16 @@
 namespace Velura.Models.Abstract;
 
-public interface IMedia
+public interface IMediaContainer
 {
 	public int Id { get; }
-	
-	public string FilePath { get; }
 	
 	public string Title { get; }
 	
 	public string? Description { get; }
+	
+	public string? PosterPath { get; }
 
 	DateTime? ReleaseDate { get; }
 
-	public TimeSpan Duration { get; }
+	string? Genre { get; }
 }

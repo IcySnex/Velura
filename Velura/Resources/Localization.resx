@@ -13,6 +13,10 @@
         <value>Home</value>
     </data>
 
+    <data name="home_show_all">
+        <value>Show All</value>
+    </data>
+    
     <!-- Search -->
     <data name="search_title">
         <value>Search</value>
@@ -223,6 +227,14 @@
     </data>
     <data name="alert_error">
         <value>Something went wrong!</value>
+    </data>
+
+    <!-- Media -->
+    <data name="media_movies">
+        <value>Movies</value>
+    </data>
+    <data name="media_shows">
+        <value>Shows</value>
     </data>
     
     <!-- Errors -->

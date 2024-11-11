@@ -78,12 +78,18 @@ public static class Extensions
 		string? subTitle = null,
 		UIButtonConfigurationSize buttonSize = UIButtonConfigurationSize.Large,
 		UIButtonConfigurationCornerStyle cornerStyle = UIButtonConfigurationCornerStyle.Medium,
+		UIImage? image = null,
+		float imagePadding = 4f,
+		NSDirectionalRectEdge imagePlacement = NSDirectionalRectEdge.Trailing,
 		UIAction? onPress = null)
 	{
 		configuration.Title = title;
 		configuration.Subtitle = subTitle;
 		configuration.ButtonSize = buttonSize;
 		configuration.CornerStyle = cornerStyle;
+		configuration.Image = image;
+		configuration.ImagePadding = imagePadding;
+		configuration.ImagePlacement = imagePlacement;
 		
 		return UIButton.GetButton(configuration, onPress);
 	}
@@ -94,8 +100,11 @@ public static class Extensions
 		string? subTitle = null,
 		UIButtonConfigurationSize buttonSize = UIButtonConfigurationSize.Large,
 		UIButtonConfigurationCornerStyle cornerStyle = UIButtonConfigurationCornerStyle.Medium,
+		UIImage? image = null,
+		float imagePadding = 4f,
+		NSDirectionalRectEdge imagePlacement = NSDirectionalRectEdge.Trailing,
 		UIActionHandler? onPress = null) =>
-		configuration.CreateButton(title, subTitle, buttonSize, cornerStyle, onPress is null ? null : UIAction.Create(onPress));
+		configuration.CreateButton(title, subTitle, buttonSize, cornerStyle, image, imagePadding, imagePlacement, onPress is null ? null : UIAction.Create(onPress));
 
 	
 	public static UINavigationController WrapInNavController(

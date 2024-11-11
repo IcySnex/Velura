@@ -17,34 +17,32 @@ public partial class HomeViewModel : ObservableObject
 	{
 		this.logger = logger;
 		this.database = database;
+
+		_ = ReloadDataAsync();
 		
 		logger.LogInformation("[HomeViewModel-.ctor] HomeViewModel has been initialized.");
 	}
-	
-	
-	[RelayCommand]
-	async Task InsertMovieAsync()
+
+
+	[ObservableProperty]
+	Movie[]? movies = null;
+
+	[ObservableProperty]
+	Show[]? shows = null;
+
+	public async Task ReloadDataAsync()
 	{
-		Movie movie = new()
-		{
-			FilePath = "some/path/to/movie.mp4",
-			PosterPath = null,
-			Title = "Suzume",
-			Description = "A modern action adventure road story where a 17-year-old girl named Suzume helps a mysterious young man close doors from the other side that are releasing disasters all over in Japan.",
-			Duration = TimeSpan.FromMinutes(122),
-			Genre = "Anime",
-			ReleaseDate = new(2022, 11, 11),
-		};
-		await database.InsertAsync(movie);
+		logger.LogInformation("[HomeViewModel-ReloadDataAsync] Reloading data from database...");
+		
+		Movies = await database.GetAsync<Movie>();
+		Shows = await database.GetAsync<Show>();
 	}
-	
+
+
 	[RelayCommand]
-	async Task GetMoviesAsync()
+	void ShowMediaSection(
+		string name)
 	{
-		Movie[] movies = await database.GetAsync<Movie>();
-		foreach (Movie movie in movies)
-		{
-			logger.LogInformation("Movie Title: {title}", movie.Title);
-		}
+		logger.LogInformation("[HomeViewModel-ShowMediaSection] Showing media section: {name}", name);
 	}
 }

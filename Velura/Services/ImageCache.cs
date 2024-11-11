@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using System.Text;
 using Microsoft.Extensions.Logging;
 using Velura.Services.Abstract;
 
@@ -10,7 +11,6 @@ public sealed class ImageCache
 	readonly IPathResolver pathResolver;
 	readonly HttpClient httpClient;
 	
-	readonly ConcurrentDictionary<string, string> filePathCache = new();
 	readonly ConcurrentDictionary<string, Task<string?>> downloadTasksCache = new();
 
 	public ImageCache(
@@ -32,8 +32,10 @@ public sealed class ImageCache
 	public string GetCachedFilePath(
 		string imageUrl)
 	{
-		string fileName = Path.GetFileName(new Uri(imageUrl).AbsolutePath);
-		return Path.Combine(pathResolver.ImageCacheDirectory, fileName);
+		string encodedUrl = Convert.ToBase64String(Encoding.UTF8.GetBytes(imageUrl))
+			.Replace("/", "_");
+    
+		return Path.Combine(pathResolver.ImageCacheDirectory, encodedUrl);
 	}
 	
 	public async ValueTask<string?> DownloadAsync(
@@ -50,9 +52,6 @@ public sealed class ImageCache
 	
 	public async ValueTask<string?> GetAsync(string imageUrl)
 	{
-		if (filePathCache.TryGetValue(imageUrl, out string? cachedFilePath))
-			return cachedFilePath;
-		
 		if (downloadTasksCache.TryGetValue(imageUrl, out Task<string?>? existingTask))
 			return await existingTask;
 		
@@ -61,10 +60,9 @@ public sealed class ImageCache
 		
 		try
 		{
-			cachedFilePath = GetCachedFilePath(imageUrl);
+			string cachedFilePath = GetCachedFilePath(imageUrl);
 			string? result = await DownloadAsync(imageUrl, cachedFilePath);
 			
-			filePathCache[imageUrl] = cachedFilePath;
 			taskCompletionSource.SetResult(result);
 		}
 		catch (Exception ex)
