@@ -1,7 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using Cirrious.FluentLayouts.Touch;
 using CoreAnimation;
-using Microsoft.Extensions.DependencyInjection;
 using Velura.Helpers;
 using Velura.iOS.Helpers;
 using Velura.ViewModels;
@@ -10,20 +9,14 @@ namespace Velura.iOS.Views.About;
 
 public class AboutViewController : UIViewController
 {
-	readonly AboutViewModel viewModel = App.Provider.GetRequiredService<AboutViewModel>();
+	readonly CAGradientLayer gradientLayer;
 
-	TermsViewController termsViewController = default!;
-	DependenciesViewController dependenciesViewController = default!;
-	
-	CAGradientLayer gradientLayer = default!;
-	
-	public override void ViewDidLoad()
+	public AboutViewController(
+		AboutViewModel viewModel)
 	{
-		base.ViewDidLoad();
-		
-		termsViewController = new(viewModel.Terms);
-		dependenciesViewController = new(viewModel.Dependencies, viewModel.ShowDependencySourceCommand);
-		
+		TermsViewController termsViewController = new(viewModel.Terms);
+		DependenciesViewController dependenciesViewController = new(viewModel.Dependencies, viewModel.ShowDependencySourceCommand);
+
 		// Properties
 		Title = "about_title".L10N();
 		NavigationItem.RightBarButtonItem = new("close".L10N(), UIBarButtonItemStyle.Done, viewModel.CloseAboutInfoCommand.ToEvent());

@@ -1,9 +1,10 @@
 using System.ComponentModel;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Velura.Helpers;
 using Velura.iOS.Helpers;
-using Velura.iOS.Views;
 using Velura.iOS.Views.About;
+using Velura.iOS.Views.Home;
 using Velura.Services.Abstract;
 using Velura.ViewModels;
 
@@ -22,24 +23,38 @@ public class Navigation : INavigation
 		
 		logger.LogInformation("[Navigation-.ctor] Navigation has been initialized.");
 	}
+
+
+	TViewModel GetViewModel<TViewModel>(
+		object? viewModel = default) where TViewModel : INotifyPropertyChanged
+	{
+		if (viewModel is TViewModel typedViewModel)
+			return typedViewModel;
+
+		TViewModel? resolvedViewModel = App.Provider.GetService<TViewModel>();
+		resolvedViewModel.ThrowIfNull($"Could not resolve ViewModel of type '{typeof(TViewModel).Name}'. Please pass in a ViewModel instance.", logger, "Navigation-GetViewModel");
+		
+		return resolvedViewModel!;
+	}
 	
-	
-	UIViewController GetViewController<TViewModel>() where TViewModel : INotifyPropertyChanged
+	UIViewController GetViewController<TViewModel>(
+		TViewModel? viewModel = default) where TViewModel : INotifyPropertyChanged
 	{
 		Type viewModelType = typeof(TViewModel);
 		if (!viewControllerCache.TryGetValue(viewModelType, out UIViewController? cachedViewController))
 		{
 			cachedViewController = viewModelType switch
 			{
-				_ when viewModelType == typeof(AboutViewModel) => new AboutViewController().WrapInNavController(),
-            
 				_ when viewModelType == typeof(HomeViewModel) => IOSApp.MainViewController.ViewControllers![0],
 				_ when viewModelType == typeof(SearchViewModel) => IOSApp.MainViewController.ViewControllers![1],
 				_ when viewModelType == typeof(SettingsViewModel) => IOSApp.MainViewController.ViewControllers![2],
-
+				
+				_ when viewModelType == typeof(MediaSectionViewModel) => new MediaSectionViewController(GetViewModel<MediaSectionViewModel>(viewModel)),
+				_ when viewModelType == typeof(AboutViewModel) => new AboutViewController(GetViewModel<AboutViewModel>(viewModel)).WrapInNavController(),
+            
 				_ => null
 			};
-			cachedViewController.ThrowIfNull($"Could not find a suitable ViewController for the given ViewModel of type '{viewModelType.Name}.", logger, "Navigation-GetViewController");
+			cachedViewController.ThrowIfNull($"Could not find a suitable ViewController for the given ViewModel of type '{viewModelType.Name}'.", logger, "Navigation-GetViewController");
 			
 			viewControllerCache[viewModelType] = cachedViewController!;
 		}
@@ -56,17 +71,19 @@ public class Navigation : INavigation
 	}
 
 	
-	public void GoTo<TViewModel>() where TViewModel : INotifyPropertyChanged
+	public void GoTo<TViewModel>(
+		TViewModel? viewModel = default) where TViewModel : INotifyPropertyChanged
 	{
 		logger.LogInformation("[Navigation-GoTo] Going to ViewController...");
-		IOSApp.MainViewController.SelectedViewController = GetViewController<TViewModel>();
+		IOSApp.MainViewController.SelectedViewController = GetViewController(viewModel);
 	}
 
 	
-	public void Push<TViewModel>() where TViewModel : INotifyPropertyChanged
+	public void Push<TViewModel>(
+		TViewModel? viewModel = default) where TViewModel : INotifyPropertyChanged
 	{
 		logger.LogInformation("[Navigation-Push] Pushing ViewController...");
-		GetCurrentNavigationController().PushViewController(GetViewController<TViewModel>(), true);
+		GetCurrentNavigationController().PushViewController(GetViewController(viewModel), true);
 	}
 
 	public void Pop()
@@ -76,10 +93,11 @@ public class Navigation : INavigation
 	}
 
 	
-	public void Present<TViewModel>() where TViewModel : INotifyPropertyChanged
+	public void Present<TViewModel>(
+		TViewModel? viewModel = default) where TViewModel : INotifyPropertyChanged
 	{
 		logger.LogInformation("[Navigation-Show] Showing modal...");
-		GetCurrentNavigationController().PresentViewController(GetViewController<TViewModel>(), true, null);
+		GetCurrentNavigationController().PresentViewController(GetViewController(viewModel), true, null);
 	}
 
 	public void Dismiss()

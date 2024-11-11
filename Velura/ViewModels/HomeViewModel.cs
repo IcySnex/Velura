@@ -1,8 +1,11 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Velura.Models;
+using Velura.Models.Abstract;
 using Velura.Services;
+using Velura.Services.Abstract;
 
 namespace Velura.ViewModels;
 
@@ -10,12 +13,19 @@ public partial class HomeViewModel : ObservableObject
 {
 	readonly ILogger<HomeViewModel> logger;
 	readonly Database database;
+	readonly INavigation navigation;
+	
+	public ImageCache ImageCache { get; }
 
 	public HomeViewModel(
 		ILogger<HomeViewModel> logger,
-		Database database)
+		Database database,
+		ImageCache imageCache,
+		INavigation navigation)
 	{
 		this.logger = logger;
+		this.navigation = navigation;
+		this.ImageCache = imageCache;
 		this.database = database;
 
 		_ = ReloadDataAsync();
@@ -25,10 +35,10 @@ public partial class HomeViewModel : ObservableObject
 
 
 	[ObservableProperty]
-	Movie[]? movies = null;
+	IReadOnlyList<IMediaContainer>? movies = null;
 
 	[ObservableProperty]
-	Show[]? shows = null;
+	IReadOnlyList<IMediaContainer>? shows = null;
 
 	public async Task ReloadDataAsync()
 	{
@@ -43,6 +53,15 @@ public partial class HomeViewModel : ObservableObject
 	void ShowMediaSection(
 		string name)
 	{
-		logger.LogInformation("[HomeViewModel-ShowMediaSection] Showing media section: {name}", name);
+		ILogger<MediaSectionViewModel> viewModelLogger = App.Provider.GetRequiredService<ILogger<MediaSectionViewModel>>();
+		IReadOnlyList<IMediaContainer> mediaContainers = name switch
+		{
+			nameof(Movies) => Movies,
+			nameof(Shows) => Shows,
+			_ => null
+		} ?? [];
+		
+		MediaSectionViewModel viewModel = new(viewModelLogger, ImageCache, name, mediaContainers);
+		navigation.Push(viewModel);
 	}
 }

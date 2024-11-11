@@ -9,9 +9,9 @@ namespace Velura.iOS.Views.Home;
 
 public class MediaContainerViewCell : UICollectionViewCell
 {
-	static readonly UIImage? PlaceholderImage = UIImage.GetSystemImage("questionmark.video")?.Apply(
-		new(104, 156), new(45, 45),
-		UIColor.FromRGBA(128, 128, 128, 128), UIColor.FromRGBA(32, 32, 32, 158), UIColor.FromRGBA(128, 128, 128, 222));
+	static readonly UIImage? PlaceholderImage = UIImage.GetSystemImage("photo.badge.exclamationmark")?.Apply(
+		new(100, 150), new(36, 36),
+		UIColor.FromRGB(102, 102, 102), UIColor.FromRGB(32, 32, 32), UIColor.FromRGBA(200, 200, 200, 138));
 	static readonly ConcurrentDictionary<string, UIImage?> CreatedUIImageCache = new();
 
 	
@@ -29,7 +29,7 @@ public class MediaContainerViewCell : UICollectionViewCell
 			ClipsToBounds = true,
 			Layer =
 			{
-				BorderColor = UIColor.FromRGBA(128, 128, 128, 128).CGColor,
+				BorderColor = UIColor.FromRGBA(128, 128, 128, 150).CGColor,
 				BorderWidth = 1,
 				CornerRadius = 8,
 				MasksToBounds = true
@@ -57,8 +57,7 @@ public class MediaContainerViewCell : UICollectionViewCell
 		// Layout
 		ContentView.SubviewsDoNotTranslateAutoresizingMaskIntoConstraints();
 		ContentView.AddConstraints(
-			imageView.Width().EqualTo(104),
-			imageView.Height().EqualTo(156),
+			imageView.Height().EqualTo().WidthOf(imageView).WithMultiplier(1.5f),
 			imageView.AtTopOf(ContentView),
 			imageView.AtLeftOf(ContentView),
 			imageView.AtRightOf(ContentView),
@@ -105,7 +104,7 @@ public class MediaContainerViewCell : UICollectionViewCell
 		
 		cachedImage = filePath is null ? PlaceholderImage : UIImage.FromFile(filePath);
 		CreatedUIImageCache[url] = cachedImage;
-		imageView.Image = cachedImage;
+		Transition(imageView, 0.1, UIViewAnimationOptions.TransitionCrossDissolve, () => imageView.Image = cachedImage, null);
 	}
 	
 	

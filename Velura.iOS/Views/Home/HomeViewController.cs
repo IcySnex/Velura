@@ -1,7 +1,6 @@
 using System.ComponentModel;
 using Microsoft.Extensions.DependencyInjection;
 using Velura.Helpers;
-using Velura.Services;
 using Velura.ViewModels;
 
 namespace Velura.iOS.Views.Home;
@@ -15,7 +14,8 @@ public class HomeViewController : UICollectionViewController
 			NSCollectionLayoutDimension.CreateEstimated(206)
 		);
 		NSCollectionLayoutItem item = NSCollectionLayoutItem.Create(itemSize);
-		NSCollectionLayoutGroup itemGroup = NSCollectionLayoutGroup.CreateHorizontal(itemSize, item, 1);
+		
+		NSCollectionLayoutGroup group = NSCollectionLayoutGroup.CreateHorizontal(itemSize, item, 1);
 
 		NSCollectionLayoutSize headerSize = NSCollectionLayoutSize.Create(
 			NSCollectionLayoutDimension.CreateFractionalWidth(1),
@@ -23,9 +23,9 @@ public class HomeViewController : UICollectionViewController
 		);
 		NSCollectionLayoutBoundarySupplementaryItem header = NSCollectionLayoutBoundarySupplementaryItem.Create(headerSize, UICollectionElementKindSectionKey.Header, NSRectAlignment.Top);
 		
-		NSCollectionLayoutSection section = NSCollectionLayoutSection.Create(itemGroup);
+		NSCollectionLayoutSection section = NSCollectionLayoutSection.Create(group);
 		section.ContentInsets = new(4, 16, 16, 16);
-		section.InterGroupSpacing = 8;
+		section.InterGroupSpacing = 10;
 		section.OrthogonalScrollingBehavior = UICollectionLayoutSectionOrthogonalScrollingBehavior.ContinuousGroupLeadingBoundary;
 		section.BoundarySupplementaryItems = [header];
 		
@@ -35,7 +35,6 @@ public class HomeViewController : UICollectionViewController
 	
 	
 	readonly HomeViewModel viewModel = App.Provider.GetRequiredService<HomeViewModel>();
-	readonly ImageCache imageCache = App.Provider.GetRequiredService<ImageCache>();
 	
 	readonly List<string> sections = [];
 
@@ -81,9 +80,9 @@ public class HomeViewController : UICollectionViewController
 	{
 		sections.Clear();
 
-		if (viewModel.Movies?.Length > 0)
+		if (viewModel.Movies?.Count > 0)
 			sections.Add(nameof(HomeViewModel.Movies));
-		if (viewModel.Shows?.Length > 0)
+		if (viewModel.Shows?.Count > 0)
 			sections.Add(nameof(HomeViewModel.Shows));
 	}
 
@@ -98,11 +97,12 @@ public class HomeViewController : UICollectionViewController
 		nint section) =>
 		sections[(int)section] switch
 		{
-			nameof(HomeViewModel.Movies) => viewModel.Movies!.Length,
-			nameof(HomeViewModel.Shows) => viewModel.Shows!.Length,
+			nameof(HomeViewModel.Movies) => viewModel.Movies!.Count,
+			nameof(HomeViewModel.Shows) => viewModel.Shows!.Count,
 			
 			_ => 0
 		};
+	
 	
 	public override UICollectionReusableView GetViewForSupplementaryElement(
 		UICollectionView collectionView,
@@ -127,7 +127,6 @@ public class HomeViewController : UICollectionViewController
 		}
 	}
 
-	
 	public override UICollectionViewCell GetCell(
 		UICollectionView collectionView,
 		NSIndexPath indexPath)
@@ -136,10 +135,10 @@ public class HomeViewController : UICollectionViewController
 		switch (sections[indexPath.Section])
 		{
 			case nameof(HomeViewModel.Movies):
-				cell.UpdateCell(viewModel.Movies![indexPath.Row], imageCache, indexPath.Row);
+				cell.UpdateCell(viewModel.Movies![indexPath.Row], viewModel.ImageCache, indexPath.Row);
 				return cell;
 			case nameof(HomeViewModel.Shows):
-				cell.UpdateCell(viewModel.Shows![indexPath.Row], imageCache, indexPath.Row);
+				cell.UpdateCell(viewModel.Shows![indexPath.Row], viewModel.ImageCache, indexPath.Row);
 				return cell;
 			
 			default:
