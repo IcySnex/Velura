@@ -11,6 +11,4 @@ public interface IMediaContainer
 	public string? PosterPath { get; }
 
 	DateTime? ReleaseDate { get; }
-
-	string? Genre { get; }
 }

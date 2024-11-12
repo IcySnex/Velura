@@ -21,6 +21,4 @@ public class Movie : IMedia, IMediaContainer
 	public DateTime? ReleaseDate { get; init; } = null;
 	
 	public TimeSpan Duration { get; init; } = TimeSpan.Zero;
-
-	public string? Genre { get; init; } = null;
 }

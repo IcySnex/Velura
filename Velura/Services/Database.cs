@@ -35,6 +35,7 @@ public sealed class Database
 		await connection.CreateTableAsync<Movie>();
 		await connection.CreateTableAsync<Show>();
 		await connection.CreateTableAsync<Episode>();
+		await connection.CreateTableAsync<GenreMap>();
 	}
 
 

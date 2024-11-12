@@ -27,4 +27,18 @@ public static class Extensions
 		logger?.LogError(ex, "[{caller}] {message}.", caller, message);
 		throw ex;
 	}
+
+	public static void ThrowIfEmpty<T>(
+		this ICollection<T> collection,
+		string message,
+		ILogger? logger = null,
+		string caller = "[-]")
+	{
+		if (collection.Count > 0)
+			return;
+		
+		NotSupportedException ex = new(message);
+		logger?.LogError(ex, "[{caller}] {message}.", caller, message);
+		throw ex;
+	}
 }

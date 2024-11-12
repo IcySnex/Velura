@@ -14,5 +14,6 @@
       <PackageReference Include="Serilog.Extensions.Hosting" Version="8.0.0" />
       <PackageReference Include="Serilog.Sinks.Debug" Version="3.0.0" />
       <PackageReference Include="sqlite-net-pcl" Version="1.9.172" />
+      <PackageReference Include="TMDbLib" Version="2.2.0" />
     </ItemGroup>
 </Project>

@@ -15,7 +15,5 @@ public class Show : IMediaContainer
 	
 	public string? PosterPath { get; init; } = null;
 
-	public string? Genre { get; init; } = null;
-
 	public DateTime? ReleaseDate { get; init; } = null;
 }

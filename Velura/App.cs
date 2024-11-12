@@ -62,6 +62,7 @@ public abstract class App
 		services.AddSingleton<HttpClient>();
 		services.AddSingleton<ImageCache>();
 		services.AddSingleton<Database>();
+		services.AddSingleton<MediaInfoProvider>();
 	}
 
 	static void RegisterViewModels(
