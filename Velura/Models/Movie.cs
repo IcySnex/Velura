@@ -16,7 +16,7 @@ public class Movie : IMedia, IMediaContainer
 
 	public string? Description { get; init; } = null;
 
-	public string? PosterPath { get; init; } = null;
+	public string? PosterUrl { get; init; } = null;
 
 	public DateTime? ReleaseDate { get; init; } = null;
 	

@@ -8,7 +8,7 @@ public interface IMediaContainer
 	
 	public string? Description { get; }
 	
-	public string? PosterPath { get; }
+	public string? PosterUrl { get; }
 
 	DateTime? ReleaseDate { get; }
 }

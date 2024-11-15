@@ -86,7 +86,7 @@ public partial class HomeViewModel : ObservableObject
 			Title = searchResult.Title,
 			FilePath = "/placeholder/path",
 			Description = searchResult.Overview,
-			PosterPath = MediaInfoProvider.GetImageUrl(searchResult.PosterPath, "w200"),
+			PosterUrl = MediaInfoProvider.GetImageUrl(searchResult.PosterPath, "w200"),
 			ReleaseDate = searchResult.ReleaseDate,
 			Duration = TimeSpan.Zero
 		};

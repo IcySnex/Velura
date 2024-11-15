@@ -116,6 +116,6 @@ public class MediaContainerViewCell : UICollectionViewCell
 		Tag = index;
 		
 		SetText(mediaContainer.Title, mediaContainer.ReleaseDate?.ToString("dd. MMM yyyy"));
-		await SetImageAsync(mediaContainer.PosterPath, imageCache, index);
+		await SetImageAsync(mediaContainer.PosterUrl, imageCache, index);
 	}
 }
