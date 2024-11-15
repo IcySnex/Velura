@@ -1,8 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFramework>net8.0-ios</TargetFramework>
+        <TargetFramework>net9.0-ios</TargetFramework>
         <SupportedOSPlatformVersion>16.0</SupportedOSPlatformVersion>
         <OutputType>Exe</OutputType>
+        <PublishAot>true</PublishAot>
 
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <Nullable>enable</Nullable>
