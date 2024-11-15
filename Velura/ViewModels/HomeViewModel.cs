@@ -59,6 +59,16 @@ public partial class HomeViewModel : ObservableObject
 		// await AddMovieAsync("Space Jam");
 		// await AddMovieAsync("Joker");
 		// await AddMovieAsync("Your Name");
+		// await AddMovieAsync("アリスとテレスのまぼろし工場");
+		// await AddMovieAsync("Bee Movie");
+		// await AddMovieAsync("Purge");
+		// await AddMovieAsync("Spirited Away");
+		// await AddMovieAsync("Her");
+		// await AddMovieAsync("The Lorax");
+		// await AddMovieAsync("Ted");
+		// await AddMovieAsync("Ted 2");
+		// await AddMovieAsync("American Psycho");
+		// await AddMovieAsync("Tom and Jerry: The Movie");
 		
 		Movies = await database.GetAsync<Movie>();
 		Shows = await database.GetAsync<Show>();

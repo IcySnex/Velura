@@ -9,10 +9,10 @@ namespace Velura.Services;
 
 public sealed class MediaInfoProvider
 {
-	public static string GetImageUrl(
-		string path,
+	public static string? GetImageUrl(
+		string? path,
 		string size) =>
-		$"https://image.tmdb.org/t/p/{size}{path}";
+		path is null ? null : $"https://image.tmdb.org/t/p/{size}{path}";
 	
 	
 	readonly ILogger<MediaInfoProvider> logger;

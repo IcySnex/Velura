@@ -38,7 +38,7 @@ public sealed class ImageCache
 		return Path.Combine(pathResolver.ImageCacheDirectory, encodedUrl);
 	}
 	
-	public async ValueTask<string?> DownloadAsync(
+	public async ValueTask DownloadAsync(
 		string imageUrl,
 		string filepath)
 	{
@@ -46,11 +46,11 @@ public sealed class ImageCache
 		await using FileStream fileStream = new(filepath, FileMode.Create, FileAccess.Write, FileShare.None);
 			
 		await networkStream.CopyToAsync(fileStream);
-		return filepath;
 	}
 
 	
-	public async ValueTask<string?> GetAsync(string imageUrl)
+	public async ValueTask<string?> GetAsync(
+		string imageUrl)
 	{
 		if (downloadTasksCache.TryGetValue(imageUrl, out Task<string?>? existingTask))
 			return await existingTask;
@@ -61,19 +61,22 @@ public sealed class ImageCache
 		try
 		{
 			string cachedFilePath = GetCachedFilePath(imageUrl);
-			string? result = await DownloadAsync(imageUrl, cachedFilePath);
+
+			if (!File.Exists(cachedFilePath))
+				await DownloadAsync(imageUrl, cachedFilePath);
 			
-			taskCompletionSource.SetResult(result);
+			taskCompletionSource.SetResult(cachedFilePath);
+			return cachedFilePath;
 		}
 		catch (Exception ex)
 		{
-			taskCompletionSource.SetResult(null);
 			logger.LogError(ex, "Failed to get image: {exception}", ex.Message);
+			taskCompletionSource.SetException(ex);
+			return null;
 		}
 		finally
 		{
 			downloadTasksCache.TryRemove(imageUrl, out _);
 		}
-		return await taskCompletionSource.Task; 
 	}
 }
