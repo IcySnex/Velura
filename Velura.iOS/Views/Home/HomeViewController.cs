@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using Microsoft.Extensions.DependencyInjection;
 using Velura.Helpers;
+using Velura.Models;
 using Velura.ViewModels;
 
 namespace Velura.iOS.Views.Home;
@@ -59,6 +60,7 @@ public class HomeViewController : UICollectionViewController
 		CollectionView.LayoutMargins = UIEdgeInsets.Zero;
 		
 		viewModel.PropertyChanged += OnViewModelPropertyChanged;
+		viewModel.Config.Home.PropertyChanged += OnConfigHomePropertyChanged;
 	}
 
 	
@@ -75,6 +77,21 @@ public class HomeViewController : UICollectionViewController
 				break;
 		}
 	}
+	
+	void OnConfigHomePropertyChanged(
+		object? sender,
+		PropertyChangedEventArgs e)
+	{
+		switch (e.PropertyName)
+		{
+			case nameof(ConfigHome.AllowLineWrap):
+			case nameof(ConfigHome.MediaContainerDescription):
+				UpdateSections();
+				CollectionView.ReloadData();
+				break;
+		}
+	}
+	
 	
 	void UpdateSections()
 	{
@@ -135,10 +152,10 @@ public class HomeViewController : UICollectionViewController
 		switch (sections[indexPath.Section])
 		{
 			case nameof(HomeViewModel.Movies):
-				cell.UpdateCell(viewModel.Movies![indexPath.Row], viewModel.ImageCache, indexPath.Row);
+				cell.UpdateCell(viewModel.Movies![indexPath.Row], viewModel.Config, viewModel.ImageCache, indexPath.Row);
 				return cell;
 			case nameof(HomeViewModel.Shows):
-				cell.UpdateCell(viewModel.Shows![indexPath.Row], viewModel.ImageCache, indexPath.Row);
+				cell.UpdateCell(viewModel.Shows![indexPath.Row], viewModel.Config, viewModel.ImageCache, indexPath.Row);
 				return cell;
 			
 			default:

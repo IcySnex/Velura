@@ -83,7 +83,7 @@ public sealed class SettingsGroupItemViewCell : UITableViewCell
 			imageView.WithSameCenterY(ContentView),
 			imageView.AtLeftOf(ContentView, 20),
 
-			controlView.Width().LessThanOrEqualTo().WidthOf(ContentView).WithMultiplier(0.5f),
+			controlView.Width().LessThanOrEqualTo().WidthOf(ContentView).WithMultiplier(0.4f),
 			controlView.WithSameCenterY(ContentView),
 			controlView.AtRightOf(ContentView, 20)
 		);

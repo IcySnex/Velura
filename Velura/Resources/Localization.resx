@@ -190,6 +190,25 @@
         <value>Prefers large page titles instead of inline page titles whenever possible.</value>
     </data>
 
+    <data name="config_home">
+        <value>Home</value>
+    </data>
+    <data name="config_home_description">
+        <value>Configure the settings for your homepage such as media display settings.</value>
+    </data>
+    <data name="config_home_allowlinewrap">
+        <value>Allow Title Line Wrap</value>
+    </data>
+    <data name="config_home_allowlinewrap_description">
+        <value>Allows text to wrap to the next line when the available space is exceeded for a media container title.</value>
+    </data>
+    <data name="config_home_mediacontainerdescription">
+        <value>Media Description</value>
+    </data>
+    <data name="config_home_mediacontainerdescription_description">
+        <value>Select what is displayed under the title of a media container.</value>
+    </data>
+    
     <data name="config_advanced">
         <value>Advanced</value>
     </data>
@@ -206,6 +225,13 @@
     </data>
     <data name="enum_theme_dark">
         <value>Dark</value>
+    </data>
+    
+    <data name="enum_mediacontainerdescription_none">
+        <value>None</value>
+    </data>
+    <data name="enum_mediacontainerdescription_releasedate">
+        <value>Date</value>
     </data>
 
     <!-- Misc -->

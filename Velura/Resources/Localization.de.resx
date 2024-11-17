@@ -190,6 +190,25 @@
         <value>Bevorzugt, wann immer möglich, große Seitentitel anstelle von Inline-Seitentiteln.</value>
     </data>
 
+    <data name="config_home">
+        <value>Startseite</value>
+    </data>
+    <data name="config_home_description">
+        <value>Konfiguriere die Einstellungen für deine Startseite wie z.B. Medienanzeigeeinstellungen.</value>
+    </data>
+    <data name="config_home_allowlinewrap">
+        <value>Erlaube Titel Zeilenumbruch</value>
+    </data>
+    <data name="config_home_allowlinewrap_description">
+        <value>Ermöglicht den Textumbruch in die nächste Zeile, wenn der verfügbare Platz überschritten wird für einen Mediacontainer Titel.</value>
+    </data>
+    <data name="config_home_mediacontainerdescription">
+        <value>Medien Beschreibung</value>
+    </data>
+    <data name="config_home_mediacontainerdescription_description">
+        <value>Wähle, was unter dem Titel eines Mediencontainers angezeigt wird.</value>
+    </data>
+
     <data name="config_advanced">
         <value>Fortgeschritten</value>
     </data>
@@ -206,6 +225,13 @@
     </data>
     <data name="enum_theme_dark">
         <value>Dunkel</value>
+    </data>
+
+    <data name="enum_mediacontainerdescription_none">
+        <value>Nichts</value>
+    </data>
+    <data name="enum_mediacontainerdescription_releasedate">
+        <value>Datum</value>
     </data>
 
     <!-- Misc -->

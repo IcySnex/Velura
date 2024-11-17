@@ -1,5 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.Extensions.Logging;
+using Velura.Models;
 using Velura.Models.Abstract;
 using Velura.Services;
 
@@ -9,15 +10,18 @@ public class MediaSectionViewModel : ObservableObject
 {
 	readonly ILogger<MediaSectionViewModel> logger;
 	
+	public Config Config { get; }
 	public ImageCache ImageCache { get; }
 
 	public MediaSectionViewModel(
 		ILogger<MediaSectionViewModel> logger,
+		Config config,
 		ImageCache imageCache,
 		string sectionName,
 		IReadOnlyList<IMediaContainer> mediaContainers)
 	{
 		this.logger = logger;
+		this.Config = config;
 		this.ImageCache = imageCache;
 		
 		SectionName = sectionName;

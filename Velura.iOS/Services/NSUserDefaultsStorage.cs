@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using Microsoft.Extensions.Logging;
 using Velura.Services.Abstract;
 
@@ -8,6 +9,7 @@ public class NSUserDefaultsStorage : ISimpleStorage
 	readonly ILogger<NSUserDefaultsStorage> logger;
 	
 	readonly NSUserDefaults userDefaults = NSUserDefaults.StandardUserDefaults;
+	readonly ConcurrentDictionary<string, object?> cache = new();
 
 	public NSUserDefaultsStorage(
 		ILogger<NSUserDefaultsStorage> logger)
@@ -22,13 +24,19 @@ public class NSUserDefaultsStorage : ISimpleStorage
 		string key,
 		T defaultValue = default!)
 	{
+		if (cache.TryGetValue(key, out object? cachedValue))
+			return cachedValue is null ? defaultValue : (T)cachedValue;
+		
 		logger.LogInformation("[NSUserDefaultsStorage-GetValue] Getting value with key '{key}'...", key);
 		NSObject value = userDefaults.ValueForKey(new(key));
 
 		if (value is null)
+		{
+			cache[key] = null;
 			return defaultValue;
+		}
 
-		return value switch
+		T result = value switch
 		{
 			NSString s => (T)(object)s.ToString(),
 			NSNumber n when typeof(T).IsEnum => (T)Enum.ToObject(typeof(T), n.Int32Value),
@@ -38,6 +46,9 @@ public class NSUserDefaultsStorage : ISimpleStorage
 			NSNumber n when typeof(T) == typeof(double) => (T)(object)n.DoubleValue,
 			_ => defaultValue
 		};
+		
+		cache[key] = result!;
+		return result;
 	}
 
 	public void SetValue<T>(
@@ -46,6 +57,8 @@ public class NSUserDefaultsStorage : ISimpleStorage
 	{
 		logger.LogInformation("[NSUserDefaultsStorage-SetValue] Setting value with key '{key}'...", key);
 		userDefaults.SetValueForKey(NSObject.FromObject(value), new(key));
+		
+		cache[key] = value!;
 	}
 
 	public void RemoveValue(
@@ -53,5 +66,7 @@ public class NSUserDefaultsStorage : ISimpleStorage
 	{
 		logger.LogInformation("[NSUserDefaultsStorage-RemoveValue] Removing value with key '{key}'...", key);
 		userDefaults.RemoveObject(key);
+		
+		cache.TryRemove(key, out _);
 	}
 }

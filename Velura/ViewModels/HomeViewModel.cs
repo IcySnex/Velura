@@ -17,16 +17,19 @@ public partial class HomeViewModel : ObservableObject
 	readonly INavigation navigation;
 	readonly MediaInfoProvider mediaInfoProvider;
 	
+	public Config Config { get; }
 	public ImageCache ImageCache { get; }
 
 	public HomeViewModel(
 		ILogger<HomeViewModel> logger,
+		Config config,
 		Database database,
 		ImageCache imageCache,
 		INavigation navigation,
 		MediaInfoProvider mediaInfoProvider)
 	{
 		this.logger = logger;
+		this.Config = config;
 		this.navigation = navigation;
 		this.ImageCache = imageCache;
 		this.database = database;
@@ -113,9 +116,9 @@ public partial class HomeViewModel : ObservableObject
 		ILogger<MediaSectionViewModel> viewModelLogger = App.Provider.GetRequiredService<ILogger<MediaSectionViewModel>>();
 		MediaSectionViewModel viewModel = name switch
 		{
-			nameof(Movies) => new(viewModelLogger, ImageCache, "media_movies".L10N(), Movies!),
-			nameof(Shows) => new(viewModelLogger, ImageCache, "media_shows".L10N(), Shows!),
-			_ => new(viewModelLogger, ImageCache, name, [])
+			nameof(Movies) => new(viewModelLogger, Config, ImageCache, "media_movies".L10N(), Movies!),
+			nameof(Shows) => new(viewModelLogger, Config, ImageCache, "media_shows".L10N(), Shows!),
+			_ => new(viewModelLogger, Config, ImageCache, name, [])
 		};
 		navigation.Push(viewModel);
 	}

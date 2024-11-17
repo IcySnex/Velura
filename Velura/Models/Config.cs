@@ -6,7 +6,7 @@ using Velura.Services.Abstract;
 namespace Velura.Models;
 
 [L10NDetails("config", "config_app_description")]
-[Image("gear", "#8e8e8e", "#ffffff")]
+[Image("gearshape.fill", "#8e8e8e", "#ffffff")]
 public sealed class Config(
 	ISimpleStorage simpleStorage) : ConfigGroup(simpleStorage, "Config")
 {
@@ -14,12 +14,14 @@ public sealed class Config(
 	
 	public ConfigAppearance Appearance { get; } = new(simpleStorage);
 	
+	public ConfigHome Home { get; } = new(simpleStorage);
+	
 	public ConfigAdvanced Advanced { get; } = new(simpleStorage);
 }
 
 
 [L10NDetails("config_general", "config_general_description")]
-[Image("house", "#0b84ff", "#ffffff")]
+[Image("gear", "#0b84ff", "#ffffff")]
 public sealed class ConfigGeneral(
 	ISimpleStorage simpleStorage) : ConfigGroup(simpleStorage, "Config.General")
 { }
@@ -48,6 +50,26 @@ public sealed class ConfigAppearance(
 	{
 		get => GetValue(nameof(PreferLargeTitles), true);
 		set => SetValue(nameof(PreferLargeTitles), value);
+	}
+}
+
+[L10NDetails("config_home", "config_home_description")]
+[Image("house.fill", "#2b8d20", "#ffffff")]
+public sealed class ConfigHome(
+	ISimpleStorage simpleStorage) : ConfigGroup(simpleStorage, "Config.Home")
+{
+	[L10NDetails("config_home_allowlinewrap", "config_home_allowlinewrap_description")]
+	public bool AllowLineWrap
+	{
+		get => GetValue(nameof(AllowLineWrap), true);
+		set => SetValue(nameof(AllowLineWrap), value);
+	}
+	
+	[L10NDetails("config_home_mediacontainerdescription", "config_home_mediacontainerdescription_description")]
+	public MediaContainerDescription MediaContainerDescription
+	{
+		get => GetValue(nameof(MediaContainerDescription), MediaContainerDescription.ReleaseDate);
+		set => SetValue(nameof(MediaContainerDescription), value);
 	}
 }
 

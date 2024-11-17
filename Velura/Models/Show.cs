@@ -16,4 +16,6 @@ public class Show : IMediaContainer
 	public string? PosterUrl { get; init; } = null;
 
 	public DateTime? ReleaseDate { get; init; } = null;
+	
+	public int Seasons { get; init; } = 0;
 }

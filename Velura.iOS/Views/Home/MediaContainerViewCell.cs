@@ -1,7 +1,9 @@
 using System.Collections.Concurrent;
 using Cirrious.FluentLayouts.Touch;
 using ObjCRuntime;
+using Velura.Enums;
 using Velura.iOS.Helpers;
+using Velura.Models;
 using Velura.Models.Abstract;
 using Velura.Services;
 
@@ -110,12 +112,20 @@ public class MediaContainerViewCell : UICollectionViewCell
 	
 	public async void UpdateCell(
 		IMediaContainer mediaContainer,
+		Config config,
 		ImageCache imageCache,
 		int index)
 	{
 		Tag = index;
 		
-		SetText(mediaContainer.Title, mediaContainer.ReleaseDate?.ToString("dd. MMM yyyy"));
+		textLabel.Lines = config.Home.AllowLineWrap ? 2 : 1;
+		string? description = config.Home.MediaContainerDescription switch
+		{
+			MediaContainerDescription.ReleaseDate => mediaContainer.ReleaseDate?.ToString("dd. MMM yyyy"),
+			_ => null
+		};
+		
+		SetText(mediaContainer.Title, description);
 		await SetImageAsync(mediaContainer.PosterUrl, imageCache, index);
 	}
 }
