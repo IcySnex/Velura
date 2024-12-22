@@ -8,5 +8,8 @@ public enum MediaContainerDescription
 	None,
 	
 	[L10NName("enum_mediacontainerdescription_releasedate")]
-	ReleaseDate
+	ReleaseDate,
+	
+	[L10NName("enum_mediacontainerdescription_lenght")]
+	Lenght
 }

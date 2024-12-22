@@ -233,6 +233,9 @@
     <data name="enum_mediacontainerdescription_releasedate">
         <value>Datum</value>
     </data>
+    <data name="enum_mediacontainerdescription_lenght">
+        <value>Länge</value>
+    </data>
 
     <!-- Misc -->
     <data name="edit">
@@ -255,12 +258,45 @@
         <value>Etwas ist schiefgelaufen!</value>
     </data>
     
+    <data name="not_available">
+        <value>k.A.</value>
+    </data>
+    
     <!-- Media -->
     <data name="media_movies">
         <value>Filme</value>
     </data>
     <data name="media_shows">
         <value>Serien</value>
+    </data>
+
+    <data name="media_season_count">
+        <value>{0} Staffel</value>
+    </data>
+    <data name="media_season_count_plural">
+        <value>{0} Staffeln</value>
+    </data>
+
+    <!-- Time -->
+    <data name="time_short_hour">
+        <value>{0} Std.</value>
+    </data>
+    <data name="time_short_hour_plural">
+        <value>{0} Std.</value>
+    </data>
+
+    <data name="time_short_minute">
+        <value>{0} Min.</value>
+    </data>
+    <data name="time_short_minute_plural">
+        <value>{0} Min.</value>
+    </data>
+
+    <data name="time_short_second">
+        <value>{0} Sek.</value>
+    </data>
+    <data name="time_short_second_plural">
+        <value>{0} Sek.</value>
     </data>
     
     <!-- Errors -->

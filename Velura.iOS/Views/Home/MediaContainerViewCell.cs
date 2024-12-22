@@ -2,6 +2,7 @@ using System.Collections.Concurrent;
 using Cirrious.FluentLayouts.Touch;
 using ObjCRuntime;
 using Velura.Enums;
+using Velura.Helpers;
 using Velura.iOS.Helpers;
 using Velura.Models;
 using Velura.Models.Abstract;
@@ -64,7 +65,7 @@ public class MediaContainerViewCell : UICollectionViewCell
 			imageView.AtLeftOf(ContentView),
 			imageView.AtRightOf(ContentView),
 			
-			textLabel.Below(imageView, 2),
+			textLabel.Below(imageView, 4),
 			textLabel.AtLeftOf(ContentView),
 			textLabel.AtRightOf(ContentView),
 			
@@ -121,7 +122,15 @@ public class MediaContainerViewCell : UICollectionViewCell
 		textLabel.Lines = config.Home.AllowLineWrap ? 2 : 1;
 		string? description = config.Home.MediaContainerDescription switch
 		{
-			MediaContainerDescription.ReleaseDate => mediaContainer.ReleaseDate?.ToString("dd. MMM yyyy"),
+			MediaContainerDescription.ReleaseDate => 
+				mediaContainer.ReleaseDate?.ToString("dd. MMM yyyy"),
+			MediaContainerDescription.Lenght =>
+				mediaContainer switch
+				{ 
+					Movie movie => movie.Duration.L10N(),
+					Show show => (show.Seasons > 1 ? "media_season_count_plural" : "media_season_count").L10N(show.Seasons),
+					_ => null
+				},
 			_ => null
 		};
 		

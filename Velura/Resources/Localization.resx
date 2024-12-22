@@ -233,6 +233,9 @@
     <data name="enum_mediacontainerdescription_releasedate">
         <value>Date</value>
     </data>
+    <data name="enum_mediacontainerdescription_lenght">
+        <value>Lenght</value>
+    </data>
 
     <!-- Misc -->
     <data name="edit">
@@ -255,12 +258,45 @@
         <value>Something went wrong!</value>
     </data>
 
+    <data name="not_available">
+        <value>N/A</value>
+    </data>
+
     <!-- Media -->
     <data name="media_movies">
         <value>Movies</value>
     </data>
     <data name="media_shows">
         <value>Shows</value>
+    </data>
+    
+    <data name="media_season_count">
+        <value>{0} Season</value>
+    </data>
+    <data name="media_season_count_plural">
+        <value>{0} Seasons</value>
+    </data>
+
+    <!-- Time -->
+    <data name="time_short_hour">
+        <value>{0} hr</value>
+    </data>
+    <data name="time_short_hour_plural">
+        <value>{0} hrs</value>
+    </data>
+    
+    <data name="time_short_minute">
+        <value>{0} min</value>
+    </data>
+    <data name="time_short_minute_plural">
+        <value>{0} mins</value>
+    </data>
+    
+    <data name="time_short_second">
+        <value>{0} sec</value>
+    </data>
+    <data name="time_short_second_plural">
+        <value>{0} secs</value>
     </data>
     
     <!-- Errors -->

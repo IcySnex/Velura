@@ -72,7 +72,7 @@ public partial class HomeViewModel : ObservableObject
 		// await AddMovieAsync("Ted 2");
 		// await AddMovieAsync("American Psycho");
 		// await AddMovieAsync("Tom and Jerry: The Movie");
-		
+
 		Movies = await database.GetAsync<Movie>();
 		Shows = await database.GetAsync<Show>();
 	}
