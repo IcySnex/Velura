@@ -289,14 +289,14 @@
         <value>{0} min</value>
     </data>
     <data name="time_short_minute_plural">
-        <value>{0} mins</value>
+        <value>{0} min</value>
     </data>
     
     <data name="time_short_second">
         <value>{0} sec</value>
     </data>
     <data name="time_short_second_plural">
-        <value>{0} secs</value>
+        <value>{0} sec</value>
     </data>
     
     <!-- Errors -->
