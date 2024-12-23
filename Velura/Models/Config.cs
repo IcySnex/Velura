@@ -61,7 +61,7 @@ public sealed class ConfigHome(
 	[L10NDetails("config_home_allowlinewrap", "config_home_allowlinewrap_description")]
 	public bool AllowLineWrap
 	{
-		get => GetValue(nameof(AllowLineWrap), true);
+		get => GetValue(nameof(AllowLineWrap), false);
 		set => SetValue(nameof(AllowLineWrap), value);
 	}
 	
