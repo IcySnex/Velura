@@ -2,9 +2,9 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using TMDbLib.Objects.Search;
 using Velura.Helpers;
 using Velura.Models;
+using Velura.Models.Abstract;
 using Velura.Services;
 using Velura.Services.Abstract;
 
@@ -15,7 +15,7 @@ public partial class HomeViewModel : ObservableObject
 	readonly ILogger<HomeViewModel> logger;
 	readonly Database database;
 	readonly INavigation navigation;
-	readonly MediaInfoProvider mediaInfoProvider;
+	readonly IDialogHandler dialogHandler;
 	
 	public Config Config { get; }
 	public ImageCache ImageCache { get; }
@@ -26,18 +26,14 @@ public partial class HomeViewModel : ObservableObject
 		Database database,
 		ImageCache imageCache,
 		INavigation navigation,
-		MediaInfoProvider mediaInfoProvider)
+		IDialogHandler dialogHandler)
 	{
 		this.logger = logger;
 		this.Config = config;
 		this.navigation = navigation;
+		this.dialogHandler = dialogHandler;
 		this.ImageCache = imageCache;
 		this.database = database;
-		this.mediaInfoProvider = mediaInfoProvider;
-
-		async void LoadData() =>
-			await ReloadDataAsync();
-		LoadData();
 		
 		logger.LogInformation("[HomeViewModel-.ctor] HomeViewModel has been initialized.");
 	}
@@ -49,77 +45,103 @@ public partial class HomeViewModel : ObservableObject
 	[ObservableProperty]
 	IReadOnlyList<Show>? shows = null;
 
-	public async Task ReloadDataAsync()
+	
+	[RelayCommand]
+	async Task ReloadMoviesAsync()
 	{
-		logger.LogInformation("[HomeViewModel-ReloadDataAsync] Reloading data from database...");
+		logger.LogInformation("[HomeViewModel-ReloadMoviesAsync] Reloading movies from database...");
+		Movie[] refreshedMovies = await database.GetAsync<Movie>();
 
-		// await AddMovieAsync("Soul");
-		// await AddMovieAsync("Suzume");
-		// await AddMovieAsync("Forest Gump");
-		// await AddMovieAsync("A Goofy Movie");
-		// await AddMovieAsync("Fatherhood");
-		// await AddMovieAsync("Jennifer's Body");
-		// await AddMovieAsync("Space Jam");
-		// await AddMovieAsync("Joker");
-		// await AddMovieAsync("Your Name");
-		// await AddMovieAsync("アリスとテレスのまぼろし工場");
-		// await AddMovieAsync("Bee Movie");
-		// await AddMovieAsync("Purge");
-		// await AddMovieAsync("Spirited Away");
-		// await AddMovieAsync("Her");
-		// await AddMovieAsync("The Lorax");
-		// await AddMovieAsync("Ted");
-		// await AddMovieAsync("Ted 2");
-		// await AddMovieAsync("American Psycho");
-		// await AddMovieAsync("Tom and Jerry: The Movie");
-
-		Movies = await database.GetAsync<Movie>();
-		Shows = await database.GetAsync<Show>();
-	}
-
-
-	async Task AddMovieAsync(
-		string query)
-	{
-		SearchMovie searchResult = await mediaInfoProvider.SearchMovieAsync(query);
-
-		// Add movie
-		Movie movie = new()
+		if (Movies is null || refreshedMovies.Length != Movies.Count)
 		{
-			Title = searchResult.Title,
-			FilePath = "/placeholder/path",
-			Description = searchResult.Overview,
-			PosterUrl = MediaInfoProvider.GetImageUrl(searchResult.PosterPath, "w200"),
-			ReleaseDate = searchResult.ReleaseDate,
-			Duration = TimeSpan.Zero
-		};
-		await database.InsertAsync(movie);
-		
-		// Add genres
-		foreach (int genreId in searchResult.GenreIds)
-		{
-			GenreMap genreMap = new()
-			{
-				GenreId = genreId,
-				MediaContainerId = movie.Id
-			};
-			await database.InsertAsync(genreMap);
+			Movies = refreshedMovies;
+			return;
 		}
+
+		for (int i = 0; i < refreshedMovies.Length; i++)
+			if (refreshedMovies[i].Id != Movies[i].Id)
+			{
+				Movies = refreshedMovies;
+				return;
+			}
 	}
 	
+	[RelayCommand]
+	async Task ReloadShowsAsync()
+	{
+		logger.LogInformation("[HomeViewModel-ReloadShowsAsync] Reloading shows from database...");
+		Show[] refreshedShows = await database.GetAsync<Show>();
+
+		if (Shows is null || refreshedShows.Length != Shows.Count)
+		{
+			Shows = refreshedShows;
+			return;
+		}
+
+		for (int i = 0; i < refreshedShows.Length; i++)
+			if (refreshedShows[i].Id != Shows[i].Id)
+			{
+				Shows = refreshedShows;
+				return;
+			}
+	}
+	
+	
+	[RelayCommand]
+	async Task RemoveMovieAsync(
+		Movie movie)
+	{
+		if (!await dialogHandler.ShowQuestionAsync("alert_question".L10N(), "warning_remove_movie".L10N(), "alert_confirm".L10N(), "alert_cancel".L10N()))
+		{
+			logger.LogInformation("[HomeViewModel-RemoveMovieAsync] Removing movie from database cancelled.");
+			return;
+		}
+		
+		logger.LogInformation("[HomeViewModel-RemoveMovieAsync] Removing movie from database...");
+		await database.DeleteAsync<Movie>(movie.Id);
+		
+		await ReloadMoviesAsync();
+	}
+	
+	[RelayCommand]
+	async Task RemoveShowAsync(
+		Show show)
+	{
+		if (!await dialogHandler.ShowQuestionAsync("alert_question".L10N(), "warning_remove_show".L10N(), "alert_confirm".L10N(), "alert_cancel".L10N()))
+		{
+			logger.LogInformation("[HomeViewModel-RemoveShowAsync] Removing show from database cancelled.");
+			return;
+		}
+		
+		logger.LogInformation("[HomeViewModel-RemoveShowAsync] Removing show from database...");
+		await database.DeleteAsync<Show>(show.Id);
+		
+		await ReloadShowsAsync();
+	}
 
 
 	[RelayCommand]
 	void ShowMediaSection(
 		string name)
 	{
-		ILogger<MediaSectionViewModel> viewModelLogger = App.Provider.GetRequiredService<ILogger<MediaSectionViewModel>>();
-		MediaSectionViewModel viewModel = name switch
+		void PushMediaSection<TMediaContainer>(
+			string sectionName) where TMediaContainer : IMediaContainer, new()
 		{
-			nameof(Movies) => new(viewModelLogger, Config, ImageCache, "media_movies".L10N(), Movies!),
-			nameof(Shows) => new(viewModelLogger, Config, ImageCache, "media_shows".L10N(), Shows!),
-			_ => new(viewModelLogger, Config, ImageCache, name, [])
-		};
-		navigation.Push(viewModel);
+			ILogger<MediaSectionViewModel<TMediaContainer>> viewModelLogger = App.Provider.GetRequiredService<ILogger<MediaSectionViewModel<TMediaContainer>>>();
+			MediaSectionViewModel<TMediaContainer> viewModel = new(viewModelLogger, Config, database, ImageCache, dialogHandler, sectionName);
+			navigation.Push(viewModel);
+		}
+		
+		switch (name)
+		{
+			case nameof(Movies):
+				PushMediaSection<Movie>("media_movies".L10N());
+				break;
+			case nameof(Shows):
+				PushMediaSection<Show>("media_shows".L10N());
+				break;
+			default:
+				throw new("This type of media container is not supported.");
+		}
 	}
 }

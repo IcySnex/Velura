@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using Microsoft.Extensions.DependencyInjection;
 using Velura.Helpers;
+using Velura.iOS.Helpers;
 using Velura.Models;
 using Velura.ViewModels;
 
@@ -58,12 +59,21 @@ public class HomeViewController : UICollectionViewController
 		CollectionView.RegisterClassForSupplementaryView(typeof(MediaSectionHeaderView), UICollectionElementKindSection.Header, nameof(MediaSectionHeaderView));
 
 		CollectionView.LayoutMargins = UIEdgeInsets.Zero;
-		
+
 		viewModel.PropertyChanged += OnViewModelPropertyChanged;
 		viewModel.Config.Home.PropertyChanged += OnConfigHomePropertyChanged;
 	}
 
-	
+	public override void ViewWillAppear(
+		bool animated)
+	{
+		base.ViewWillAppear(animated);
+		
+		viewModel.ReloadMoviesCommand.Execute(null);
+		viewModel.ReloadShowsCommand.Execute(null);
+	}
+
+
 	void OnViewModelPropertyChanged(
 		object? sender,
 		PropertyChangedEventArgs e)
@@ -77,6 +87,7 @@ public class HomeViewController : UICollectionViewController
 				break;
 		}
 	}
+
 	
 	void OnConfigHomePropertyChanged(
 		object? sender,
@@ -114,9 +125,8 @@ public class HomeViewController : UICollectionViewController
 		nint section) =>
 		sections[(int)section] switch
 		{
-			nameof(HomeViewModel.Movies) => viewModel.Movies!.Count,
-			nameof(HomeViewModel.Shows) => viewModel.Shows!.Count,
-			
+			nameof(HomeViewModel.Movies) => viewModel.Movies?.Count ?? 0,
+			nameof(HomeViewModel.Shows) => viewModel.Shows?.Count ?? 0,
 			_ => 0
 		};
 	
@@ -168,4 +178,37 @@ public class HomeViewController : UICollectionViewController
 		NSIndexPath indexPath)
 	{
 	}
+
+
+	public override UIContextMenuConfiguration GetContextMenuConfiguration(
+		UICollectionView collectionView,
+		NSIndexPath indexPath,
+		CGPoint point) =>
+		UIContextMenuConfiguration.Create(indexPath, null, _ =>
+		{
+			UIMenu topActions = UIMenu.Create("", null, UIMenuIdentifier.None, UIMenuOptions.DisplayInline,
+			[
+				UIAction.Create("media_play".L10N(), UIImage.GetSystemImage("play"), null, _ => { }),
+				UIAction.Create("media_mark_as_watched".L10N(), UIImage.GetSystemImage("eye"), null, _ => { }),
+			]);
+			
+			UIAction deleteAction = UIAction.Create("media_remove".L10N(), UIImage.GetSystemImage("trash"), null, sections[indexPath.Section] switch
+			{
+				nameof(HomeViewModel.Movies) => viewModel.RemoveMovieCommand.ToUIActionHandler(viewModel.Movies![indexPath.Row]),
+				nameof(HomeViewModel.Shows) => viewModel.RemoveShowCommand.ToUIActionHandler(viewModel.Shows![indexPath.Row]),
+				_ => default!
+			});
+			deleteAction.Attributes = UIMenuElementAttributes.Destructive;
+
+			return UIMenu.Create([topActions, deleteAction]);
+		});
+
+	public override UITargetedPreview? GetPreviewForHighlightingContextMenu(
+		UICollectionView collectionView,
+		UIContextMenuConfiguration configuration) =>
+		collectionView.CellForItem((NSIndexPath)configuration.Identifier)?.ContentView.CreateTargetedPreview(6, 8);
+	public override UITargetedPreview? GetPreviewForDismissingContextMenu(
+		UICollectionView collectionView,
+		UIContextMenuConfiguration configuration) =>
+		collectionView.CellForItem((NSIndexPath)configuration.Identifier)?.ContentView.CreateTargetedPreview(6, 8);
 }

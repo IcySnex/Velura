@@ -257,6 +257,9 @@
     <data name="alert_error">
         <value>Etwas ist schiefgelaufen!</value>
     </data>
+    <data name="alert_question">
+        <value>Bist du sicher?</value>
+    </data>
     
     <data name="not_available">
         <value>k.A.</value>
@@ -268,6 +271,19 @@
     </data>
     <data name="media_shows">
         <value>Serien</value>
+    </data>
+
+    <data name="media_play">
+        <value>Abspielen</value>
+    </data>
+    <data name="media_mark_as_watched">
+        <value>Als gesehen markieren</value>
+    </data>
+    <data name="media_mark_as_unwatched">
+        <value>Als ungesehen markieren</value>
+    </data>
+    <data name="media_remove">
+        <value>Entfernen</value>
     </data>
 
     <data name="media_season_count">
@@ -302,5 +318,13 @@
     <!-- Errors -->
     <data name="error_nomailservices">
         <value>Es sieht so aus, als ob E-Mail-Dienste auf diesem Gerät nicht verfügbar sind.</value>
+    </data>
+
+    <!-- Warnings -->
+    <data name="warning_remove_movie">
+        <value>Wenn sie diesen Film entfernen, wird er in Velura ausgeblendet und der gesamte Wiedergabeverlauf zurückgesetzt. Die Mediendatei wird nicht gelöscht.</value>
+    </data>
+    <data name="warning_remove_show">
+        <value>Wenn sie diese Serie entfernen, wird sie in Velura ausgeblendet und der gesamte Wiedergabeverlauf zurückgesetzt. Die Mediendatei wird nicht gelöscht.</value>
     </data>
 </root>

@@ -257,6 +257,9 @@
     <data name="alert_error">
         <value>Something went wrong!</value>
     </data>
+    <data name="alert_question">
+        <value>Are you sure?</value>
+    </data>
 
     <data name="not_available">
         <value>N/A</value>
@@ -268,6 +271,19 @@
     </data>
     <data name="media_shows">
         <value>Shows</value>
+    </data>
+
+    <data name="media_play">
+        <value>Play</value>
+    </data>
+    <data name="media_mark_as_watched">
+        <value>Mark as watched</value>
+    </data>
+    <data name="media_mark_as_unwatched">
+        <value>Mark as unwatched</value>
+    </data>
+    <data name="media_remove">
+        <value>Remove</value>
     </data>
     
     <data name="media_season_count">
@@ -302,5 +318,13 @@
     <!-- Errors -->
     <data name="error_nomailservices">
         <value>It looks like mail services are not available on this device.</value>
+    </data>
+    
+    <!-- Warnings -->
+    <data name="warning_remove_movie">
+        <value>Removing this movie will hide it in Velura and reset all watch progress. The media file will not be deleted.</value>
+    </data>
+    <data name="warning_remove_show">
+        <value>Removing this show will hide it in Velura and reset all watch progress. The media file will not be deleted.</value>
     </data>
 </root>

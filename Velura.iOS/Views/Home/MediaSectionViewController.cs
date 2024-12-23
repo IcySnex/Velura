@@ -1,10 +1,13 @@
 using System.ComponentModel;
+using Velura.Helpers;
+using Velura.iOS.Helpers;
 using Velura.Models;
+using Velura.Models.Abstract;
 using Velura.ViewModels;
 
 namespace Velura.iOS.Views.Home;
 
-public class MediaSectionViewController : UICollectionViewController
+public class MediaSectionViewController<TMediaContainer> : UICollectionViewController where TMediaContainer : IMediaContainer, new()
 {
 	static UICollectionViewLayout CreateLayout()
 	{
@@ -50,10 +53,10 @@ public class MediaSectionViewController : UICollectionViewController
 	}
 	
 	
-	readonly MediaSectionViewModel viewModel;
+	readonly MediaSectionViewModel<TMediaContainer> viewModel;
 	
 	public MediaSectionViewController(
-		MediaSectionViewModel viewModel) : base(CreateLayout())
+		MediaSectionViewModel<TMediaContainer> viewModel) : base(CreateLayout())
 	{
 		this.viewModel = viewModel;
 		
@@ -67,10 +70,31 @@ public class MediaSectionViewController : UICollectionViewController
 
 		CollectionView.LayoutMargins = UIEdgeInsets.Zero;
 		
+		viewModel.PropertyChanged += OnViewModelPropertyChanged;
 		viewModel.Config.Home.PropertyChanged += OnConfigHomePropertyChanged;
+	}
+
+	public override void ViewWillAppear(
+		bool animated)
+	{
+		base.ViewWillAppear(animated);
+		
+		viewModel.ReloadMediaContainersCommand.Execute(null);
 	}
 	
 	
+	void OnViewModelPropertyChanged(
+		object? sender,
+		PropertyChangedEventArgs e)
+	{
+		switch (e.PropertyName)
+		{
+			case nameof(MediaSectionViewModel<TMediaContainer>.MediaContainers):
+				CollectionView.ReloadData();
+				break;
+		}
+	}
+
 	void OnConfigHomePropertyChanged(
 		object? sender,
 		PropertyChangedEventArgs e)
@@ -92,7 +116,7 @@ public class MediaSectionViewController : UICollectionViewController
 	public override nint GetItemsCount(
 		UICollectionView collectionView,
 		nint section) =>
-		viewModel.MediaContainers.Count;
+		viewModel.MediaContainers?.Count ?? 0;
 	
 	
 	public override UICollectionViewCell GetCell(
@@ -100,7 +124,35 @@ public class MediaSectionViewController : UICollectionViewController
 		NSIndexPath indexPath)
 	{
 		MediaContainerViewCell cell = (MediaContainerViewCell)collectionView.DequeueReusableCell(nameof(MediaContainerViewCell), indexPath);
-		cell.UpdateCell(viewModel.MediaContainers[indexPath.Row], viewModel.Config, viewModel.ImageCache, indexPath.Row);
+		cell.UpdateCell(viewModel.MediaContainers![indexPath.Row], viewModel.Config, viewModel.ImageCache, indexPath.Row);
 		return cell;
 	}
+	
+	
+	public override UIContextMenuConfiguration GetContextMenuConfiguration(
+		UICollectionView collectionView,
+		NSIndexPath indexPath,
+		CGPoint point) =>
+		UIContextMenuConfiguration.Create(indexPath, null, _ =>
+		{
+			UIMenu topActions = UIMenu.Create("", null, UIMenuIdentifier.None, UIMenuOptions.DisplayInline,
+			[
+				UIAction.Create("media_play".L10N(), UIImage.GetSystemImage("play"), null, _ => { }),
+				UIAction.Create("media_mark_as_watched".L10N(), UIImage.GetSystemImage("eye"), null, _ => { }),
+			]);
+			
+			UIAction deleteAction = UIAction.Create("media_remove".L10N(), UIImage.GetSystemImage("trash"), null, viewModel.RemoveMediaContainerCommand.ToUIActionHandler(viewModel.MediaContainers![indexPath.Row]));
+			deleteAction.Attributes = UIMenuElementAttributes.Destructive;
+
+			return UIMenu.Create([topActions, deleteAction]);
+		});
+
+	public override UITargetedPreview? GetPreviewForHighlightingContextMenu(
+		UICollectionView collectionView,
+		UIContextMenuConfiguration configuration) =>
+		collectionView.CellForItem((NSIndexPath)configuration.Identifier)?.ContentView.CreateTargetedPreview(6, 8);
+	public override UITargetedPreview? GetPreviewForDismissingContextMenu(
+		UICollectionView collectionView,
+		UIContextMenuConfiguration configuration) =>
+		collectionView.CellForItem((NSIndexPath)configuration.Identifier)?.ContentView.CreateTargetedPreview(6, 8);
 }

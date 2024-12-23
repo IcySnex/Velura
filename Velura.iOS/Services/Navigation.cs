@@ -5,6 +5,8 @@ using Velura.Helpers;
 using Velura.iOS.Helpers;
 using Velura.iOS.Views.About;
 using Velura.iOS.Views.Home;
+using Velura.Models;
+using Velura.Models.Abstract;
 using Velura.Services.Abstract;
 using Velura.ViewModels;
 
@@ -49,7 +51,8 @@ public class Navigation : INavigation
 				_ when viewModelType == typeof(SearchViewModel) => IOSApp.MainViewController.ViewControllers![1],
 				_ when viewModelType == typeof(SettingsViewModel) => IOSApp.MainViewController.ViewControllers![2],
 				
-				_ when viewModelType == typeof(MediaSectionViewModel) => new MediaSectionViewController(GetViewModel<MediaSectionViewModel>(viewModel)),
+				_ when viewModelType == typeof(MediaSectionViewModel<Movie>) => new MediaSectionViewController<Movie>(GetViewModel<MediaSectionViewModel<Movie>>(viewModel)),
+				_ when viewModelType == typeof(MediaSectionViewModel<Show>) => new MediaSectionViewController<Show>(GetViewModel<MediaSectionViewModel<Show>>(viewModel)),
 				_ when viewModelType == typeof(AboutViewModel) => new AboutViewController(GetViewModel<AboutViewModel>(viewModel)).WrapInNavController(),
             
 				_ => null

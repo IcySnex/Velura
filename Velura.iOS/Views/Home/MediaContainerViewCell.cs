@@ -69,7 +69,7 @@ public class MediaContainerViewCell : UICollectionViewCell
 			textLabel.AtLeftOf(ContentView),
 			textLabel.AtRightOf(ContentView),
 			
-			secondaryTextLabel.Below(textLabel,2),
+			secondaryTextLabel.Below(textLabel),
 			secondaryTextLabel.AtLeftOf(ContentView),
 			secondaryTextLabel.AtRightOf(ContentView),
 			secondaryTextLabel.AtBottomOf(ContentView, 2)

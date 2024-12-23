@@ -62,14 +62,19 @@ public static class Extensions
 				command.Execute(parameter);
 		};
 
-	public static UIAction ToUIAction(
+	public static UIActionHandler ToUIActionHandler(
 		this ICommand command,
 		object? parameter = null) =>
-		UIAction.Create(_ =>
+		_ =>
 		{
 			if (command.CanExecute(parameter))
 				command.Execute(parameter);
-		});
+		};
+	
+	public static UIAction ToUIAction(
+		this ICommand command,
+		object? parameter = null) =>
+		UIAction.Create(command.ToUIActionHandler(parameter));
 
 
 	public static UIButton CreateButton(
@@ -106,6 +111,21 @@ public static class Extensions
 		UIActionHandler? onPress = null) =>
 		configuration.CreateButton(title, subTitle, buttonSize, cornerStyle, image, imagePadding, imagePlacement, onPress is null ? null : UIAction.Create(onPress));
 
+
+	public static UITargetedPreview? CreateTargetedPreview(
+		this UIView? view,
+		int padding,
+		int cornerRadius)
+	{
+		if (view is null)
+			return null;
+		
+		return new(view, new()
+		{
+			VisiblePath = UIBezierPath.FromRoundedRect(view.Frame.Inset(-padding, -padding), cornerRadius)
+		});
+	}
+	
 	
 	public static UINavigationController WrapInNavController(
 		this UIViewController viewController,

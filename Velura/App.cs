@@ -72,7 +72,6 @@ public abstract class App
 		services.AddSingleton<SearchViewModel>();
 		services.AddSingleton<SettingsViewModel>();
 		
-		services.AddSingleton<MediaSectionViewModel>();
 		services.AddSingleton<AboutViewModel>();
 	}
 
