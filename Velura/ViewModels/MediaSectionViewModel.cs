@@ -13,6 +13,7 @@ public partial class MediaSectionViewModel<TMediaContainer> : ObservableObject w
 {
 	readonly ILogger<MediaSectionViewModel<TMediaContainer>> logger;
 	readonly Database database;
+	readonly INavigation navigation;
 	readonly IDialogHandler dialogHandler;
 	
 	public Config Config { get; }
@@ -24,6 +25,7 @@ public partial class MediaSectionViewModel<TMediaContainer> : ObservableObject w
 		Config config,
 		Database database,
 		ImageCache imageCache,
+		INavigation navigation,
 		IDialogHandler dialogHandler,
 		string sectionName)
 	{
@@ -31,6 +33,7 @@ public partial class MediaSectionViewModel<TMediaContainer> : ObservableObject w
 		this.Config = config;
 		this.database = database;
 		this.ImageCache = imageCache;
+		this.navigation = navigation;
 		this.dialogHandler = dialogHandler;
 		
 		SectionName = sectionName;
@@ -78,5 +81,11 @@ public partial class MediaSectionViewModel<TMediaContainer> : ObservableObject w
 		await database.DeleteAsync<TMediaContainer>(mediaContainer.Id);
 		
 		await ReloadMediaContainersAsync();
+
+		if (MediaContainers!.Count < 1)
+		{
+			logger.LogInformation("[HomeViewModel-RemoveMediaContainerAsync] No media containers left.");
+			navigation.Pop();
+		}
 	}
 }

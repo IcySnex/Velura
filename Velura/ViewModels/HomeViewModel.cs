@@ -128,7 +128,7 @@ public partial class HomeViewModel : ObservableObject
 			string sectionName) where TMediaContainer : IMediaContainer, new()
 		{
 			ILogger<MediaSectionViewModel<TMediaContainer>> viewModelLogger = App.Provider.GetRequiredService<ILogger<MediaSectionViewModel<TMediaContainer>>>();
-			MediaSectionViewModel<TMediaContainer> viewModel = new(viewModelLogger, Config, database, ImageCache, dialogHandler, sectionName);
+			MediaSectionViewModel<TMediaContainer> viewModel = new(viewModelLogger, Config, database, ImageCache, navigation, dialogHandler, sectionName);
 			navigation.Push(viewModel);
 		}
 		
