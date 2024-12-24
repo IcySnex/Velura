@@ -1,3 +1,4 @@
+using System.Collections.Specialized;
 using System.Reflection;
 using System.Windows.Input;
 using CoreAnimation;
@@ -7,7 +8,7 @@ namespace Velura.iOS.Helpers;
 public static class Extensions
 {
 	public static PropertyInfo GetProperty(
-		this Type type,
+        this Type type,
 		string propertyPath) =>
 		type.GetProperty(propertyPath) ?? throw new InvalidOperationException($"Property path '{propertyPath}' is invalid for type '{type.Name}'.");
 
@@ -17,7 +18,7 @@ public static class Extensions
 		GetProperty(instance.GetType(), propertyPath);
 	
 	public static EventInfo GetEvent(
-		this Type type,
+        this Type type,
 		string eventPath) =>
 		type.GetEvent(eventPath) ?? throw new InvalidOperationException($"Event path '{eventPath}' is invalid for type '{type.Name}'.");
 
@@ -137,6 +138,58 @@ public static class Extensions
 				PrefersLargeTitles = preferLargeTitles
 			}
 		};
+
+
+	public static void ReloadData(
+		this UICollectionView collectionView,
+		int sectionIndex,
+		NotifyCollectionChangedEventArgs e)
+	{
+		switch (e.Action)
+		{
+			case NotifyCollectionChangedAction.Move when e.NewItems is not null && e.OldItems is not null:
+				if (e.NewItems.Count != 1 && e.OldItems.Count != 1)
+				{
+					collectionView.ReloadData();
+					break;
+				}
+				
+				NSIndexPath beforeMoveIndexPath = NSIndexPath.FromItemSection(e.OldStartingIndex, sectionIndex);
+				NSIndexPath afterMoveIndexPath = NSIndexPath.FromItemSection(e.NewStartingIndex, sectionIndex);
+				
+				collectionView.MoveItem(beforeMoveIndexPath, afterMoveIndexPath);
+				break;
+			case NotifyCollectionChangedAction.Replace when e.NewItems is not null && e.OldItems is not null:
+				NSIndexPath[] replacedIndexPath = [NSIndexPath.FromItemSection(e.OldStartingIndex, sectionIndex)];
+				
+				collectionView.ReloadItems(replacedIndexPath);
+				break;
+			case NotifyCollectionChangedAction.Add when e.NewItems is not null:
+				NSIndexPath[] addIndexPaths = new NSIndexPath[e.NewItems.Count];
+				for (int index = 0; index < addIndexPaths.Length; index++)
+					addIndexPaths[index] = NSIndexPath.FromItemSection(e.NewStartingIndex + index, sectionIndex);
+					
+				collectionView.InsertItems(addIndexPaths);
+				break;
+			case NotifyCollectionChangedAction.Remove when e.OldItems is not null:
+				NSIndexPath[] removeIndexPaths = new NSIndexPath[e.OldItems.Count];
+				for (int index = 0; index < removeIndexPaths.Length; index++)
+					removeIndexPaths[index] = NSIndexPath.FromItemSection(e.OldStartingIndex + index, sectionIndex);
+					
+				collectionView.DeleteItems(removeIndexPaths);
+				break;
+			case NotifyCollectionChangedAction.Reset when e.OldItems is not null:
+				NSIndexPath[] resetIndexPaths = new NSIndexPath[e.OldItems.Count];
+				for (int index = 0; index < resetIndexPaths.Length; index++)
+					resetIndexPaths[index] = NSIndexPath.FromItemSection(index, sectionIndex);
+					
+				collectionView.DeleteItems(resetIndexPaths);
+				break;
+			default:
+				collectionView.ReloadData();
+				break;
+		}
+	}
 	
 
 	public static UIColor ToUIColor(

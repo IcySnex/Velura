@@ -320,6 +320,27 @@
         <value>It looks like mail services are not available on this device.</value>
     </data>
     
+    <data name="error_failed_loading_movies">
+        <value>It looks like loading the movies from the database failed.</value>
+    </data>
+    <data name="error_failed_loading_shows">
+        <value>It looks like loading the shows from the database failed.</value>
+    </data>
+    
+    <data name="error_failed_adding_movie">
+        <value>It looks like this movie could not be added.</value>
+    </data>
+    <data name="error_failed_adding_show">
+        <value>It looks like this show could not be added.</value>
+    </data>
+    
+    <data name="error_failed_removing_movie">
+        <value>It looks like this movie could not be removed.</value>
+    </data>
+    <data name="error_failed_removing_show">
+        <value>It looks like this show could not be removed.</value>
+    </data>
+    
     <!-- Warnings -->
     <data name="warning_remove_movie">
         <value>Removing this movie will hide it in Velura and reset all watch progress. The media file will not be deleted.</value>

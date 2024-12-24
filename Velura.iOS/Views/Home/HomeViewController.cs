@@ -1,8 +1,10 @@
+using System.Collections.Specialized;
 using System.ComponentModel;
 using Microsoft.Extensions.DependencyInjection;
 using Velura.Helpers;
 using Velura.iOS.Helpers;
 using Velura.Models;
+using Velura.Services;
 using Velura.ViewModels;
 
 namespace Velura.iOS.Views.Home;
@@ -60,32 +62,40 @@ public class HomeViewController : UICollectionViewController
 
 		CollectionView.LayoutMargins = UIEdgeInsets.Zero;
 
-		viewModel.PropertyChanged += OnViewModelPropertyChanged;
+		viewModel.MediaLibrary.Movies.CollectionChanged += OnMediaLibraryMoviesChanged;
+		viewModel.MediaLibrary.Shows.CollectionChanged += OnMediaLibraryShowsChanged;
 		viewModel.Config.Home.PropertyChanged += OnConfigHomePropertyChanged;
 	}
 
-	public override void ViewWillAppear(
-		bool animated)
+	
+	void OnMediaLibraryMoviesChanged(
+		object? sender,
+		NotifyCollectionChangedEventArgs e)
 	{
-		base.ViewWillAppear(animated);
-		
-		viewModel.ReloadMoviesCommand.Execute(null);
-		viewModel.ReloadShowsCommand.Execute(null);
+		if (UpdateSections())
+		{
+			CollectionView.ReloadData();
+			return;
+		}
+
+		int sectionIndex = sections.IndexOf(nameof(MediaLibrary.Movies));
+		if (sectionIndex != -1)
+			CollectionView.ReloadData(sectionIndex, e);
 	}
 
-
-	void OnViewModelPropertyChanged(
+	void OnMediaLibraryShowsChanged(
 		object? sender,
-		PropertyChangedEventArgs e)
+		NotifyCollectionChangedEventArgs e)
 	{
-		switch (e.PropertyName)
+		if (UpdateSections())
 		{
-			case nameof(HomeViewModel.Movies):
-			case nameof(HomeViewModel.Shows):
-				UpdateSections();
-				CollectionView.ReloadData();
-				break;
+			CollectionView.ReloadData();
+			return;
 		}
+
+		int sectionIndex = sections.IndexOf(nameof(MediaLibrary.Shows));
+		if (sectionIndex != -1)
+			CollectionView.ReloadData(sectionIndex, e);
 	}
 
 	
@@ -104,14 +114,18 @@ public class HomeViewController : UICollectionViewController
 	}
 	
 	
-	void UpdateSections()
+	bool UpdateSections()
 	{
+		int sectionsCountBefore = sections.Count;
+		
 		sections.Clear();
 
-		if (viewModel.Movies?.Count > 0)
-			sections.Add(nameof(HomeViewModel.Movies));
-		if (viewModel.Shows?.Count > 0)
-			sections.Add(nameof(HomeViewModel.Shows));
+		if (viewModel.MediaLibrary.Movies.Count > 0)
+			sections.Add(nameof(MediaLibrary.Movies));
+		if (viewModel.MediaLibrary.Shows.Count > 0)
+			sections.Add(nameof(MediaLibrary.Shows));
+		
+		return sectionsCountBefore != sections.Count;
 	}
 
 
@@ -125,8 +139,8 @@ public class HomeViewController : UICollectionViewController
 		nint section) =>
 		sections[(int)section] switch
 		{
-			nameof(HomeViewModel.Movies) => viewModel.Movies?.Count ?? 0,
-			nameof(HomeViewModel.Shows) => viewModel.Shows?.Count ?? 0,
+			nameof(MediaLibrary.Movies) => viewModel.MediaLibrary.Movies.Count,
+			nameof(MediaLibrary.Shows) => viewModel.MediaLibrary.Shows.Count,
 			_ => 0
 		};
 	
@@ -142,11 +156,11 @@ public class HomeViewController : UICollectionViewController
 		MediaSectionHeaderView header = (MediaSectionHeaderView)collectionView.DequeueReusableSupplementaryView(UICollectionElementKindSection.Header, nameof(MediaSectionHeaderView), indexPath);
 		switch (sections[indexPath.Section])
 		{
-			case nameof(HomeViewModel.Movies):
-				header.UpdateHeader("media_movies".L10N(), viewModel.ShowMediaSectionCommand, nameof(HomeViewModel.Movies));
+			case nameof(MediaLibrary.Movies):
+				header.UpdateHeader("media_movies".L10N(), viewModel.ShowMediaSectionCommand, nameof(MediaLibrary.Movies));
 				return header;
-			case nameof(HomeViewModel.Shows):
-				header.UpdateHeader("media_shows".L10N(), viewModel.ShowMediaSectionCommand, nameof(HomeViewModel.Shows));
+			case nameof(MediaLibrary.Shows):
+				header.UpdateHeader("media_shows".L10N(), viewModel.ShowMediaSectionCommand, nameof(MediaLibrary.Shows));
 				return header;
 			
 			default:
@@ -161,11 +175,11 @@ public class HomeViewController : UICollectionViewController
 		MediaContainerViewCell cell = (MediaContainerViewCell)collectionView.DequeueReusableCell(nameof(MediaContainerViewCell), indexPath);
 		switch (sections[indexPath.Section])
 		{
-			case nameof(HomeViewModel.Movies):
-				cell.UpdateCell(viewModel.Movies![indexPath.Row], viewModel.Config, viewModel.ImageCache, indexPath.Row);
+			case nameof(MediaLibrary.Movies):
+				cell.UpdateCell(viewModel.MediaLibrary.Movies[indexPath.Row], viewModel.Config, viewModel.ImageCache, indexPath.Row);
 				return cell;
-			case nameof(HomeViewModel.Shows):
-				cell.UpdateCell(viewModel.Shows![indexPath.Row], viewModel.Config, viewModel.ImageCache, indexPath.Row);
+			case nameof(MediaLibrary.Shows):
+				cell.UpdateCell(viewModel.MediaLibrary.Shows[indexPath.Row], viewModel.Config, viewModel.ImageCache, indexPath.Row);
 				return cell;
 			
 			default:
@@ -194,8 +208,8 @@ public class HomeViewController : UICollectionViewController
 			
 			UIAction deleteAction = UIAction.Create("media_remove".L10N(), UIImage.GetSystemImage("trash"), null, sections[indexPath.Section] switch
 			{
-				nameof(HomeViewModel.Movies) => viewModel.RemoveMovieCommand.ToUIActionHandler(viewModel.Movies![indexPath.Row]),
-				nameof(HomeViewModel.Shows) => viewModel.RemoveShowCommand.ToUIActionHandler(viewModel.Shows![indexPath.Row]),
+				nameof(MediaLibrary.Movies) => viewModel.RemoveMovieCommand.ToUIActionHandler(viewModel.MediaLibrary.Movies[indexPath.Row]),
+				nameof(MediaLibrary.Shows) => viewModel.RemoveShowCommand.ToUIActionHandler(viewModel.MediaLibrary.Shows[indexPath.Row]),
 				_ => default!
 			});
 			deleteAction.Attributes = UIMenuElementAttributes.Destructive;

@@ -12,80 +12,59 @@ namespace Velura.ViewModels;
 public partial class MediaSectionViewModel<TMediaContainer> : ObservableObject where TMediaContainer : IMediaContainer, new()
 {
 	readonly ILogger<MediaSectionViewModel<TMediaContainer>> logger;
-	readonly Database database;
 	readonly INavigation navigation;
-	readonly IDialogHandler dialogHandler;
 	
 	public Config Config { get; }
 	public ImageCache ImageCache { get; }
+	public MediaLibrary MediaLibrary { get; }
 	public string SectionName { get; }
+	public ObservableRangeCollection<TMediaContainer> MediaContainers { get; }
 
 	public MediaSectionViewModel(
 		ILogger<MediaSectionViewModel<TMediaContainer>> logger,
 		Config config,
-		Database database,
 		ImageCache imageCache,
 		INavigation navigation,
-		IDialogHandler dialogHandler,
-		string sectionName)
+		MediaLibrary mediaLibrary,
+		string sectionName,
+		ObservableRangeCollection<TMediaContainer> mediaContainers)
 	{
 		this.logger = logger;
 		this.Config = config;
-		this.database = database;
 		this.ImageCache = imageCache;
 		this.navigation = navigation;
-		this.dialogHandler = dialogHandler;
-		
-		SectionName = sectionName;
-		
+		this.MediaLibrary = mediaLibrary;
+		this.SectionName = sectionName;
+		this.MediaContainers = mediaContainers;
+
 		logger.LogInformation("[MediaSectionViewModel-.ctor] MediaSectionViewModel has been initialized.");
 	}
 	
-	
-	[ObservableProperty]
-	IReadOnlyList<TMediaContainer>? mediaContainers;
-
-
-	[RelayCommand]
-	async Task ReloadMediaContainersAsync()
-	{
-		logger.LogInformation("[HomeViewModel-ReloadMediaContainersAsync] Reloading media containers from database...");
-		TMediaContainer[] refreshedMediaContainers = await database.GetAsync<TMediaContainer>();
-
-		if (MediaContainers is null || refreshedMediaContainers.Length != MediaContainers.Count)
-		{
-			MediaContainers = refreshedMediaContainers;
-			return;
-		}
-
-		for (int i = 0; i < refreshedMediaContainers.Length; i++)
-			if (refreshedMediaContainers[i].Id != MediaContainers[i].Id)
-			{
-				MediaContainers = refreshedMediaContainers;
-				return;
-			}
-	}
-
 	
 	[RelayCommand]
 	async Task RemoveMediaContainerAsync(
 		TMediaContainer mediaContainer)
 	{
-		if (!await dialogHandler.ShowQuestionAsync("alert_question".L10N(), $"warning_remove_{mediaContainer switch{Movie => "movie", Show => "show", _ => throw new("This type of media container is not supported.") }}".L10N(), "alert_confirm".L10N(), "alert_cancel".L10N()))
+		void ReturnToPreviousPage()
 		{
-			logger.LogInformation("[HomeViewModel-RemoveMediaContainerAsync] Removing media container from database cancelled.");
-			return;
+			logger.LogInformation("[MediaSectionViewModel-RemoveMediaContainerAsync] No media containers left: Returning to previous page.");
+			navigation.Pop();
 		}
 		
-		logger.LogInformation("[HomeViewModel-RemoveMediaContainerAsync] Removing media container from database...");
-		await database.DeleteAsync<TMediaContainer>(mediaContainer.Id);
-		
-		await ReloadMediaContainersAsync();
-
-		if (MediaContainers!.Count < 1)
+		switch (mediaContainer)
 		{
-			logger.LogInformation("[HomeViewModel-RemoveMediaContainerAsync] No media containers left.");
-			navigation.Pop();
+			case Movie movie:
+				await MediaLibrary.RemoveMovieAsync(movie);
+				if (MediaLibrary.Movies.Count < 1)
+					ReturnToPreviousPage();
+				break;
+			case Show show:
+				await MediaLibrary.RemoveShowAsync(show);
+				if (MediaLibrary.Shows.Count < 1)
+					ReturnToPreviousPage();
+				break;
+			default:
+				throw new("This media container type is not supported.");
 		}
 	}
 }

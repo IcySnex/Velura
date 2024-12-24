@@ -62,6 +62,7 @@ public abstract class App
 		services.AddSingleton<HttpClient>();
 		services.AddSingleton<ImageCache>();
 		services.AddSingleton<Database>();
+		services.AddSingleton<MediaLibrary>();
 		services.AddSingleton<MediaInfoProvider>();
 	}
 
@@ -76,6 +77,10 @@ public abstract class App
 	}
 
 
-	protected virtual void FinishAppInitialization()
-	{ }
+	protected virtual async void FinishAppInitialization()
+	{
+		MediaLibrary library = Provider.GetRequiredService<MediaLibrary>();
+		await library.LoadMoviesAsync();
+		await library.LoadShowsAsync();
+	}
 }

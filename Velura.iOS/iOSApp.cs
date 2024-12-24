@@ -52,6 +52,8 @@ public sealed class IOSApp : App
 
 	protected override void FinishAppInitialization()
 	{
+		base.FinishAppInitialization();
+		
 		PropertyBindingMappers =
 		[
 			new UISwitchOnMapper(),

@@ -320,6 +320,27 @@
         <value>Es sieht so aus, als ob E-Mail-Dienste auf diesem Gerät nicht verfügbar sind.</value>
     </data>
 
+    <data name="error_failed_loading_movies">
+        <value>Es sieht so aus, als ob das Laden der Filme aus der Datenbank fehlgeschlagen ist.</value>
+    </data>
+    <data name="error_failed_loading_shows">
+        <value>Es sieht so aus, als ob das Laden der Serien aus der Datenbank fehlgeschlagen ist.</value>
+    </data>
+
+    <data name="error_failed_adding_movie">
+        <value>Es sieht so aus, als ob dieser Film nicht hinzugefügt werden konnte.</value>
+    </data>
+    <data name="error_failed_adding_show">
+        <value>Es sieht so aus, als ob diese Serie nicht hinzugefügt werden konnte.</value>
+    </data>
+
+    <data name="error_failed_removing_movie">
+        <value>Es sieht so aus, als ob dieser Film nicht entfernt werden konnte.</value>
+    </data>
+    <data name="error_failed_removing_show">
+        <value>Es sieht so aus, als ob diese Serie nicht entfernt werden konnte.</value>
+    </data>
+
     <!-- Warnings -->
     <data name="warning_remove_movie">
         <value>Wenn sie diesen Film entfernen, wird er in Velura ausgeblendet und der gesamte Wiedergabeverlauf zurückgesetzt. Die Mediendatei wird nicht gelöscht.</value>

@@ -1,3 +1,4 @@
+using System.Collections.Specialized;
 using System.ComponentModel;
 using Velura.Helpers;
 using Velura.iOS.Helpers;
@@ -70,31 +71,17 @@ public class MediaSectionViewController<TMediaContainer> : UICollectionViewContr
 
 		CollectionView.LayoutMargins = UIEdgeInsets.Zero;
 		
-		viewModel.PropertyChanged += OnViewModelPropertyChanged;
+		viewModel.MediaContainers.CollectionChanged += OnMediaContainersChanged;
 		viewModel.Config.Home.PropertyChanged += OnConfigHomePropertyChanged;
 	}
 
-	public override void ViewWillAppear(
-		bool animated)
-	{
-		base.ViewWillAppear(animated);
-		
-		viewModel.ReloadMediaContainersCommand.Execute(null);
-	}
 	
-	
-	void OnViewModelPropertyChanged(
+	void OnMediaContainersChanged(
 		object? sender,
-		PropertyChangedEventArgs e)
-	{
-		switch (e.PropertyName)
-		{
-			case nameof(MediaSectionViewModel<TMediaContainer>.MediaContainers):
-				CollectionView.ReloadData();
-				break;
-		}
-	}
+		NotifyCollectionChangedEventArgs e) =>
+		CollectionView.ReloadData(0, e);
 
+	
 	void OnConfigHomePropertyChanged(
 		object? sender,
 		PropertyChangedEventArgs e)
@@ -116,7 +103,7 @@ public class MediaSectionViewController<TMediaContainer> : UICollectionViewContr
 	public override nint GetItemsCount(
 		UICollectionView collectionView,
 		nint section) =>
-		viewModel.MediaContainers?.Count ?? 0;
+		viewModel.MediaContainers.Count;
 	
 	
 	public override UICollectionViewCell GetCell(
@@ -124,7 +111,7 @@ public class MediaSectionViewController<TMediaContainer> : UICollectionViewContr
 		NSIndexPath indexPath)
 	{
 		MediaContainerViewCell cell = (MediaContainerViewCell)collectionView.DequeueReusableCell(nameof(MediaContainerViewCell), indexPath);
-		cell.UpdateCell(viewModel.MediaContainers![indexPath.Row], viewModel.Config, viewModel.ImageCache, indexPath.Row);
+		cell.UpdateCell(viewModel.MediaContainers[indexPath.Row], viewModel.Config, viewModel.ImageCache, indexPath.Row);
 		return cell;
 	}
 	
@@ -141,7 +128,7 @@ public class MediaSectionViewController<TMediaContainer> : UICollectionViewContr
 				UIAction.Create("media_mark_as_watched".L10N(), UIImage.GetSystemImage("eye"), null, _ => { }),
 			]);
 			
-			UIAction deleteAction = UIAction.Create("media_remove".L10N(), UIImage.GetSystemImage("trash"), null, viewModel.RemoveMediaContainerCommand.ToUIActionHandler(viewModel.MediaContainers![indexPath.Row]));
+			UIAction deleteAction = UIAction.Create("media_remove".L10N(), UIImage.GetSystemImage("trash"), null, viewModel.RemoveMediaContainerCommand.ToUIActionHandler(viewModel.MediaContainers[indexPath.Row]));
 			deleteAction.Attributes = UIMenuElementAttributes.Destructive;
 
 			return UIMenu.Create([topActions, deleteAction]);
