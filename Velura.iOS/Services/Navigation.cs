@@ -5,6 +5,7 @@ using Velura.Helpers;
 using Velura.iOS.Helpers;
 using Velura.iOS.Views.About;
 using Velura.iOS.Views.Home;
+using Velura.iOS.Views.Info;
 using Velura.Models;
 using Velura.Models.Abstract;
 using Velura.Services.Abstract;
@@ -40,29 +41,33 @@ public class Navigation : INavigation
 	}
 	
 	UIViewController GetViewController<TViewModel>(
-		TViewModel? viewModel = default) where TViewModel : INotifyPropertyChanged
+		TViewModel? viewModel,
+		bool useCache) where TViewModel : INotifyPropertyChanged
 	{
 		Type viewModelType = typeof(TViewModel);
-		if (!viewControllerCache.TryGetValue(viewModelType, out UIViewController? cachedViewController))
-		{
-			cachedViewController = viewModelType switch
-			{
-				_ when viewModelType == typeof(HomeViewModel) => IOSApp.MainViewController.ViewControllers![0],
-				_ when viewModelType == typeof(SearchViewModel) => IOSApp.MainViewController.ViewControllers![1],
-				_ when viewModelType == typeof(SettingsViewModel) => IOSApp.MainViewController.ViewControllers![2],
-				
-				_ when viewModelType == typeof(MediaSectionViewModel<Movie>) => new MediaSectionViewController<Movie>(GetViewModel<MediaSectionViewModel<Movie>>(viewModel)),
-				_ when viewModelType == typeof(MediaSectionViewModel<Show>) => new MediaSectionViewController<Show>(GetViewModel<MediaSectionViewModel<Show>>(viewModel)),
-				_ when viewModelType == typeof(AboutViewModel) => new AboutViewController(GetViewModel<AboutViewModel>(viewModel)).WrapInNavController(),
-            
-				_ => null
-			};
-			cachedViewController.ThrowIfNull($"Could not find a suitable ViewController for the given ViewModel of type '{viewModelType.Name}'.", logger, "Navigation-GetViewController");
-			
-			viewControllerCache[viewModelType] = cachedViewController!;
-		}
+		if (useCache && viewControllerCache.TryGetValue(viewModelType, out UIViewController? cachedViewController))
+			return cachedViewController;
 		
-		return cachedViewController!;
+		UIViewController? viewController = viewModelType switch
+		{
+			_ when viewModelType == typeof(HomeViewModel) => IOSApp.MainViewController.ViewControllers![0],
+			_ when viewModelType == typeof(SearchViewModel) => IOSApp.MainViewController.ViewControllers![1],
+			_ when viewModelType == typeof(SettingsViewModel) => IOSApp.MainViewController.ViewControllers![2],
+				
+			_ when viewModelType == typeof(AboutViewModel) => new AboutViewController(GetViewModel<AboutViewModel>(viewModel)).WrapInNavController(),
+				
+			_ when viewModelType == typeof(MovieInfoViewModel) => new MovieInfoViewController(GetViewModel<MovieInfoViewModel>(viewModel)),
+				
+			_ when viewModelType == typeof(MediaSectionViewModel<Movie>) => new MediaSectionViewController<Movie>(GetViewModel<MediaSectionViewModel<Movie>>(viewModel)),
+			_ when viewModelType == typeof(MediaSectionViewModel<Show>) => new MediaSectionViewController<Show>(GetViewModel<MediaSectionViewModel<Show>>(viewModel)),
+            
+			_ => null
+		};
+		viewController.ThrowIfNull($"Could not find a suitable ViewController for the given ViewModel of type '{viewModelType.Name}'.", logger, "Navigation-GetViewController");
+		
+		if (useCache)
+			viewControllerCache[viewModelType] = viewController!;
+		return viewController!;
 	}
 	
 	UINavigationController GetCurrentNavigationController()
@@ -75,18 +80,20 @@ public class Navigation : INavigation
 
 	
 	public void GoTo<TViewModel>(
-		TViewModel? viewModel = default) where TViewModel : INotifyPropertyChanged
+		TViewModel? viewModel = default,
+		bool useCache = true) where TViewModel : INotifyPropertyChanged
 	{
 		logger.LogInformation("[Navigation-GoTo] Going to ViewController...");
-		IOSApp.MainViewController.SelectedViewController = GetViewController(viewModel);
+		IOSApp.MainViewController.SelectedViewController = GetViewController(viewModel, useCache);
 	}
 
 	
 	public void Push<TViewModel>(
-		TViewModel? viewModel = default) where TViewModel : INotifyPropertyChanged
+		TViewModel? viewModel = default,
+		bool useCache = true) where TViewModel : INotifyPropertyChanged
 	{
 		logger.LogInformation("[Navigation-Push] Pushing ViewController...");
-		GetCurrentNavigationController().PushViewController(GetViewController(viewModel), true);
+		GetCurrentNavigationController().PushViewController(GetViewController(viewModel, useCache), true);
 	}
 
 	public void Pop()
@@ -97,10 +104,11 @@ public class Navigation : INavigation
 
 	
 	public void Present<TViewModel>(
-		TViewModel? viewModel = default) where TViewModel : INotifyPropertyChanged
+		TViewModel? viewModel = default,
+		bool useCache = true) where TViewModel : INotifyPropertyChanged
 	{
 		logger.LogInformation("[Navigation-Show] Showing modal...");
-		GetCurrentNavigationController().PresentViewController(GetViewController(viewModel), true, null);
+		GetCurrentNavigationController().PresentViewController(GetViewController(viewModel, useCache), true, null);
 	}
 
 	public void Dismiss()
