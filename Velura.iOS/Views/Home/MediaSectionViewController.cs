@@ -125,7 +125,7 @@ public class MediaSectionViewController<TMediaContainer> : UICollectionViewContr
 			UIMenu topActions = UIMenu.Create("", null, UIMenuIdentifier.None, UIMenuOptions.DisplayInline,
 			[
 				UIAction.Create("media_play".L10N(), UIImage.GetSystemImage("play"), null, _ => { }),
-				UIAction.Create("media_mark_as_watched".L10N(), UIImage.GetSystemImage("eye"), null, _ => { }),
+				UIAction.Create("media_mark_as_watched".L10N(), UIImage.GetSystemImage("flag"), null, _ => { }),
 			]);
 			
 			UIAction deleteAction = UIAction.Create("media_remove".L10N(), UIImage.GetSystemImage("trash"), null, viewModel.RemoveMediaContainerCommand.ToUIActionHandler(viewModel.MediaContainers[indexPath.Row]));
