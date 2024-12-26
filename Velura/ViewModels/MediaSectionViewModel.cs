@@ -1,5 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Velura.Helpers;
 using Velura.Models;
@@ -40,6 +41,26 @@ public partial class MediaSectionViewModel<TMediaContainer> : ObservableObject w
 		logger.LogInformation("[MediaSectionViewModel-.ctor] MediaSectionViewModel has been initialized.");
 	}
 	
+	
+	[RelayCommand]
+	void ShowMediaContainerInfo(
+		TMediaContainer mediaContainer)
+	{
+		switch (mediaContainer)
+		{
+			case Movie movie:
+				logger.LogInformation("[MediaSectionViewModel-ShowMediaContainerInfo] Creating new movie info ViewModel");
+				ILogger<MovieInfoViewModel> movieViewModelLogger = App.Provider.GetRequiredService<ILogger<MovieInfoViewModel>>();
+				MovieInfoViewModel movieViewModel = new(movieViewModelLogger, movie);
+				
+				navigation.Push(movieViewModel, false);
+				break;
+			case Show show:
+				logger.LogInformation("[MediaSectionViewModel-ShowMediaContainerInfo] Creating new show info ViewModel");
+				break;
+		}
+	}
+
 	
 	[RelayCommand]
 	async Task RemoveMediaContainerAsync(

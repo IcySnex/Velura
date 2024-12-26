@@ -191,6 +191,15 @@ public class HomeViewController : UICollectionViewController
 		UICollectionView collectionView,
 		NSIndexPath indexPath)
 	{
+		switch (sections[indexPath.Section])
+		{
+			case nameof(MediaLibrary.Movies):
+				viewModel.ShowMovieInfoCommand.Execute(viewModel.MediaLibrary.Movies[indexPath.Row]);
+				break;
+			case nameof(MediaLibrary.Shows):
+				viewModel.ShowShowInfoCommand.Execute(viewModel.MediaLibrary.Shows[indexPath.Row]);
+				break;
+		}
 	}
 
 

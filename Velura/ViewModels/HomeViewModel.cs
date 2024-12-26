@@ -37,6 +37,25 @@ public partial class HomeViewModel : ObservableObject
 
 
 	[RelayCommand]
+	void ShowMovieInfo(
+		Movie movie)
+	{
+		logger.LogInformation("[HomeViewmodel-ShowMovieInfo] Creating new movie info ViewModel");
+		ILogger<MovieInfoViewModel> viewModelLogger = App.Provider.GetRequiredService<ILogger<MovieInfoViewModel>>();
+		MovieInfoViewModel viewModel = new(viewModelLogger, movie);
+			
+		navigation.Push(viewModel, false);
+	}
+
+	[RelayCommand]
+	void ShowShowInfo(
+		Show show)
+	{
+		logger.LogInformation("[HomeViewmodel-ShowShowInfo] Creating new show info ViewModel");
+	}
+
+
+	[RelayCommand]
 	Task RemoveMovieAsync(
 		Movie movie) =>
 		MediaLibrary.RemoveMovieAsync(movie);
@@ -46,7 +65,7 @@ public partial class HomeViewModel : ObservableObject
 		Show show) =>
 		MediaLibrary.RemoveShowAsync(show);
 
-
+	
 	[RelayCommand]
 	void ShowMediaSection(
 		string name)

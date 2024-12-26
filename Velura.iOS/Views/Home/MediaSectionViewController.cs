@@ -115,6 +115,11 @@ public class MediaSectionViewController<TMediaContainer> : UICollectionViewContr
 		return cell;
 	}
 	
+	public override void ItemSelected(
+		UICollectionView collectionView,
+		NSIndexPath indexPath) =>
+		viewModel.ShowMediaContainerInfoCommand.Execute(viewModel.MediaContainers[indexPath.Row]);
+
 	
 	public override UIContextMenuConfiguration GetContextMenuConfiguration(
 		UICollectionView collectionView,
