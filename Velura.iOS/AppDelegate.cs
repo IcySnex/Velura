@@ -11,12 +11,13 @@ public class AppDelegate : UIApplicationDelegate
 	{
 		IOSApp _ = new();
 		
-		Window = new(UIScreen.MainScreen.Bounds);
+		Window = IOSApp.MainWindow;
 		Window.RootViewController = IOSApp.MainViewController;
 		Window.MakeKeyAndVisible();
-		
-		UIWindow.Appearance.TintColor = UIColor.FromName("AccentColor");
-		UISwitch.Appearance.OnTintColor = UIColor.FromName("AccentColor");
+
+		UIColor? accentColor = UIColor.FromName("AccentColor");
+		UIWindow.Appearance.TintColor = accentColor;
+		UISwitch.Appearance.OnTintColor = accentColor;
 		
 		return true;
 	}

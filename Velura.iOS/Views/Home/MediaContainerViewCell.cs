@@ -12,11 +12,6 @@ namespace Velura.iOS.Views.Home;
 
 public class MediaContainerViewCell : UICollectionViewCell
 {
-	static readonly UIImage? PlaceholderImage = UIImage.GetSystemImage("photo.badge.exclamationmark")?.Apply(
-		new(100, 150), new(36, 36),
-		UIColor.FromRGB(102, 102, 102), UIColor.FromRGB(32, 32, 32), UIColor.FromRGBA(200, 200, 200, 138));
-	static readonly ConcurrentDictionary<string, UIImage?> CreatedUIImageCache = new();
-
 	
 	readonly UIImageView imageView;
 	readonly UILabel textLabel;
@@ -28,7 +23,7 @@ public class MediaContainerViewCell : UICollectionViewCell
 		// UI
 		imageView = new()
 		{
-			Image = PlaceholderImage,
+			Image = IOSApp.Images.Placeholder,
 			ClipsToBounds = true,
 			Layer =
 			{
@@ -87,34 +82,20 @@ public class MediaContainerViewCell : UICollectionViewCell
 	
 	async Task SetImageAsync(
 		string? url,
-		ImageCache imageCache,
 		int index)
 	{
-		if (url is null)
-		{
-			imageView.Image = PlaceholderImage;
-			return;
-		}
-		if (CreatedUIImageCache.TryGetValue(url, out UIImage? cachedImage))
-		{
-			imageView.Image = cachedImage;
-			return;
-		}
+		UIImage? image = await IOSApp.Images.GetASync(url);
 		
-		string? filePath = await imageCache.GetAsync(url);
 		if (index != Tag)
 			return;
 		
-		cachedImage = filePath is null ? PlaceholderImage : UIImage.FromFile(filePath);
-		CreatedUIImageCache[url] = cachedImage;
-		Transition(imageView, 0.15, UIViewAnimationOptions.TransitionCrossDissolve, () => imageView.Image = cachedImage, null);
+		Transition(imageView, 0.15, UIViewAnimationOptions.TransitionCrossDissolve, () => imageView.Image = image, null);
 	}
 	
 	
 	public async void UpdateCell(
 		IMediaContainer mediaContainer,
 		Config config,
-		ImageCache imageCache,
 		int index)
 	{
 		Tag = index;
@@ -135,6 +116,6 @@ public class MediaContainerViewCell : UICollectionViewCell
 		};
 		
 		SetText(mediaContainer.Title, description);
-		await SetImageAsync(mediaContainer.PosterUrl, imageCache, index);
+		await SetImageAsync(mediaContainer.PosterUrl, index);
 	}
 }

@@ -16,20 +16,17 @@ public partial class HomeViewModel : ObservableObject
 	readonly INavigation navigation;
 	
 	public Config Config { get; }
-	public ImageCache ImageCache { get; }
 	public MediaLibrary MediaLibrary { get; }
 
 	public HomeViewModel(
 		ILogger<HomeViewModel> logger,
 		Config config,
-		ImageCache imageCache,
 		INavigation navigation,
 		MediaLibrary mediaLibrary)
 	{
 		this.logger = logger;
 		this.Config = config;
 		this.navigation = navigation;
-		this.ImageCache = imageCache;
 		this.MediaLibrary = mediaLibrary;
 		
 		logger.LogInformation("[HomeViewModel-.ctor] HomeViewModel has been initialized.");
@@ -76,7 +73,7 @@ public partial class HomeViewModel : ObservableObject
 		{
 			logger.LogInformation("[HomeViewmodel-ShowMediaSection] Creating new media section ViewModel");
 			ILogger<MediaSectionViewModel<TMediaContainer>> viewModelLogger = App.Provider.GetRequiredService<ILogger<MediaSectionViewModel<TMediaContainer>>>();
-			MediaSectionViewModel<TMediaContainer> viewModel = new(viewModelLogger, Config, ImageCache, navigation, MediaLibrary, sectionName, mediaContainers);
+			MediaSectionViewModel<TMediaContainer> viewModel = new(viewModelLogger, Config, navigation, MediaLibrary, sectionName, mediaContainers);
 			
 			navigation.Push(viewModel);
 		}

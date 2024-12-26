@@ -176,10 +176,10 @@ public class HomeViewController : UICollectionViewController
 		switch (sections[indexPath.Section])
 		{
 			case nameof(MediaLibrary.Movies):
-				cell.UpdateCell(viewModel.MediaLibrary.Movies[indexPath.Row], viewModel.Config, viewModel.ImageCache, indexPath.Row);
+				cell.UpdateCell(viewModel.MediaLibrary.Movies[indexPath.Row], viewModel.Config, indexPath.Row);
 				return cell;
 			case nameof(MediaLibrary.Shows):
-				cell.UpdateCell(viewModel.MediaLibrary.Shows[indexPath.Row], viewModel.Config, viewModel.ImageCache, indexPath.Row);
+				cell.UpdateCell(viewModel.MediaLibrary.Shows[indexPath.Row], viewModel.Config, indexPath.Row);
 				return cell;
 			
 			default:

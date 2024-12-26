@@ -2,22 +2,22 @@ using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 using Velura.iOS.Binding.Abstract;
 using Velura.iOS.Binding.Mappers;
+using Velura.iOS.Helpers;
 using Velura.iOS.Services;
 using Velura.iOS.Views;
+using Velura.Services;
 using Velura.Services.Abstract;
 
 namespace Velura.iOS;
 
 public sealed class IOSApp : App
 {
-	public static IReadOnlyList<PropertyBindingMapper> PropertyBindingMappers { get; private set; } = default!;
-
-	static UIWindow? mainWindow;
-	public static UIWindow MainWindow => mainWindow ??= UIApplication.SharedApplication.Delegate.GetWindow();
+	public static UIWindow MainWindow { get; } = new(UIScreen.MainScreen.Bounds);
 	
-	static MainViewController? mainViewController;
-	public static MainViewController MainViewController => mainViewController ??= Provider.GetRequiredService<MainViewController>();
-
+	public static IReadOnlyList<PropertyBindingMapper> PropertyBindingMappers { get; private set; } = default!;
+	public static MainViewController MainViewController { get; private set; } = default!;
+	public static Images Images { get; private set; } = default!;
+	
 	
 	readonly PathResolver pathResolver = new();
 	
@@ -61,5 +61,7 @@ public sealed class IOSApp : App
 			new UINumberFieldNumberMapper(),
 			new UISelectionButtonSelectedItemMapper()
 		];
+		MainViewController = Provider.GetRequiredService<MainViewController>();
+		Images = new(Provider.GetRequiredService<ImageCache>());
 	}
 }

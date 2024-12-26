@@ -16,7 +16,6 @@ public partial class MediaSectionViewModel<TMediaContainer> : ObservableObject w
 	readonly INavigation navigation;
 	
 	public Config Config { get; }
-	public ImageCache ImageCache { get; }
 	public MediaLibrary MediaLibrary { get; }
 	public string SectionName { get; }
 	public ObservableRangeCollection<TMediaContainer> MediaContainers { get; }
@@ -24,7 +23,6 @@ public partial class MediaSectionViewModel<TMediaContainer> : ObservableObject w
 	public MediaSectionViewModel(
 		ILogger<MediaSectionViewModel<TMediaContainer>> logger,
 		Config config,
-		ImageCache imageCache,
 		INavigation navigation,
 		MediaLibrary mediaLibrary,
 		string sectionName,
@@ -32,7 +30,6 @@ public partial class MediaSectionViewModel<TMediaContainer> : ObservableObject w
 	{
 		this.logger = logger;
 		this.Config = config;
-		this.ImageCache = imageCache;
 		this.navigation = navigation;
 		this.MediaLibrary = mediaLibrary;
 		this.SectionName = sectionName;

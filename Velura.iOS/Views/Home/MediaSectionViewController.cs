@@ -111,7 +111,7 @@ public class MediaSectionViewController<TMediaContainer> : UICollectionViewContr
 		NSIndexPath indexPath)
 	{
 		MediaContainerViewCell cell = (MediaContainerViewCell)collectionView.DequeueReusableCell(nameof(MediaContainerViewCell), indexPath);
-		cell.UpdateCell(viewModel.MediaContainers[indexPath.Row], viewModel.Config, viewModel.ImageCache, indexPath.Row);
+		cell.UpdateCell(viewModel.MediaContainers[indexPath.Row], viewModel.Config, indexPath.Row);
 		return cell;
 	}
 	
