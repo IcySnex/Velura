@@ -23,9 +23,7 @@ public class MainViewController : UITabBarController, IUITabBarControllerDelegat
 		// Properties
 		Title = "Velura";
 		Delegate = this;
-		
-		if (UIDevice.CurrentDevice.CheckSystemVersion(18, 0))
-			Mode = UITabBarControllerMode.TabSidebar;
+		Mode = UITabBarControllerMode.TabSidebar;
 
 		themeManager.SetMode(config.Appearance.Theme);
 		

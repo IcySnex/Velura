@@ -13,7 +13,8 @@ public class ConcealingTitleView : UIView
 		label = new()
 		{
 			Text = text,
-			Font = UIFont.SystemFontOfSize(17, UIFontWeight.Semibold),
+			Font = UIFontMetrics.DefaultMetrics.GetScaledFont(UIFont.SystemFontOfSize(17, UIFontWeight.Semibold)),
+			AdjustsFontForContentSizeCategory = true,
 			TextAlignment = UITextAlignment.Center,
 			Lines = 1
 		};

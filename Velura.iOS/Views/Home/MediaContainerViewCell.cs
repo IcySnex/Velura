@@ -12,11 +12,12 @@ namespace Velura.iOS.Views.Home;
 
 public class MediaContainerViewCell : UICollectionViewCell
 {
+	public IMediaContainer? MediaContainer { get; private set; }
 	
 	readonly UIImageView imageView;
 	readonly UILabel textLabel;
 	readonly UILabel secondaryTextLabel;
-	
+
 	public MediaContainerViewCell(
 		NativeHandle handle) : base(handle)
 	{
@@ -98,6 +99,7 @@ public class MediaContainerViewCell : UICollectionViewCell
 		Config config,
 		int index)
 	{
+		MediaContainer = mediaContainer;
 		Tag = index;
 		
 		textLabel.Lines = config.Home.AllowLineWrap ? 2 : 1;

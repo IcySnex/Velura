@@ -2,6 +2,7 @@ using System.Collections.Specialized;
 using System.Reflection;
 using System.Windows.Input;
 using CoreAnimation;
+using CoreImage;
 
 namespace Velura.iOS.Helpers;
 
@@ -261,4 +262,41 @@ public static class Extensions
 			UIImage imageToDraw = tintColor is null ? image : image.ApplyTintColor(tintColor, UIImageRenderingMode.AlwaysTemplate);
 			imageToDraw.Draw(new CGRect((size.Width - newWidth) / 2, (size.Height - newHeight) / 2, newWidth, newHeight));
 		});
+
+	public static UIColor? GetAverageColor(
+		this UIImage image)
+	{
+		CIImage inputImage = CIImage.FromCGImage(image.CGImage!);
+		if (inputImage == null)
+			return null;
+		
+		CIFilter? filter = CIFilter.FromName("CIAreaAverage");
+		if (filter is null)
+			return UIColor.Black;
+		
+		CGRect extent = inputImage.Extent;
+		CIVector extentVector = new(extent.X, extent.Y, extent.Width, extent.Height);
+		
+		filter.SetValueForKey(inputImage, CIFilterInputKey.Image);
+		filter.SetValueForKey(extentVector, CIFilterInputKey.Extent);
+		
+		CIImage? outputImage = filter.OutputImage;
+		if (outputImage is null)
+			return null;
+
+		CIContext context = CIContext.FromOptions(new()
+		{
+			WorkingColorSpace = CGColorSpace.CreateDeviceRGB()
+		});
+		byte[] bitmap = new byte[4];
+
+		unsafe
+		{
+			fixed (byte* bitmapPtr = bitmap)
+				context.RenderToBitmap(outputImage, (IntPtr)bitmapPtr, 4, new(0, 0, 1, 1), (int)CIFormat.kRGBA8, null);
+		}
+		
+		return new(bitmap[0] / 255f, bitmap[1] / 255f, bitmap[2] / 255f, bitmap[3] / 255f);
+
+	}
 }
