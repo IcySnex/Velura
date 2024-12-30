@@ -10,11 +10,13 @@ public class MovieInfoViewController : UIViewController, IUIScrollViewDelegate
 {
 	readonly MovieInfoViewModel viewModel;
 
+	UIScrollView scrollView = default!;
 	UIView topContainerView = default!;
 	CAGradientLayer topContainerGradient = default!;
 	
-	UIView? navigationBarBackgroundView;
-	readonly UILabel navigationBarTitleView;
+	UINavigationBar navigationBar = default!;
+	UIView navigationBarBackgroundView = default!;
+	float navigationBarAlpha = 0;
 
 	public MovieInfoViewController(
 		MovieInfoViewModel viewModel)
@@ -22,32 +24,30 @@ public class MovieInfoViewController : UIViewController, IUIScrollViewDelegate
 		this.viewModel = viewModel;
 
 		// Properties
+		Title = viewModel.Movie.Title;
 		View!.BackgroundColor = UIColor.SystemGroupedBackground;
 		NavigationItem.LargeTitleDisplayMode = UINavigationItemLargeTitleDisplayMode.Never;
-
-		// Title
-		navigationBarTitleView =  new()
-		{
-			Alpha = 0,
-			Text = viewModel.Movie.Title,
-			Font = UIFontMetrics.DefaultMetrics.GetScaledFont(UIFont.SystemFontOfSize(17, UIFontWeight.Semibold)),
-			AdjustsFontForContentSizeCategory = true,
-			TextAlignment = UITextAlignment.Center,
-			Lines = 1
-		};
-		
-		CGSize labelSize = navigationBarTitleView.SizeThatFits(new(float.MaxValue, 44));
-		navigationBarTitleView.Frame = new(0, 0, labelSize.Width, 44);
-		
-		NavigationItem.TitleView = navigationBarTitleView;
 		
 		// Transition
 		PreferredTransition = UIViewControllerTransition.Zoom(null, context =>
 		{
 			UICollectionViewController sourceController = (UICollectionViewController)context.SourceViewController;
 			MovieInfoViewController thisController = (MovieInfoViewController)context.ZoomedViewController;
+			
+			if (thisController.State == 2)
+			{
+				navigationBar.TitleTextAttributes = default!;
+				navigationBarBackgroundView.Alpha = 1;
 
-			IOSApp.MainViewController.SetTabBarHidden(!thisController.WillDisappear, true);
+				thisController.State = 1;
+			}
+			else
+			{
+				navigationBar.TitleTextAttributes = new() { ForegroundColor = UIColor.Label.ColorWithAlpha(navigationBarAlpha) };
+			}
+		
+			if (UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Phone)
+				IOSApp.MainViewController.SetTabBarHidden(thisController.State == 0, true);
 				
 			UICollectionViewCell? cell = sourceController.CollectionView.VisibleCells.FirstOrDefault(
 				c => c is MediaContainerViewCell mc && mc.MediaContainer == viewModel.Movie);
@@ -59,12 +59,17 @@ public class MovieInfoViewController : UIViewController, IUIScrollViewDelegate
 	{
 		base.ViewDidLoad();
 
+		// Navigation Bar
+		UINavigationController navigationController = (UINavigationController)IOSApp.MainViewController.SelectedViewController!;
+		navigationBar = navigationController.NavigationBar;
+		navigationBarBackgroundView = navigationBar.Subviews[0];
+
 		// Images
 		UIImage? posterImage = await IOSApp.Images.GetASync(viewModel.Movie.PosterUrl);
 		UIColor averageColor = posterImage?.GetAverageColor() ?? UIColor.Black;
 
 		// UI: Scroll
-		UIScrollView scrollView = new()
+		scrollView = new()
 		{
 			ContentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentBehavior.Never,
 			Delegate = this,
@@ -218,46 +223,54 @@ public class MovieInfoViewController : UIViewController, IUIScrollViewDelegate
 		);
 	}
 
-
-	public bool WillDisappear { get; set; } = false;
 	
-	public override void ViewWillAppear(
+	public byte State { get; set; } = 0; // You may ask who did this awful code? Let me answer your question: GOOOD DID !!!!
+	
+	public override void ViewDidAppear(
 		bool animated)
 	{
-		WillDisappear = false;
-		base.ViewWillAppear(animated);
+		navigationBar.TitleTextAttributes = new() { ForegroundColor = UIColor.Label.ColorWithAlpha(navigationBarAlpha) };
+		navigationBarBackgroundView.Alpha = navigationBarAlpha;
+
+		State = 2;
+		base.ViewDidAppear(animated);
 	}
 	
-	public override void ViewWillDisappear(
+	public override void ViewDidDisappear(
 		bool animated)
 	{
-		if (navigationBarBackgroundView is not null)
-			navigationBarBackgroundView.Alpha = 1;
-		
-		WillDisappear = true;
-		base.ViewWillDisappear(animated);
+		navigationBar.TitleTextAttributes = default!;
+		navigationBarBackgroundView.Alpha = 1;
+
+		State = 0;
+		base.ViewDidDisappear(animated);
 	}
 
-	
+
 	public override void ViewDidLayoutSubviews()
 	{
 		base.ViewDidLayoutSubviews();
 
 		topContainerGradient.Frame = View!.Bounds;
 	}
-	
+
+
 
 	public void Scrolled(
 		UIScrollView scrollView)
 	{
-		int topBarHeight = (int)NavigationController!.NavigationBar.Frame.Height + (int)(View!.Window.WindowScene?.StatusBarManager?.StatusBarFrame.Height ?? 0);
-		float value = (float)Math.Clamp((scrollView.ContentOffset.Y - View!.Bounds.Height / 2) / (View!.Bounds.Height - topBarHeight * 2.25), 0, 1) * 2;
-		float delayedValue = (float)Math.Clamp((value - 0.9) / 0.1, 0, 1);
+		if (State != 2)
+			return;
+		
+		float barHeight = (float)navigationBar.Frame.Height + (float)(IOSApp.MainWindow.WindowScene?.StatusBarManager?.StatusBarFrame.Height ?? 0);
+		float viewHeight = (float)IOSApp.MainWindow.Bounds.Height - barHeight;
+		float scrollOffset = (float)scrollView.ContentOffset.Y;
+		
+		float topContainerAlpha = Math.Clamp((scrollOffset - viewHeight / 2) * 2.5f / viewHeight, 0, 1);
+		navigationBarAlpha = Math.Clamp((scrollOffset - viewHeight + barHeight) * 7.5f / (viewHeight - barHeight), 0, 1);
 
-		topContainerView.Alpha = 1 - value;
-
-		navigationBarBackgroundView ??= NavigationController!.NavigationBar.Subviews[0];
-		navigationBarBackgroundView.Alpha = delayedValue;
-		navigationBarTitleView.Alpha = delayedValue; // WTF WHY NOT ALWAYS ZERO?=???
+		topContainerView.Alpha = 1 - topContainerAlpha;
+		navigationBar.TitleTextAttributes = new() { ForegroundColor = UIColor.Label.ColorWithAlpha(navigationBarAlpha)};
+		navigationBarBackgroundView.Alpha = navigationBarAlpha;
 	}
 }

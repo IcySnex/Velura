@@ -3,6 +3,7 @@ using System.ComponentModel;
 using Microsoft.Extensions.DependencyInjection;
 using Velura.Helpers;
 using Velura.iOS.Helpers;
+using Velura.iOS.Services;
 using Velura.Models;
 using Velura.Services;
 using Velura.ViewModels;
@@ -65,6 +66,11 @@ public class HomeViewController : UICollectionViewController
 		viewModel.MediaLibrary.Movies.CollectionChanged += OnMediaLibraryMoviesChanged;
 		viewModel.MediaLibrary.Shows.CollectionChanged += OnMediaLibraryShowsChanged;
 		viewModel.Config.Home.PropertyChanged += OnConfigHomePropertyChanged;
+
+		if (NavigationController != null)
+		{
+			var gs = NavigationController.NavigationBar.Subviews[0];
+		}
 	}
 
 	
