@@ -13,7 +13,8 @@ namespace Velura.iOS;
 public sealed class IOSApp : App
 {
 	public static UIWindow MainWindow { get; } = new(UIScreen.MainScreen.Bounds);
-	
+	public static bool IsIPad { get; } = UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Pad;
+
 	public static IReadOnlyList<PropertyBindingMapper> PropertyBindingMappers { get; private set; } = default!;
 	public static MainViewController MainViewController { get; private set; } = default!;
 	public static Images Images { get; private set; } = default!;

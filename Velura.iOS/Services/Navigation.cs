@@ -56,7 +56,15 @@ public class Navigation : INavigation
 				
 			_ when viewModelType == typeof(AboutViewModel) => new AboutViewController(GetViewModel<AboutViewModel>(viewModel)).WrapInNavController(),
 				
-			_ when viewModelType == typeof(MovieInfoViewModel) => new MovieInfoViewController(GetViewModel<MovieInfoViewModel>(viewModel)),
+			_ when viewModelType == typeof(MovieInfoViewModel) => new MovieInfoViewController(GetViewModel<MovieInfoViewModel>(viewModel)).WrapInNavController(preferredTransition: UIViewControllerTransition.Zoom(null, _ =>
+				{
+					UINavigationController? navigationController = (UINavigationController?)IOSApp.MainViewController.SelectedViewController;
+					UICollectionViewController? sourceController = (UICollectionViewController?)navigationController?.ViewControllers![^1];
+			
+					UICollectionViewCell? cell = sourceController?.CollectionView.VisibleCells.FirstOrDefault(
+						c => c is MediaContainerViewCell mc && mc.MediaContainer == (viewModel as MovieInfoViewModel)!.Movie);
+					return cell?.ContentView.Subviews[0]!;
+				})),
 				
 			_ when viewModelType == typeof(MediaSectionViewModel<Movie>) => new MediaSectionViewController<Movie>(GetViewModel<MediaSectionViewModel<Movie>>(viewModel)),
 			_ when viewModelType == typeof(MediaSectionViewModel<Show>) => new MediaSectionViewController<Show>(GetViewModel<MediaSectionViewModel<Show>>(viewModel)),

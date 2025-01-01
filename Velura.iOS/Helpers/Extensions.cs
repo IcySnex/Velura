@@ -131,13 +131,15 @@ public static class Extensions
 	
 	public static UINavigationController WrapInNavController(
 		this UIViewController viewController,
-		bool preferLargeTitles = false) =>
+		bool preferLargeTitles = false,
+		UIViewControllerTransition? preferredTransition = null) =>
 		new(viewController)
 		{
 			NavigationBar =
 			{
 				PrefersLargeTitles = preferLargeTitles
-			}
+			},
+			PreferredTransition = preferredTransition
 		};
 
 

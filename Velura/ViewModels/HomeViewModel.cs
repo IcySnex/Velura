@@ -39,9 +39,9 @@ public partial class HomeViewModel : ObservableObject
 	{
 		logger.LogInformation("[HomeViewmodel-ShowMovieInfo] Creating new movie info ViewModel");
 		ILogger<MovieInfoViewModel> viewModelLogger = App.Provider.GetRequiredService<ILogger<MovieInfoViewModel>>();
-		MovieInfoViewModel viewModel = new(viewModelLogger, movie);
+		MovieInfoViewModel viewModel = new(viewModelLogger, navigation, movie);
 			
-		navigation.Push(viewModel, false);
+		navigation.Present(viewModel, false);
 	}
 
 	[RelayCommand]

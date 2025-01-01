@@ -2,74 +2,57 @@ using Cirrious.FluentLayouts.Touch;
 using CoreAnimation;
 using Velura.iOS.Helpers;
 using Velura.iOS.Views.Home;
+using Velura.Models;
 using Velura.ViewModels;
 
 namespace Velura.iOS.Views.Info;
 
-public class MovieInfoViewController : UIViewController, IUIScrollViewDelegate
+public class MovieInfoViewController(
+	MovieInfoViewModel viewModel) : UIViewController, IUIScrollViewDelegate
 {
-	readonly MovieInfoViewModel viewModel;
+	readonly MovieInfoViewModel viewModel = viewModel;
 
-	UIScrollView scrollView = default!;
 	UIView topContainerView = default!;
 	CAGradientLayer topContainerGradient = default!;
-	
-	UINavigationBar navigationBar = default!;
-	UIView navigationBarBackgroundView = default!;
+
+	UIButton backFloatingButton = default!;
 	float navigationBarAlpha = 0;
 
-	public MovieInfoViewController(
-		MovieInfoViewModel viewModel)
+	public override async void ViewDidLoad()
 	{
-		this.viewModel = viewModel;
+		base.ViewDidLoad();
 
 		// Properties
 		Title = viewModel.Movie.Title;
 		View!.BackgroundColor = UIColor.SystemGroupedBackground;
 		NavigationItem.LargeTitleDisplayMode = UINavigationItemLargeTitleDisplayMode.Never;
 		
-		// Transition
-		PreferredTransition = UIViewControllerTransition.Zoom(null, context =>
-		{
-			UICollectionViewController sourceController = (UICollectionViewController)context.SourceViewController;
-			MovieInfoViewController thisController = (MovieInfoViewController)context.ZoomedViewController;
-			
-			if (thisController.State == 2)
-			{
-				navigationBar.TitleTextAttributes = default!;
-				navigationBarBackgroundView.Alpha = 1;
-
-				thisController.State = 1;
-			}
-			else
-			{
-				navigationBar.TitleTextAttributes = new() { ForegroundColor = UIColor.Label.ColorWithAlpha(navigationBarAlpha) };
-			}
+		UIImage? backBarImage = UIImage.GetSystemImage("chevron.backward")?.ApplyConfiguration(UIImageSymbolConfiguration.Create(UIFont.SystemFontOfSize(18, UIFontWeight.Semibold)));
+		UIBarButtonItem backBarItem = new(backBarImage, UIBarButtonItemStyle.Plain, viewModel.CloseCommand.ToEvent());
+		backBarItem.ImageInsets = new(0, -8, 0, 0);
+		backBarItem.TintColor = UIColor.Clear;
+		NavigationItem.LeftBarButtonItem = backBarItem;
 		
-			if (UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Phone)
-				IOSApp.MainViewController.SetTabBarHidden(thisController.State == 0, true);
-				
-			UICollectionViewCell? cell = sourceController.CollectionView.VisibleCells.FirstOrDefault(
-				c => c is MediaContainerViewCell mc && mc.MediaContainer == viewModel.Movie);
-			return cell?.ContentView.Subviews[0]!;
-		});
-	}
-
-	public override async void ViewDidLoad()
-	{
-		base.ViewDidLoad();
-
 		// Navigation Bar
-		UINavigationController navigationController = (UINavigationController)IOSApp.MainViewController.SelectedViewController!;
-		navigationBar = navigationController.NavigationBar;
-		navigationBarBackgroundView = navigationBar.Subviews[0];
-
-		// Images
-		UIImage? posterImage = await IOSApp.Images.GetASync(viewModel.Movie.PosterUrl);
-		UIColor averageColor = posterImage?.GetAverageColor() ?? UIColor.Black;
+		NavigationController!.NavigationBar.ScrollEdgeAppearance = new()
+		{
+			BackgroundColor = null,
+			ShadowColor = null,
+			BackgroundEffect = null,
+			TitleTextAttributes = new() { ForegroundColor = UIColor.Clear }
+		};
+		
+		backFloatingButton = UIButtonConfiguration.TintedButtonConfiguration.CreateButton(
+			title: "",
+			image: UIImage.GetSystemImage("chevron.backward"),
+			buttonSize: UIButtonConfigurationSize.Medium,
+			cornerStyle: UIButtonConfigurationCornerStyle.Capsule,
+			onPress: viewModel.CloseCommand.ToUIAction());
+		backFloatingButton.Frame = new(12, IOSApp.IsIPad ? 33 : 59, 32, 32);
+		View!.AddSubview(backFloatingButton);
 
 		// UI: Scroll
-		scrollView = new()
+		UIScrollView scrollView = new()
 		{
 			ContentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentBehavior.Never,
 			Delegate = this,
@@ -80,10 +63,13 @@ public class MovieInfoViewController : UIViewController, IUIScrollViewDelegate
 			TranslatesAutoresizingMaskIntoConstraints = false
 		};
 
-		View!.AddSubview(scrollView);
+		View!.InsertSubview(scrollView, 0);
 		scrollView.AddSubview(contentView);
-
+		
 		// UI: Top Container
+		UIImage? posterImage = await IOSApp.Images.GetASync(viewModel.Movie.PosterUrl);
+		UIColor averageColor = posterImage?.GetAverageColor() ?? UIColor.Black;
+		
 		topContainerView = new()
 		{
 			Layer =
@@ -178,10 +164,11 @@ public class MovieInfoViewController : UIViewController, IUIScrollViewDelegate
 
 		contentView.AddSubviews(topContainerView, anotherOneLabel);
 		
+		
 		// Layout
 		contentView.SubviewsDoNotTranslateAutoresizingMaskIntoConstraints();
 		topContainerView.SubviewsDoNotTranslateAutoresizingMaskIntoConstraints();
-		View.AddConstraints(
+		View.AddConstraints(			
 			// Scroll
 			scrollView.AtLeftOfSafeArea(View),
 			scrollView.AtRightOfSafeArea(View),
@@ -223,27 +210,14 @@ public class MovieInfoViewController : UIViewController, IUIScrollViewDelegate
 		);
 	}
 
-	
-	public byte State { get; set; } = 0; // You may ask who did this awful code? Let me answer your question: GOOOD DID !!!!
-	
 	public override void ViewDidAppear(
 		bool animated)
 	{
-		navigationBar.TitleTextAttributes = new() { ForegroundColor = UIColor.Label.ColorWithAlpha(navigationBarAlpha) };
-		navigationBarBackgroundView.Alpha = navigationBarAlpha;
-
-		State = 2;
 		base.ViewDidAppear(animated);
-	}
-	
-	public override void ViewDidDisappear(
-		bool animated)
-	{
-		navigationBar.TitleTextAttributes = default!;
-		navigationBarBackgroundView.Alpha = 1;
 
-		State = 0;
-		base.ViewDidDisappear(animated);
+		NavigationController!.NavigationBar.Alpha = navigationBarAlpha;
+		NavigationController!.NavigationBar.ScrollEdgeAppearance = default!;
+		NavigationItem.LeftBarButtonItem!.TintColor = default!;
 	}
 
 
@@ -259,18 +233,16 @@ public class MovieInfoViewController : UIViewController, IUIScrollViewDelegate
 	public void Scrolled(
 		UIScrollView scrollView)
 	{
-		if (State != 2)
-			return;
-		
-		float barHeight = (float)navigationBar.Frame.Height + (float)(IOSApp.MainWindow.WindowScene?.StatusBarManager?.StatusBarFrame.Height ?? 0);
+		float barHeight = (float)NavigationController!.NavigationBar.Frame.Height + (float)(IOSApp.MainWindow.WindowScene?.StatusBarManager?.StatusBarFrame.Height ?? 0);
 		float viewHeight = (float)IOSApp.MainWindow.Bounds.Height - barHeight;
 		float scrollOffset = (float)scrollView.ContentOffset.Y;
 		
-		float topContainerAlpha = Math.Clamp((scrollOffset - viewHeight / 2) * 2.5f / viewHeight, 0, 1);
+		float topContainerAlpha = Math.Clamp((scrollOffset - (viewHeight - barHeight) / 1.5f) * 2.5f / viewHeight, 0, 1);
 		navigationBarAlpha = Math.Clamp((scrollOffset - viewHeight + barHeight) * 7.5f / (viewHeight - barHeight), 0, 1);
-
+		
 		topContainerView.Alpha = 1 - topContainerAlpha;
-		navigationBar.TitleTextAttributes = new() { ForegroundColor = UIColor.Label.ColorWithAlpha(navigationBarAlpha)};
-		navigationBarBackgroundView.Alpha = navigationBarAlpha;
+		backFloatingButton.Frame = new(Math.Max(12 - navigationBarAlpha * 12, 6), backFloatingButton.Frame.Y, backFloatingButton.Frame.Width, backFloatingButton.Frame.Height);
+		
+		NavigationController!.NavigationBar.Alpha = navigationBarAlpha;
 	}
 }

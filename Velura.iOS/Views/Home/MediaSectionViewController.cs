@@ -75,7 +75,7 @@ public class MediaSectionViewController<TMediaContainer> : UICollectionViewContr
 		viewModel.Config.Home.PropertyChanged += OnConfigHomePropertyChanged;
 	}
 
-	
+
 	void OnMediaContainersChanged(
 		object? sender,
 		NotifyCollectionChangedEventArgs e) =>

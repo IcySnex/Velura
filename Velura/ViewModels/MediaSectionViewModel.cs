@@ -48,9 +48,9 @@ public partial class MediaSectionViewModel<TMediaContainer> : ObservableObject w
 			case Movie movie:
 				logger.LogInformation("[MediaSectionViewModel-ShowMediaContainerInfo] Creating new movie info ViewModel");
 				ILogger<MovieInfoViewModel> movieViewModelLogger = App.Provider.GetRequiredService<ILogger<MovieInfoViewModel>>();
-				MovieInfoViewModel movieViewModel = new(movieViewModelLogger, movie);
+				MovieInfoViewModel movieViewModel = new(movieViewModelLogger, navigation, movie);
 				
-				navigation.Push(movieViewModel, false);
+				navigation.Present(movieViewModel, false);
 				break;
 			case Show show:
 				logger.LogInformation("[MediaSectionViewModel-ShowMediaContainerInfo] Creating new show info ViewModel");
