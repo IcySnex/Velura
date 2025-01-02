@@ -16,6 +16,8 @@ public class MovieInfoViewController(
 	CAGradientLayer topContainerGradient = default!;
 
 	UIButton backFloatingButton = default!;
+	float barHeight = 0;
+	float viewHeight = 0;
 	float navigationBarAlpha = 0;
 
 	public override async void ViewDidLoad()
@@ -34,6 +36,9 @@ public class MovieInfoViewController(
 		NavigationItem.LeftBarButtonItem = backBarItem;
 		
 		// Navigation Bar
+		barHeight = (float)NavigationController!.NavigationBar.Frame.Height + (float)(IOSApp.MainWindow.WindowScene?.StatusBarManager?.StatusBarFrame.Height ?? 0);
+		viewHeight = (float)View!.Frame.Height - barHeight;
+		
 		NavigationController!.NavigationBar.ScrollEdgeAppearance = new()
 		{
 			BackgroundColor = null,
@@ -48,7 +53,7 @@ public class MovieInfoViewController(
 			buttonSize: UIButtonConfigurationSize.Medium,
 			cornerStyle: UIButtonConfigurationCornerStyle.Capsule,
 			onPress: viewModel.CloseCommand.ToUIAction());
-		backFloatingButton.Frame = new(12, IOSApp.IsIPad ? 33 : 59, 32, 32);
+		backFloatingButton.Frame = new(12, IOSApp.IsIPad ? 33 : barHeight - 38, 32, 32);
 		View!.AddSubview(backFloatingButton);
 
 		// UI: Scroll
@@ -226,15 +231,15 @@ public class MovieInfoViewController(
 		base.ViewDidLayoutSubviews();
 
 		topContainerGradient.Frame = View!.Bounds;
+		
+		barHeight = (float)NavigationController!.NavigationBar.Frame.Height + (float)(IOSApp.MainWindow.WindowScene?.StatusBarManager?.StatusBarFrame.Height ?? 0);
+		viewHeight = (float)View!.Frame.Height - barHeight;
 	}
-
 
 
 	public void Scrolled(
 		UIScrollView scrollView)
 	{
-		float barHeight = (float)NavigationController!.NavigationBar.Frame.Height + (float)(IOSApp.MainWindow.WindowScene?.StatusBarManager?.StatusBarFrame.Height ?? 0);
-		float viewHeight = (float)IOSApp.MainWindow.Bounds.Height - barHeight;
 		float scrollOffset = (float)scrollView.ContentOffset.Y;
 		
 		float topContainerAlpha = Math.Clamp((scrollOffset - (viewHeight - barHeight) / 1.5f) * 2.5f / viewHeight, 0, 1);
