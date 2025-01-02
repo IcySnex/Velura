@@ -88,6 +88,8 @@ public static class Extensions
 		UIImage? image = null,
 		float imagePadding = 4f,
 		NSDirectionalRectEdge imagePlacement = NSDirectionalRectEdge.Trailing,
+		UIColor? foregroundColor = null,
+		UIColor? backgroundColor = null,
 		UIAction? onPress = null)
 	{
 		configuration.Title = title;
@@ -97,6 +99,10 @@ public static class Extensions
 		configuration.Image = image;
 		configuration.ImagePadding = imagePadding;
 		configuration.ImagePlacement = imagePlacement;
+		if (foregroundColor is not null)
+			configuration.BaseForegroundColor = foregroundColor;
+		if (backgroundColor is not null)
+			configuration.Background.BackgroundColor = backgroundColor;
 		
 		return UIButton.GetButton(configuration, onPress);
 	}
@@ -110,8 +116,10 @@ public static class Extensions
 		UIImage? image = null,
 		float imagePadding = 4f,
 		NSDirectionalRectEdge imagePlacement = NSDirectionalRectEdge.Trailing,
+		UIColor? foregroundColor = null,
+		UIColor? backgroundColor = null,
 		UIActionHandler? onPress = null) =>
-		configuration.CreateButton(title, subTitle, buttonSize, cornerStyle, image, imagePadding, imagePlacement, onPress is null ? null : UIAction.Create(onPress));
+		configuration.CreateButton(title, subTitle, buttonSize, cornerStyle, image, imagePadding, imagePlacement, foregroundColor, backgroundColor, onPress is null ? null : UIAction.Create(onPress));
 
 
 	public static UITargetedPreview? CreateTargetedPreview(
@@ -204,6 +212,65 @@ public static class Extensions
 		byte a = hex.Length == 9 ? Convert.ToByte(hex[7..9], 16) : (byte)255;
 		
 		return UIColor.FromRGBA(r, g, b, a);
+	}
+
+	public static UIColor Invert(
+		this UIColor color)
+	{
+		color.GetRGBA(out nfloat red, out nfloat green, out nfloat blue, out nfloat alpha);
+
+		red = 1 - red;
+		green = 1 - green;
+		blue = 1 - blue;
+
+		return new(red, green, blue, alpha);
+	}
+	
+	public static UIColor ColorWithLightness(
+		this UIColor color,
+		float lightnessMultiplier)
+	{
+		color.GetRGBA(out nfloat red, out nfloat green, out nfloat blue, out nfloat alpha);
+		
+		red = Math.Clamp((float)red * lightnessMultiplier, 0, 1);
+		green = Math.Clamp((float)green * lightnessMultiplier, 0, 1);
+		blue = Math.Clamp((float)blue * lightnessMultiplier, 0, 1);
+
+		return new(red, green, blue, alpha);
+	}
+
+	public static double CalculateLuminance(
+		this UIColor color)
+	{
+		color.GetRGBA(out nfloat red, out nfloat green, out nfloat blue, out nfloat _);
+		
+		double redRatio = red <= 0.03928f ? red / 12.92f : Math.Pow((red + 0.055f) / 1.055f, 2.4f);
+		double greenRatio = green <= 0.03928f ? green / 12.92f : Math.Pow((green + 0.055f) / 1.055f, 2.4f);
+		double blueRatio = blue <= 0.03928f ? blue / 12.92f : Math.Pow((blue + 0.055f) / 1.055f, 2.4f);
+		
+		return 0.2126 * redRatio + 0.7152 * greenRatio + 0.0722 * blueRatio;
+	}
+
+	public static double CalculateContrast(
+		this UIColor color,
+		UIColor otherColor)
+	{
+		double luminance1 = color.CalculateLuminance();
+		double luminance2 = otherColor.CalculateLuminance();
+		
+		if (luminance1 < luminance2)
+			(luminance1, luminance2) = (luminance2, luminance1);
+		
+		return (luminance1 + 0.05) / (luminance2 + 0.05);
+	}
+
+	public static UIColor GetForegroundColor(
+		this UIColor backgroundColor)
+	{
+		UIColor white = UIColor.White;
+		UIColor black = UIColor.Black;
+		
+		return backgroundColor.CalculateContrast(white) >= backgroundColor.CalculateContrast(black) ? white : black;
 	}
 	
 	

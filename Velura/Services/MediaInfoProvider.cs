@@ -1,9 +1,10 @@
 using System.Globalization;
+using DustyPig.REST;
+using DustyPig.TMDB.Models.Common;
+using DustyPig.TMDB.Models.Genres;
 using Microsoft.Extensions.Logging;
-using TMDbLib.Client;
-using TMDbLib.Objects.General;
-using TMDbLib.Objects.Search;
 using Velura.Helpers;
+using Client = DustyPig.TMDB.Client;
 
 namespace Velura.Services;
 
@@ -17,7 +18,7 @@ public sealed class MediaInfoProvider
 	
 	readonly ILogger<MediaInfoProvider> logger;
 
-	readonly TMDbClient client = new("d8321e5f175262c6a054a024df87c763");
+	readonly Client client = new(Client.AuthTypes.APIKey, "d8321e5f175262c6a054a024df87c763");
 
 	public MediaInfoProvider(
 		ILogger<MediaInfoProvider> logger)
@@ -38,25 +39,35 @@ public sealed class MediaInfoProvider
 			return value;
 		
 		logger.LogInformation("[MediaInfoProvider-GetGenreNameAsync] Getting genre name by id: {id}...", id);
-		
-		foreach (Genre genre in await client.GetMovieGenresAsync(CultureInfo.CurrentCulture.Name, cancellationToken))
+
+		Response<GenreList> movieGenres = await client.Endpoints.Genres.GetMoviesAsync(CultureInfo.CurrentCulture.Name, cancellationToken);
+		movieGenres.ThrowIfError();
+		foreach (CommonName genre in movieGenres.Data.Genres)
 			genreCache[genre.Id] = genre.Name;
-		foreach (Genre genre in await client.GetTvGenresAsync(CultureInfo.CurrentCulture.Name, cancellationToken))
+		
+		Response<GenreList> tvGenres = await client.Endpoints.Genres.GetTvSeriesAsync(CultureInfo.CurrentCulture.Name, cancellationToken);
+		tvGenres.ThrowIfError();
+		foreach (CommonName genre in tvGenres.Data.Genres)
 			genreCache[genre.Id] = genre.Name;
 
 		return genreCache.GetValueOrDefault(id, "Unknown");
 	}
 	
 	
-	public async Task<SearchMovie> SearchMovieAsync(
+	public async Task<CommonMovie> SearchMovieAsync(
 		string query,
 		CancellationToken cancellationToken = default)
 	{
 		logger.LogInformation("[MediaInfoProvider-SearchMovieAsync] Searching for movies: {query}...", query);
 		
-		SearchContainer<SearchMovie> results = await client.SearchMovieAsync(query, CultureInfo.CurrentCulture.Name, cancellationToken: cancellationToken);
-		results.Results.ThrowIfEmpty($"No movies found for query: {query}.", logger, "MediaInfoProvider-SearchMovieAsync");
+		Response<PagedResult<CommonMovie>> results = await client.Endpoints.Search.MoviesAsync(
+			query,
+			language: CultureInfo.CurrentCulture.Name,
+			cancellationToken: cancellationToken);
 		
-		return results.Results[0];
+		results.ThrowIfError();
+		results.Data.Results.ThrowIfEmpty($"No movies found for query: {query}.", logger, "MediaInfoProvider-SearchMovieAsync");
+		
+		return results.Data.Results[0];
 	}
 }

@@ -10,5 +10,7 @@ public interface IMediaContainer
 	
 	public string? PosterUrl { get; }
 
+	public string? BackdropUrl { get; }
+
 	DateTime? ReleaseDate { get; }
 }

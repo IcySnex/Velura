@@ -16,10 +16,11 @@ public class Images(
 
 
 	public async Task<UIImage?> GetASync(
-		string? url)
+		string? url,
+		bool returnPlaceholder = true)
 	{
 		if (url is null)
-			return Placeholder;
+			return returnPlaceholder ? Placeholder: null;
 		if (created.TryGetValue(url, out UIImage? cachedImage))
 			return cachedImage;
 		
