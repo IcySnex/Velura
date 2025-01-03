@@ -18,6 +18,8 @@ public class MovieInfoViewController(
 	
 	UIView fadeInView = default!;
 	CAGradientLayer fadeInGradient = default!;
+	
+	UIScrollView scrollView = default!;
 
 	UIButton backFloatingButton = default!;
 	float barHeight = 0;
@@ -70,10 +72,9 @@ public class MovieInfoViewController(
 		View!.AddSubview(backFloatingButton);
 
 		// UI: Scroll
-		UIScrollView scrollView = new()
+		scrollView = new()
 		{
 			ContentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentBehavior.Never,
-			Delegate = this,
 			TranslatesAutoresizingMaskIntoConstraints = false
 		};
 		UIView contentView = new()
@@ -279,6 +280,9 @@ public class MovieInfoViewController(
 	public override void ViewDidLayoutSubviews()
 	{
 		base.ViewDidLayoutSubviews();
+		
+		barHeight = (float)NavigationController!.NavigationBar.Frame.Height + (float)(IOSApp.MainWindow.WindowScene?.StatusBarManager?.StatusBarFrame.Height ?? 0);
+		viewHeight = (float)View!.Frame.Height - barHeight;
 
 		if (topContainerGradient is not null)
 			topContainerGradient.Frame = View!.Frame;
@@ -286,8 +290,8 @@ public class MovieInfoViewController(
 		if (fadeInGradient is not null)
 			fadeInGradient.Frame = new(View!.Frame.X, View!.Frame.Y, View!.Frame.Width, barHeight);
 		
-		barHeight = (float)NavigationController!.NavigationBar.Frame.Height + (float)(IOSApp.MainWindow.WindowScene?.StatusBarManager?.StatusBarFrame.Height ?? 0);
-		viewHeight = (float)View!.Frame.Height - barHeight;
+		if (scrollView is not null)
+			Scrolled(scrollView);
 	}
 
 
@@ -305,14 +309,7 @@ public class MovieInfoViewController(
 		NavigationController!.NavigationBar.Alpha = navigationBarAlpha;
 		backFloatingButton.Alpha = 1 - navigationBarAlpha;
 
-		if (scrollOffset < 0)
-		{
-			backdropViewHeightConstraint.Constant = View!.Frame.Height * 0.45f - scrollOffset;
-			backdropViewTopConstraint.Constant = scrollOffset;
-		}
-		else
-		{
-			backdropViewTopConstraint.Constant = scrollOffset / 2;
-		}
+		backdropViewHeightConstraint.Constant = (viewHeight + barHeight) * 0.45f - Math.Min(scrollOffset, 0);
+		backdropViewTopConstraint.Constant = scrollOffset < 0 ? scrollOffset : Math.Min(scrollOffset / 2, (float)View!.Frame.Height - scrollOffset);
 	}
 }
