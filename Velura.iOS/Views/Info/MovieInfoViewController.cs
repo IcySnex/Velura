@@ -19,6 +19,8 @@ public class MovieInfoViewController(
 	UIView fadeInView = default!;
 	CAGradientLayer fadeInGradient = default!;
 	
+	CAGradientLayer containerGloomGradient = default!;
+	
 	UIScrollView scrollView = default!;
 
 	UIButton backFloatingButton = default!;
@@ -45,7 +47,7 @@ public class MovieInfoViewController(
 		UIImage? backdropImage = await IOSApp.Images.GetASync(viewModel.Movie.BackdropUrl, false);
 		UIImage? posterImage = await IOSApp.Images.GetASync(viewModel.Movie.PosterUrl);
 		
-		UIColor backgroundColor = (backdropImage?.GetAverageColor() ?? posterImage?.GetAverageColor()) ?? UIColor.Black;
+		UIColor backgroundColor = (backdropImage?.GetPrimaryColor() ?? posterImage?.GetPrimaryColor()) ?? UIColor.Black;
 		UIColor foregroundColor = backgroundColor.GetForegroundColor();
 		
 		// Navigation Bar
@@ -88,6 +90,13 @@ public class MovieInfoViewController(
 			BackgroundColor = backgroundColor,
 			ContentMode = UIViewContentMode.ScaleAspectFill
 		};
+		UIImageView backdropBottomView = new()
+		{
+			Image = backdropImage?.CGImage is null ? null : UIImage.FromImage(backdropImage.CGImage, backdropImage.CurrentScale, UIImageOrientation.DownMirrored),
+			BackgroundColor = backgroundColor,
+			ContentMode = UIViewContentMode.ScaleAspectFill
+		};
+		
 		fadeInView = new()
 		{
 			TranslatesAutoresizingMaskIntoConstraints = false,
@@ -114,38 +123,54 @@ public class MovieInfoViewController(
 		scrollView.AddSubview(contentView);
 		
 		// UI: Top Container
+		UIVisualEffectView blurEffectView = new(UIBlurEffect.FromStyle(UIBlurEffectStyle.SystemMaterialDark))
+		{
+			AutoresizingMask = UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleHeight
+		};
+
+		CAGradientLayer blurMaskLayer = new()
+		{
+			Colors =
+			[
+				UIColor.Clear.CGColor,
+				UIColor.White.CGColor
+			],
+			Locations =
+			[
+				0.3,
+				0.5,
+			],
+			StartPoint = new(0.5, 0),
+			EndPoint = new(0.5, 1),
+			Frame = View!.Frame
+		};
+		blurEffectView.Layer.Mask = blurMaskLayer;
+		
 		topContainerView = new()
 		{
-			Layer =
-			{
-				ShadowColor = backgroundColor.CGColor,
-				ShadowOpacity = 0.5f,
-				ShadowRadius = 14f,
-				ShadowOffset = new(0, 8),
-				ShouldRasterize = true,
-				RasterizationScale = UIScreen.MainScreen.Scale
-			},
 			TranslatesAutoresizingMaskIntoConstraints = false,
 		};
-		topContainerView.AddSubview(backdropView);
+		topContainerView.AddSubviews(backdropView, backdropBottomView, blurEffectView);
 		topContainerGradient = new()
 		{
 			Colors =
 			[
 				backgroundColor.ColorWithAlpha(0).CGColor,
-				backgroundColor.ColorWithAlpha(1).CGColor
+				backgroundColor.ColorWithAlpha(0.7f).CGColor,
+				backgroundColor.ColorWithLightness(0.5f).ColorWithAlpha(0.7f).CGColor,
 			],
 			Locations =
 			[
 				0.35,
 				0.45,
+				1,
 			],
 			StartPoint = new(0.5, 0),
 			EndPoint = new(0.5, 1),
 			Frame = View!.Frame
 		};
 		topContainerView.Layer.AddSublayer(topContainerGradient);
-
+		
 		UIView imageShadowView = new()
 		{
 			Layer =
@@ -195,6 +220,29 @@ public class MovieInfoViewController(
 		topContainerView.AddSubviews(imageShadowView, imageView, titleLabel, descriptionLabel, fadeInView);
 
 		// UI: Bottom Container
+		UIView bottomContainerView = new()
+		{
+			BackgroundColor = UIColor.SystemGroupedBackground,
+			TranslatesAutoresizingMaskIntoConstraints = false,
+		};
+		containerGloomGradient = new()
+		{
+			Colors =
+			[
+				backgroundColor.ColorWithAlpha(0.3f).CGColor,
+				backgroundColor.ColorWithAlpha(0).CGColor
+			],
+			Locations =
+			[
+				0,
+				1
+			],
+			StartPoint = new(0.5, 0),
+			EndPoint = new(0.5, 1),
+			Frame = new(View!.Frame.X, View!.Frame.Y, View!.Frame.Width, 20)
+		};
+		bottomContainerView.Layer.InsertSublayer(containerGloomGradient, 0);
+
 		UILabel anotherOneLabel = new()
 		{
 			Text = "Another One\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nANOTHER ONE",
@@ -202,13 +250,14 @@ public class MovieInfoViewController(
 			Lines = 200,
 			TextColor = UIColor.Label,
 		};
+		
+		bottomContainerView.AddSubviews(anotherOneLabel);
 
-		contentView.AddSubviews(topContainerView, anotherOneLabel);
-		
-		
 		// Layout
-		contentView.SubviewsDoNotTranslateAutoresizingMaskIntoConstraints();
+		contentView.AddSubviews(topContainerView, bottomContainerView);
+		
 		topContainerView.SubviewsDoNotTranslateAutoresizingMaskIntoConstraints();
+		bottomContainerView.SubviewsDoNotTranslateAutoresizingMaskIntoConstraints();
 		View.AddConstraints(
 			// Scroll
 			scrollView.AtLeftOfSafeArea(View),
@@ -224,6 +273,10 @@ public class MovieInfoViewController(
 			backdropView.Width().EqualTo().WidthOf(View),
 			// backdropView.Height().EqualTo().HeightOf(View).WithMultiplier(0.45f),
 			// backdropView.AtTopOf(contentView),
+			
+			backdropBottomView.Width().EqualTo().WidthOf(View),
+			backdropBottomView.Height().EqualTo().HeightOf(backdropView),
+			backdropBottomView.Below(backdropView),
 			
 			// Top Container
 			imageShadowView.WithSameCenterX(topContainerView),
@@ -254,10 +307,20 @@ public class MovieInfoViewController(
 			topContainerView.AtRightOf(contentView),
 			topContainerView.AtTopOf(contentView),
 			topContainerView.Height().EqualTo().HeightOf(View),
+			
+			blurEffectView.AtLeftOf(topContainerView),
+			blurEffectView.AtRightOf(topContainerView),
+			blurEffectView.AtTopOf(topContainerView),
+			blurEffectView.AtBottomOf(topContainerView),
+			
+			bottomContainerView.Height().EqualTo().HeightOf(View),
+			bottomContainerView.AtLeftOf(contentView),
+			bottomContainerView.AtRightOf(contentView),
+			bottomContainerView.Below(topContainerView),
 
-			anotherOneLabel.WithSameCenterX(contentView),
-			anotherOneLabel.Below(topContainerView, 24),
-			anotherOneLabel.AtBottomOf(contentView, 24).Minus(IOSApp.MainViewController.TabBar.Frame.Height)
+			anotherOneLabel.WithSameCenterX(bottomContainerView),
+			anotherOneLabel.AtTopOf(bottomContainerView, 24),
+			anotherOneLabel.AtBottomOf(contentView, 24)
 		);
 		
 		backdropViewHeightConstraint = backdropView.HeightAnchor.ConstraintEqualTo(View!.Frame.Height * 0.45f);
@@ -290,7 +353,7 @@ public class MovieInfoViewController(
 		if (fadeInGradient is not null)
 			fadeInGradient.Frame = new(View!.Frame.X, View!.Frame.Y, View!.Frame.Width, barHeight);
 		
-		if (scrollView is not null)
+		if (scrollView is not null && backdropViewHeightConstraint is not null)
 			Scrolled(scrollView);
 	}
 
@@ -304,12 +367,13 @@ public class MovieInfoViewController(
 		navigationBarAlpha = Math.Clamp((scrollOffset - viewHeight + barHeight) * 7.5f / (viewHeight - barHeight), 0, 1);
 		
 		topContainerView.Alpha = 1 - topContainerAlpha;
+		containerGloomGradient.Opacity = 1 - topContainerAlpha;
 		backFloatingButton.Frame = new(Math.Max(12 - navigationBarAlpha * 12, 6), backFloatingButton.Frame.Y, backFloatingButton.Frame.Width, backFloatingButton.Frame.Height);
 		
 		NavigationController!.NavigationBar.Alpha = navigationBarAlpha;
 		backFloatingButton.Alpha = 1 - navigationBarAlpha;
 
 		backdropViewHeightConstraint.Constant = (viewHeight + barHeight) * 0.45f - Math.Min(scrollOffset, 0);
-		backdropViewTopConstraint.Constant = scrollOffset < 0 ? scrollOffset : Math.Min(scrollOffset / 2, (float)View!.Frame.Height - scrollOffset);
+		backdropViewTopConstraint.Constant = scrollOffset < 0 ? scrollOffset : scrollOffset / 2;
 	}
 }

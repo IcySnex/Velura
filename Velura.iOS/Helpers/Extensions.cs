@@ -1,8 +1,11 @@
 using System.Collections.Specialized;
+using System.Numerics;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Windows.Input;
 using CoreAnimation;
 using CoreImage;
+using Velura.iOS.Models;
 
 namespace Velura.iOS.Helpers;
 
@@ -332,40 +335,133 @@ public static class Extensions
 			imageToDraw.Draw(new CGRect((size.Width - newWidth) / 2, (size.Height - newHeight) / 2, newWidth, newHeight));
 		});
 
+	
+	public static UIImage Resize(
+		this UIImage image,
+		CGSize size)
+	{
+		UIGraphicsImageRendererFormat format = new()
+		{
+			Scale = 1,
+			PreferredRange = UIGraphicsImageRendererFormatRange.Standard
+		};
+		UIGraphicsImageRenderer renderer = new(new CGSize(100, 100), format);
+
+		UIImage resizedImage = renderer.CreateImage(_ => image.Draw(new CGRect(CGPoint.Empty, image.Size)));
+		return resizedImage;
+	}
+
+	public static List<Vector3> GetPixels(
+		this UIImage image)
+	{
+		CGImage? cgImage = image.CGImage;
+		if (cgImage is null || cgImage.BitsPerPixel != 32 || cgImage.BitsPerComponent != 8)
+			return [];
+		
+		CGDataProvider dataProvider = cgImage.DataProvider;
+		if (dataProvider is null)
+			return [];
+        
+		NSData? imageData = dataProvider.CopyData();
+		if (imageData is null)
+			return [];
+		
+		CGImageByteOrderInfo byteOrder = cgImage.ByteOrderInfo;
+		int width = (int)cgImage.Width;
+		int height = (int)cgImage.Height;
+		int size = width * height;
+
+		byte[] buffer = new byte[size * 4];
+		Marshal.Copy(imageData.Bytes, buffer, 0, buffer.Length);
+
+		List<Vector3> result = new(size);
+		for (int i = 0; i < size; i++)
+		{
+			int offset = i * 4;
+			byte r, g, b;
+
+			switch (byteOrder)
+			{
+				case CGImageByteOrderInfo.ByteOrderDefault:
+				case CGImageByteOrderInfo.ByteOrder32Big:
+					r = buffer[offset];
+					g = buffer[offset + 1];
+					b = buffer[offset + 2];
+					break;
+				case CGImageByteOrderInfo.ByteOrder32Little:
+					r = buffer[offset + 2];
+					g = buffer[offset + 1];
+					b = buffer[offset];
+					break;
+				default:
+					throw new NotSupportedException("Unsupported byte order.");
+			}
+
+			Vector3 color = new(r / 255.0f, g / 255.0f, b / 255.0f);
+			result.Add(color);
+		}
+
+		return result;
+	}
+	
+	public static UIColor ToUIColor(
+		this Vector3 vector) =>
+		UIColor.FromRGB(vector.X, vector.Y, vector.Z);
+
+	public static Vector3 ToVector3(
+		this UIColor color)
+	{
+		color.GetRGBA(out nfloat r, out nfloat g, out nfloat b, out nfloat _);
+		return new((float)r, (float)g, (float)b);
+	}
+
+	public static UIColor? GetPrimaryColor(
+		this UIImage image)
+	{
+		UIImage resizedImage = image.Resize(new(100, 100));
+		List<Vector3> pixels = resizedImage.GetPixels();
+
+		IEnumerable<Cluster> clusters = Cluster.Create(pixels, 3).OrderByDescending(c => c.Points.Count);
+		
+		Cluster? primaryCluster = clusters.FirstOrDefault();
+		return primaryCluster?.Center.ToUIColor();
+	}
+	
 	public static UIColor? GetAverageColor(
 		this UIImage image)
 	{
-		CIImage inputImage = CIImage.FromCGImage(image.CGImage!);
-		if (inputImage == null)
-			return null;
+		return null;
 		
-		CIFilter? filter = CIFilter.FromName("CIAreaAverage");
-		if (filter is null)
-			return UIColor.Black;
-		
-		CGRect extent = inputImage.Extent;
-		CIVector extentVector = new(extent.X, extent.Y, extent.Width, extent.Height);
-		
-		filter.SetValueForKey(inputImage, CIFilterInputKey.Image);
-		filter.SetValueForKey(extentVector, CIFilterInputKey.Extent);
-		
-		CIImage? outputImage = filter.OutputImage;
-		if (outputImage is null)
-			return null;
-
-		CIContext context = CIContext.FromOptions(new()
-		{
-			WorkingColorSpace = CGColorSpace.CreateDeviceRGB()
-		});
-		byte[] bitmap = new byte[4];
-
-		unsafe
-		{
-			fixed (byte* bitmapPtr = bitmap)
-				context.RenderToBitmap(outputImage, (IntPtr)bitmapPtr, 4, new(0, 0, 1, 1), (int)CIFormat.kRGBA8, null);
-		}
-		
-		return new(bitmap[0] / 255f, bitmap[1] / 255f, bitmap[2] / 255f, bitmap[3] / 255f);
-
+		// CIImage inputImage = CIImage.FromCGImage(image.CGImage!);
+		// if (inputImage == null)
+		// 	return null;
+		//
+		// CIFilter? filter = CIFilter.FromName("CIAreaAverage");
+		// if (filter is null)
+		// 	return UIColor.Black;
+		//
+		// CGRect extent = inputImage.Extent;
+		// CIVector extentVector = new(extent.X, extent.Y, extent.Width, extent.Height);
+		//
+		// filter.SetValueForKey(inputImage, CIFilterInputKey.Image);
+		// filter.SetValueForKey(extentVector, CIFilterInputKey.Extent);
+		//
+		// CIImage? outputImage = filter.OutputImage;
+		// if (outputImage is null)
+		// 	return null;
+		//
+		// CIContext context = CIContext.FromOptions(new()
+		// {
+		// 	WorkingColorSpace = CGColorSpace.CreateDeviceRGB()
+		// });
+		// byte[] bitmap = new byte[4];
+		//
+		// unsafe
+		// {
+		// 	fixed (byte* bitmapPtr = bitmap)
+		// 		context.RenderToBitmap(outputImage, (IntPtr)bitmapPtr, 4, new(0, 0, 1, 1), (int)CIFormat.kRGBA8, null);
+		// }
+		//
+		// return new(bitmap[0] / 255f, bitmap[1] / 255f, bitmap[2] / 255f, bitmap[3] / 255f);
 	}
 }
