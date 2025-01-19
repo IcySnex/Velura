@@ -1,10 +1,12 @@
 using System.Collections.Specialized;
+using System.Diagnostics;
 using System.Numerics;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows.Input;
 using CoreAnimation;
 using CoreImage;
+using CoreVideo;
 using Velura.iOS.Models;
 
 namespace Velura.iOS.Helpers;
@@ -336,28 +338,31 @@ public static class Extensions
 		});
 
 	
-	public static UIImage Resize(
+	public static CGImage? Resize(
 		this UIImage image,
-		CGSize size)
+		CGSize size,
+		CGRect bounds)
 	{
+		if (image.CGImage is not CGImage inputImage)
+			return null;
+
+		if (inputImage.WithImageInRect(bounds) is not CGImage croppedImage)
+			return null;
+
 		UIGraphicsImageRendererFormat format = new()
 		{
 			Scale = 1,
 			PreferredRange = UIGraphicsImageRendererFormatRange.Standard
 		};
-		UIGraphicsImageRenderer renderer = new(new CGSize(100, 100), format);
-
-		UIImage resizedImage = renderer.CreateImage(_ => image.Draw(new CGRect(CGPoint.Empty, image.Size)));
-		return resizedImage;
+		UIGraphicsImageRenderer renderer = new(size, format);
+		
+		UIImage resizedImage = renderer.CreateImage(_ => UIImage.FromImage(croppedImage).Draw(new CGRect(0, 0, size.Width, size.Height)));
+		return resizedImage.CGImage;
 	}
 
 	public static List<Vector3> GetPixels(
-		this UIImage image)
+		this CGImage cgImage)
 	{
-		CGImage? cgImage = image.CGImage;
-		if (cgImage is null || cgImage.BitsPerPixel != 32 || cgImage.BitsPerComponent != 8)
-			return [];
-		
 		CGDataProvider dataProvider = cgImage.DataProvider;
 		if (dataProvider is null)
 			return [];
@@ -416,52 +421,87 @@ public static class Extensions
 	}
 
 	public static UIColor? GetPrimaryColor(
-		this UIImage image)
+		this UIImage image,
+		CGRect bounds)
 	{
-		UIImage resizedImage = image.Resize(new(100, 100));
-		List<Vector3> pixels = resizedImage.GetPixels();
-
-		IEnumerable<Cluster> clusters = Cluster.Create(pixels, 3).OrderByDescending(c => c.Points.Count);
+		Stopwatch watch = new();
+		watch.Start();
 		
-		Cluster? primaryCluster = clusters.FirstOrDefault();
-		return primaryCluster?.Center.ToUIColor();
+		if (image.Resize(new(100, 100), bounds) is not CGImage resizedImage)
+			return null;
+		
+		// string documentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+		// string filePath = Path.Combine(documentsPath, "hello.png");
+		// UIImage.FromImage(resizedImage).AsPNG().Save(filePath, false);
+		
+		// List<Vector3> pixels = resizedImage.GetPixels();
+		// IEnumerable<Cluster> clusters = Cluster.Create(pixels, 3).OrderByDescending(c => c.Points.Count);
+		//
+		// Cluster? primaryCluster = clusters.FirstOrDefault();
+		// UIColor? color = primaryCluster?.Center.ToUIColor();
+
+		CIFilter? filter = CIFilter.FromName("CIKMeans");
+		if (filter is null)
+			return null;
+		
+		filter.SetValueForKey((CIImage)resizedImage, CIFilterInputKey.Image);
+		filter.SetValueForKey(CIVector.Create(bounds), CIFilterInputKey.Extent);
+		filter.SetValueForKey(NSArray.FromObjects(CIColor.RedColor), new("inputMeans"));
+		filter.SetValueForKey(NSNumber.FromInt32(3), new("inputCount"));
+		filter.SetValueForKey(NSNumber.FromInt32(100), new("inputPasses"));
+		filter.SetValueForKey(NSNumber.FromBoolean(false), new("inputPerceptual"));
+		
+		CIImage? outputImage = filter.OutputImage;
+		if (outputImage is null)
+			return null;
+		
+		byte[] bitmap = new byte[4];
+		unsafe
+		{
+			CIContext context = CIContext.FromOptions(null);
+		
+			fixed (byte* bitmapPtr = bitmap)
+				context.RenderToBitmap(outputImage.CreateBySettingAlphaOne(outputImage.Extent), (IntPtr)bitmapPtr, 4, new(0, 0, 1, 1), (int)CIFormat.kRGBA8, null);
+		}
+		
+		UIColor color = new(bitmap[0] / 255f, bitmap[1] / 255f, bitmap[2] / 255f, bitmap[3] / 255f);
+		
+		Console.WriteLine(watch.ElapsedMilliseconds);
+		watch.Stop();
+		
+		return color;
 	}
 	
 	public static UIColor? GetAverageColor(
 		this UIImage image)
 	{
-		return null;
+		CIImage inputImage = CIImage.FromCGImage(image.CGImage!);
+		if (inputImage == null)
+			return null;
 		
-		// CIImage inputImage = CIImage.FromCGImage(image.CGImage!);
-		// if (inputImage == null)
-		// 	return null;
-		//
-		// CIFilter? filter = CIFilter.FromName("CIAreaAverage");
-		// if (filter is null)
-		// 	return UIColor.Black;
-		//
-		// CGRect extent = inputImage.Extent;
-		// CIVector extentVector = new(extent.X, extent.Y, extent.Width, extent.Height);
-		//
-		// filter.SetValueForKey(inputImage, CIFilterInputKey.Image);
-		// filter.SetValueForKey(extentVector, CIFilterInputKey.Extent);
-		//
-		// CIImage? outputImage = filter.OutputImage;
-		// if (outputImage is null)
-		// 	return null;
-		//
-		// CIContext context = CIContext.FromOptions(new()
-		// {
-		// 	WorkingColorSpace = CGColorSpace.CreateDeviceRGB()
-		// });
-		// byte[] bitmap = new byte[4];
-		//
-		// unsafe
-		// {
-		// 	fixed (byte* bitmapPtr = bitmap)
-		// 		context.RenderToBitmap(outputImage, (IntPtr)bitmapPtr, 4, new(0, 0, 1, 1), (int)CIFormat.kRGBA8, null);
-		// }
-		//
-		// return new(bitmap[0] / 255f, bitmap[1] / 255f, bitmap[2] / 255f, bitmap[3] / 255f);
+		CIFilter? filter = CIFilter.FromName("CIAreaAverage");
+		if (filter is null)
+			return UIColor.Black;
+		
+		filter.SetValueForKey(inputImage, CIFilterInputKey.Image);
+		filter.SetValueForKey(CIVector.Create(inputImage.Extent), CIFilterInputKey.Extent);
+		
+		CIImage? outputImage = filter.OutputImage;
+		if (outputImage is null)
+			return null;
+		
+		CIContext context = CIContext.FromOptions(new()
+		{
+			WorkingColorSpace = CGColorSpace.CreateDeviceRGB()
+		});
+		byte[] bitmap = new byte[4];
+		
+		unsafe
+		{
+			fixed (byte* bitmapPtr = bitmap)
+				context.RenderToBitmap(outputImage, (IntPtr)bitmapPtr, 4, new(0, 0, 1, 1), (int)CIFormat.kRGBA8, null);
+		}
+		
+		return new(bitmap[0] / 255f, bitmap[1] / 255f, bitmap[2] / 255f, bitmap[3] / 255f);
 	}
 }

@@ -46,10 +46,16 @@ public class MovieInfoViewController(
 		// Resources
 		UIImage? backdropImage = await IOSApp.Images.GetASync(viewModel.Movie.BackdropUrl, false);
 		UIImage? posterImage = await IOSApp.Images.GetASync(viewModel.Movie.PosterUrl);
-		
-		UIColor backgroundColor = (backdropImage?.GetPrimaryColor() ?? posterImage?.GetPrimaryColor()) ?? UIColor.Black;
+
+		UIColor backgroundColor;
+		if (backdropImage is not null)
+		{
+			backgroundColor = backdropImage.GetPrimaryColor(new(backdropImage.Size.Width / 4, 0, backdropImage.Size.Width / 2, backdropImage.Size.Height)) ?? UIColor.Black;
+		}
+		else
+			backgroundColor = posterImage?.GetPrimaryColor(new(0, 0, posterImage.Size.Width, posterImage.Size.Height)) ?? UIColor.Black;
 		UIColor foregroundColor = backgroundColor.GetForegroundColor();
-		
+
 		// Navigation Bar
 		barHeight = (float)NavigationController!.NavigationBar.Frame.Height + (float)(IOSApp.MainWindow.WindowScene?.StatusBarManager?.StatusBarFrame.Height ?? 0);
 		viewHeight = (float)View!.Frame.Height - barHeight;
@@ -157,7 +163,7 @@ public class MovieInfoViewController(
 			[
 				backgroundColor.ColorWithAlpha(0).CGColor,
 				backgroundColor.ColorWithAlpha(0.7f).CGColor,
-				backgroundColor.ColorWithLightness(0.5f).ColorWithAlpha(0.7f).CGColor,
+				backgroundColor.ColorWithLightness(0.7f).ColorWithAlpha(0.7f).CGColor,
 			],
 			Locations =
 			[
@@ -323,7 +329,7 @@ public class MovieInfoViewController(
 			anotherOneLabel.AtBottomOf(contentView, 24)
 		);
 		
-		backdropViewHeightConstraint = backdropView.HeightAnchor.ConstraintEqualTo(View!.Frame.Height * 0.45f);
+		backdropViewHeightConstraint = backdropView.HeightAnchor.ConstraintEqualTo(View!.Frame.Height * 0.5f);
 		backdropViewTopConstraint = backdropView.TopAnchor.ConstraintEqualTo(contentView.TopAnchor, 0);
 		View.AddConstraint(backdropViewHeightConstraint);
 		View.AddConstraint(backdropViewTopConstraint);
@@ -373,7 +379,7 @@ public class MovieInfoViewController(
 		NavigationController!.NavigationBar.Alpha = navigationBarAlpha;
 		backFloatingButton.Alpha = 1 - navigationBarAlpha;
 
-		backdropViewHeightConstraint.Constant = (viewHeight + barHeight) * 0.45f - Math.Min(scrollOffset, 0);
+		backdropViewHeightConstraint.Constant = (viewHeight + barHeight) * 0.5f - Math.Min(scrollOffset, 0);
 		backdropViewTopConstraint.Constant = scrollOffset < 0 ? scrollOffset : scrollOffset / 2;
 	}
 }
