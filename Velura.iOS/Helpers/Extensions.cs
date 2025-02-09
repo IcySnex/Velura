@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows.Input;
 using CoreAnimation;
+using CoreFoundation;
 using CoreImage;
 using CoreVideo;
 using Velura.iOS.Models;
@@ -13,6 +14,11 @@ namespace Velura.iOS.Helpers;
 
 public static class Extensions
 {
+	static readonly CIContext RenderContext = CIContext.Create();
+	
+	static readonly CGColorSpace ColorSpace = CGColorSpace.CreateDeviceRGB();
+	
+	
 	public static PropertyInfo GetProperty(
         this Type type,
 		string propertyPath) =>
@@ -424,51 +430,32 @@ public static class Extensions
 		this UIImage image,
 		CGRect bounds)
 	{
-		Stopwatch watch = new();
-		watch.Start();
-		
-		if (image.Resize(new(100, 100), bounds) is not CGImage resizedImage)
+		if (image.CGImage is null)
 			return null;
+		CIImage inputImage = image.CGImage;
 		
-		// string documentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-		// string filePath = Path.Combine(documentsPath, "hello.png");
-		// UIImage.FromImage(resizedImage).AsPNG().Save(filePath, false);
-		
-		// List<Vector3> pixels = resizedImage.GetPixels();
-		// IEnumerable<Cluster> clusters = Cluster.Create(pixels, 3).OrderByDescending(c => c.Points.Count);
-		//
-		// Cluster? primaryCluster = clusters.FirstOrDefault();
-		// UIColor? color = primaryCluster?.Center.ToUIColor();
-
 		CIFilter? filter = CIFilter.FromName("CIKMeans");
 		if (filter is null)
 			return null;
 		
-		filter.SetValueForKey((CIImage)resizedImage, CIFilterInputKey.Image);
-		filter.SetValueForKey(CIVector.Create(bounds), CIFilterInputKey.Extent);
-		filter.SetValueForKey(NSArray.FromObjects(CIColor.RedColor), new("inputMeans"));
+		filter.SetValueForKey(inputImage, CIFilterInputKey.Image);
+		filter.SetValueForKey(CIVector.Create(bounds), new("inputExtent"));
 		filter.SetValueForKey(NSNumber.FromInt32(3), new("inputCount"));
-		filter.SetValueForKey(NSNumber.FromInt32(100), new("inputPasses"));
+		filter.SetValueForKey(NSNumber.FromInt32(10), new("inputPasses"));
 		filter.SetValueForKey(NSNumber.FromBoolean(false), new("inputPerceptual"));
 		
-		CIImage? outputImage = filter.OutputImage;
-		if (outputImage is null)
+		if (filter.OutputImage is null)
 			return null;
+		CIImage outputImage = filter.OutputImage.CreateBySettingAlphaOne(filter.OutputImage.Extent);
 		
-		byte[] bitmap = new byte[4];
+		Span<byte> bitmap = stackalloc byte[4 * (int)outputImage.Extent.Width];
 		unsafe
 		{
-			CIContext context = CIContext.FromOptions(null);
-		
 			fixed (byte* bitmapPtr = bitmap)
-				context.RenderToBitmap(outputImage.CreateBySettingAlphaOne(outputImage.Extent), (IntPtr)bitmapPtr, 4, new(0, 0, 1, 1), (int)CIFormat.kRGBA8, null);
+				RenderContext.RenderToBitmap(outputImage, (IntPtr)bitmapPtr, bitmap.Length, outputImage.Extent, (int)CIFormat.kRGBA8, ColorSpace);
 		}
 		
-		UIColor color = new(bitmap[0] / 255f, bitmap[1] / 255f, bitmap[2] / 255f, bitmap[3] / 255f);
-		
-		Console.WriteLine(watch.ElapsedMilliseconds);
-		watch.Stop();
-		
+		UIColor color = new(bitmap[8] / 255f, bitmap[9] / 255f, bitmap[10] / 255f, bitmap[11] / 255f);
 		return color;
 	}
 	
