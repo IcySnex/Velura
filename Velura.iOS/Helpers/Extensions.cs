@@ -1,14 +1,8 @@
 using System.Collections.Specialized;
-using System.Diagnostics;
-using System.Numerics;
 using System.Reflection;
-using System.Runtime.InteropServices;
 using System.Windows.Input;
 using CoreAnimation;
-using CoreFoundation;
 using CoreImage;
-using CoreVideo;
-using Velura.iOS.Models;
 
 namespace Velura.iOS.Helpers;
 
@@ -344,88 +338,6 @@ public static class Extensions
 		});
 
 	
-	public static CGImage? Resize(
-		this UIImage image,
-		CGSize size,
-		CGRect bounds)
-	{
-		if (image.CGImage is not CGImage inputImage)
-			return null;
-
-		if (inputImage.WithImageInRect(bounds) is not CGImage croppedImage)
-			return null;
-
-		UIGraphicsImageRendererFormat format = new()
-		{
-			Scale = 1,
-			PreferredRange = UIGraphicsImageRendererFormatRange.Standard
-		};
-		UIGraphicsImageRenderer renderer = new(size, format);
-		
-		UIImage resizedImage = renderer.CreateImage(_ => UIImage.FromImage(croppedImage).Draw(new CGRect(0, 0, size.Width, size.Height)));
-		return resizedImage.CGImage;
-	}
-
-	public static List<Vector3> GetPixels(
-		this CGImage cgImage)
-	{
-		CGDataProvider dataProvider = cgImage.DataProvider;
-		if (dataProvider is null)
-			return [];
-        
-		NSData? imageData = dataProvider.CopyData();
-		if (imageData is null)
-			return [];
-		
-		CGImageByteOrderInfo byteOrder = cgImage.ByteOrderInfo;
-		int width = (int)cgImage.Width;
-		int height = (int)cgImage.Height;
-		int size = width * height;
-
-		byte[] buffer = new byte[size * 4];
-		Marshal.Copy(imageData.Bytes, buffer, 0, buffer.Length);
-
-		List<Vector3> result = new(size);
-		for (int i = 0; i < size; i++)
-		{
-			int offset = i * 4;
-			byte r, g, b;
-
-			switch (byteOrder)
-			{
-				case CGImageByteOrderInfo.ByteOrderDefault:
-				case CGImageByteOrderInfo.ByteOrder32Big:
-					r = buffer[offset];
-					g = buffer[offset + 1];
-					b = buffer[offset + 2];
-					break;
-				case CGImageByteOrderInfo.ByteOrder32Little:
-					r = buffer[offset + 2];
-					g = buffer[offset + 1];
-					b = buffer[offset];
-					break;
-				default:
-					throw new NotSupportedException("Unsupported byte order.");
-			}
-
-			Vector3 color = new(r / 255.0f, g / 255.0f, b / 255.0f);
-			result.Add(color);
-		}
-
-		return result;
-	}
-	
-	public static UIColor ToUIColor(
-		this Vector3 vector) =>
-		UIColor.FromRGB(vector.X, vector.Y, vector.Z);
-
-	public static Vector3 ToVector3(
-		this UIColor color)
-	{
-		color.GetRGBA(out nfloat r, out nfloat g, out nfloat b, out nfloat _);
-		return new((float)r, (float)g, (float)b);
-	}
-
 	public static UIColor? GetPrimaryColor(
 		this UIImage image,
 		CGRect bounds)
@@ -457,38 +369,5 @@ public static class Extensions
 		
 		UIColor color = new(bitmap[8] / 255f, bitmap[9] / 255f, bitmap[10] / 255f, bitmap[11] / 255f);
 		return color;
-	}
-	
-	public static UIColor? GetAverageColor(
-		this UIImage image)
-	{
-		CIImage inputImage = CIImage.FromCGImage(image.CGImage!);
-		if (inputImage == null)
-			return null;
-		
-		CIFilter? filter = CIFilter.FromName("CIAreaAverage");
-		if (filter is null)
-			return UIColor.Black;
-		
-		filter.SetValueForKey(inputImage, CIFilterInputKey.Image);
-		filter.SetValueForKey(CIVector.Create(inputImage.Extent), CIFilterInputKey.Extent);
-		
-		CIImage? outputImage = filter.OutputImage;
-		if (outputImage is null)
-			return null;
-		
-		CIContext context = CIContext.FromOptions(new()
-		{
-			WorkingColorSpace = CGColorSpace.CreateDeviceRGB()
-		});
-		byte[] bitmap = new byte[4];
-		
-		unsafe
-		{
-			fixed (byte* bitmapPtr = bitmap)
-				context.RenderToBitmap(outputImage, (IntPtr)bitmapPtr, 4, new(0, 0, 1, 1), (int)CIFormat.kRGBA8, null);
-		}
-		
-		return new(bitmap[0] / 255f, bitmap[1] / 255f, bitmap[2] / 255f, bitmap[3] / 255f);
 	}
 }

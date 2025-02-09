@@ -47,13 +47,9 @@ public class MovieInfoViewController(
 		UIImage? backdropImage = await IOSApp.Images.GetASync(viewModel.Movie.BackdropUrl, false);
 		UIImage? posterImage = await IOSApp.Images.GetASync(viewModel.Movie.PosterUrl);
 
-		UIColor backgroundColor;
-		if (backdropImage is not null)
-		{
-			backgroundColor = backdropImage.GetPrimaryColor(new(backdropImage.Size.Width / 4, 0, backdropImage.Size.Width / 2, backdropImage.Size.Height)) ?? UIColor.Black;
-		}
-		else
-			backgroundColor = posterImage?.GetPrimaryColor(new(0, 0, posterImage.Size.Width, posterImage.Size.Height)) ?? UIColor.Black;
+		UIColor backgroundColor = backdropImage is not null ?
+			backdropImage.GetPrimaryColor(new(backdropImage.Size.Width / 4, 0, backdropImage.Size.Width / 2, backdropImage.Size.Height)) ?? UIColor.Black :
+			posterImage?.GetPrimaryColor(new(0, 0, posterImage.Size.Width, posterImage.Size.Height)) ?? UIColor.Black;
 		UIColor foregroundColor = backgroundColor.GetForegroundColor();
 
 		// Navigation Bar
