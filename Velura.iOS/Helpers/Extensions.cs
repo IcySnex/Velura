@@ -244,38 +244,27 @@ public static class Extensions
 		return new(red, green, blue, alpha);
 	}
 
-	public static double CalculateLuminance(
+	public static UIColor AdjustForWhiteForeground(
 		this UIColor color)
 	{
-		color.GetRGBA(out nfloat red, out nfloat green, out nfloat blue, out nfloat _);
+		static double AdjustGamma(nfloat channel) =>
+			channel <= 0.03928 ? channel / 12.92 : Math.Pow((channel + 0.055) / 1.055, 2.4);
 		
-		double redRatio = red <= 0.03928f ? red / 12.92f : Math.Pow((red + 0.055f) / 1.055f, 2.4f);
-		double greenRatio = green <= 0.03928f ? green / 12.92f : Math.Pow((green + 0.055f) / 1.055f, 2.4f);
-		double blueRatio = blue <= 0.03928f ? blue / 12.92f : Math.Pow((blue + 0.055f) / 1.055f, 2.4f);
 		
-		return 0.2126 * redRatio + 0.7152 * greenRatio + 0.0722 * blueRatio;
-	}
+		color.GetRGBA(out nfloat r, out nfloat g, out nfloat b, out nfloat a);
 
-	public static double CalculateContrast(
-		this UIColor color,
-		UIColor otherColor)
-	{
-		double luminance1 = color.CalculateLuminance();
-		double luminance2 = otherColor.CalculateLuminance();
+		double currentLuminance = 0.2126 * AdjustGamma(r) + 0.7152 * AdjustGamma(g) + 0.0722 * AdjustGamma(b);
+		double minLuminance = (1.0 / 4.5) - 0.05;
 		
-		if (luminance1 < luminance2)
-			(luminance1, luminance2) = (luminance2, luminance1);
+		if (currentLuminance <= minLuminance)
+			return color;
 		
-		return (luminance1 + 0.05) / (luminance2 + 0.05);
-	}
+		double scaleFactor = minLuminance / currentLuminance;
+		r = (nfloat)Math.Max(0, r * scaleFactor);
+		g = (nfloat)Math.Max(0, g * scaleFactor);
+		b = (nfloat)Math.Max(0, b * scaleFactor);
 
-	public static UIColor GetForegroundColor(
-		this UIColor backgroundColor)
-	{
-		UIColor white = UIColor.White;
-		UIColor black = UIColor.Black;
-		
-		return backgroundColor.CalculateContrast(white) >= backgroundColor.CalculateContrast(black) ? white : black;
+		return UIColor.FromRGBA(r, g, b, a);
 	}
 	
 	

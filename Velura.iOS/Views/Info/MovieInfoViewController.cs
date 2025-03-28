@@ -1,6 +1,7 @@
 using Cirrious.FluentLayouts.Touch;
 using CoreAnimation;
 using Velura.iOS.Helpers;
+using Velura.iOS.UI;
 using Velura.ViewModels;
 
 namespace Velura.iOS.Views.Info;
@@ -48,9 +49,9 @@ public class MovieInfoViewController(
 		UIImage? posterImage = await IOSApp.Images.GetASync(viewModel.Movie.PosterUrl);
 
 		UIColor backgroundColor = backdropImage is not null ?
-			backdropImage.GetPrimaryColor(new(backdropImage.Size.Width / 4, 0, backdropImage.Size.Width / 2, backdropImage.Size.Height)) ?? UIColor.Black :
-			posterImage?.GetPrimaryColor(new(0, 0, posterImage.Size.Width, posterImage.Size.Height)) ?? UIColor.Black;
-		UIColor foregroundColor = backgroundColor.GetForegroundColor();
+			backdropImage.GetPrimaryColor(new(backdropImage.Size.Width / 4, 0, backdropImage.Size.Width / 2, backdropImage.Size.Height))?.AdjustForWhiteForeground() ?? UIColor.Black :
+			posterImage?.GetPrimaryColor(new(0, 0, posterImage.Size.Width, posterImage.Size.Height))?.AdjustForWhiteForeground() ?? UIColor.Black;
+		
 
 		// Navigation Bar
 		barHeight = (float)NavigationController!.NavigationBar.Frame.Height + (float)(IOSApp.MainWindow.WindowScene?.StatusBarManager?.StatusBarFrame.Height ?? 0);
@@ -66,11 +67,11 @@ public class MovieInfoViewController(
 		
 		backFloatingButton = UIButtonConfiguration.TintedButtonConfiguration.CreateButton(
 			title: "",
-			image: UIImage.GetSystemImage("chevron.backward"),
+			image: UIImage.GetSystemImage("chevron.backward")?.ApplyConfiguration(UIImageSymbolConfiguration.Create(UIFont.SystemFontOfSize(16, UIFontWeight.Semibold))),
 			buttonSize: UIButtonConfigurationSize.Medium,
 			cornerStyle: UIButtonConfigurationCornerStyle.Capsule,
-			foregroundColor: foregroundColor.Invert().ColorWithAlpha(0.85f),
-			backgroundColor: foregroundColor.ColorWithAlpha(0.5f),
+			foregroundColor: UIColor.Black.ColorWithAlpha(0.625f),
+			backgroundColor: UIColor.White.ColorWithAlpha(0.5f),
 			onPress: viewModel.CloseCommand.ToUIAction());
 		backFloatingButton.Frame = new(12, IOSApp.IsIPad ? 33 : barHeight - 38, 32, 32);
 		View!.AddSubview(backFloatingButton);
@@ -203,19 +204,17 @@ public class MovieInfoViewController(
 			Text = viewModel.Movie.Title,
 			Font = UIFontMetrics.DefaultMetrics.GetScaledFont(UIFont.BoldSystemFontOfSize(24)),
 			AdjustsFontForContentSizeCategory = true,
-			TextColor = foregroundColor,
+			TextColor = UIColor.White,
 			Lines = 1,
 			LineBreakMode = UILineBreakMode.TailTruncation,
 			TextAlignment = UITextAlignment.Center
 		};
-		UILabel descriptionLabel = new()
+		ExpandableTextView descriptionLabel = new()
 		{
 			Text = viewModel.Movie.Description,
 			Font = UIFontMetrics.DefaultMetrics.GetScaledFont(UIFont.SystemFontOfSize(14)),
 			AdjustsFontForContentSizeCategory = true,
-			TextColor = foregroundColor.ColorWithAlpha(0.6f),
-			Lines = 3,
-			LineBreakMode = UILineBreakMode.TailTruncation,
+			TextColor = UIColor.White.ColorWithAlpha(0.6f),
 			TextAlignment = UITextAlignment.Center
 		};
 		
