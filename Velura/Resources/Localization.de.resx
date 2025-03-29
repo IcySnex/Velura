@@ -150,6 +150,11 @@
         <value>&#xD;&#xD;Vielen Dank, dass Sie Velura verwenden! Genießen Sie Ihre persönliche Medienbibliothek einfach und bequem.</value>
     </data>
 
+    <!-- Info -->
+    <data name="description">
+        <value>Beschreibung</value>
+    </data>
+    
     <!-- Config -->
     <data name="config">
         <value>Konfiguration</value>
@@ -263,6 +268,10 @@
     
     <data name="not_available">
         <value>k.A.</value>
+    </data>
+    
+    <data name="more">
+        <value>mehr</value>
     </data>
     
     <!-- Media -->

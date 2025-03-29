@@ -209,13 +209,15 @@ public class MovieInfoViewController(
 			LineBreakMode = UILineBreakMode.TailTruncation,
 			TextAlignment = UITextAlignment.Center
 		};
-		ExpandableTextView descriptionLabel = new()
+		ExpandableTextView descriptionLabel = new(this)
 		{
 			Text = viewModel.Movie.Description,
+			Lines = 3,
 			Font = UIFontMetrics.DefaultMetrics.GetScaledFont(UIFont.SystemFontOfSize(14)),
 			AdjustsFontForContentSizeCategory = true,
 			TextColor = UIColor.White.ColorWithAlpha(0.6f),
-			TextAlignment = UITextAlignment.Center
+			TextAlignment = UITextAlignment.Center,
+			HorizontalPadding = 24
 		};
 		
 		topContainerView.AddSubviews(imageShadowView, imageView, titleLabel, descriptionLabel, fadeInView);

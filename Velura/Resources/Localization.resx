@@ -149,6 +149,11 @@
     <data name="about_terms_contact_thanks">
         <value>&#xD;&#xD;Thank you for using Velura! Enjoy your personal media collection with ease and convenience.</value>
     </data>
+    
+    <!-- Info -->
+    <data name="description">
+        <value>Description</value>
+    </data>
 
     <!-- Config -->
     <data name="config">
@@ -263,6 +268,10 @@
 
     <data name="not_available">
         <value>N/A</value>
+    </data>
+
+    <data name="more">
+        <value>more</value>
     </data>
 
     <!-- Media -->
