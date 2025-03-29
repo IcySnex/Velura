@@ -13,12 +13,15 @@ public class MovieInfoViewController(
 
 	NSLayoutConstraint backdropViewHeightConstraint = default!;
 	NSLayoutConstraint backdropViewTopConstraint = default!;
+	NSLayoutConstraint backdropBottomViewTopConstraint = default!;
 	
 	UIView topContainerView = default!;
 	CAGradientLayer topContainerGradient = default!;
 	
 	UIView fadeInView = default!;
 	CAGradientLayer fadeInGradient = default!;
+
+	CAGradientLayer blurMaskLayer = default!;
 	
 	CAGradientLayer containerGloomGradient = default!;
 	
@@ -131,7 +134,7 @@ public class MovieInfoViewController(
 			AutoresizingMask = UIViewAutoresizing.FlexibleWidth | UIViewAutoresizing.FlexibleHeight
 		};
 
-		CAGradientLayer blurMaskLayer = new()
+		blurMaskLayer = new()
 		{
 			Colors =
 			[
@@ -274,12 +277,12 @@ public class MovieInfoViewController(
 			contentView.AtBottomOf(scrollView),
 			
 			backdropView.Width().EqualTo().WidthOf(View),
-			// backdropView.Height().EqualTo().HeightOf(View).WithMultiplier(0.45f),
-			// backdropView.AtTopOf(contentView),
+			//backdropView.Height().EqualTo().HeightOf(View).WithMultiplier(0.45f),
+			//backdropView.AtTopOf(contentView),
 			
 			backdropBottomView.Width().EqualTo().WidthOf(View),
 			backdropBottomView.Height().EqualTo().HeightOf(backdropView),
-			backdropBottomView.Below(backdropView),
+			// backdropBottomView.Below(backdropView),
 			
 			// Top Container
 			imageShadowView.WithSameCenterX(topContainerView),
@@ -328,8 +331,8 @@ public class MovieInfoViewController(
 		
 		backdropViewHeightConstraint = backdropView.HeightAnchor.ConstraintEqualTo(View!.Frame.Height * 0.5f);
 		backdropViewTopConstraint = backdropView.TopAnchor.ConstraintEqualTo(contentView.TopAnchor, 0);
-		View.AddConstraint(backdropViewHeightConstraint);
-		View.AddConstraint(backdropViewTopConstraint);
+		backdropBottomViewTopConstraint = backdropBottomView.TopAnchor.ConstraintEqualTo(contentView.TopAnchor, 0);
+		View.AddConstraints(backdropViewHeightConstraint, backdropViewTopConstraint, backdropBottomViewTopConstraint);
 	}
 
 	public override void ViewDidAppear(
@@ -352,9 +355,11 @@ public class MovieInfoViewController(
 
 		if (topContainerGradient is not null)
 			topContainerGradient.Frame = View!.Frame;
-		
+		if (blurMaskLayer is not null)
+			blurMaskLayer.Frame = View!.Frame;
 		if (fadeInGradient is not null)
 			fadeInGradient.Frame = new(View!.Frame.X, View!.Frame.Y, View!.Frame.Width, barHeight);
+		
 		
 		if (scrollView is not null && backdropViewHeightConstraint is not null)
 			Scrolled(scrollView);
@@ -378,5 +383,6 @@ public class MovieInfoViewController(
 
 		backdropViewHeightConstraint.Constant = (viewHeight + barHeight) * 0.5f - Math.Min(scrollOffset, 0);
 		backdropViewTopConstraint.Constant = scrollOffset < 0 ? scrollOffset : scrollOffset / 2;
+		backdropBottomViewTopConstraint.Constant = View!.Frame.Height < View!.Frame.Width ? backdropViewHeightConstraint.Constant * 1.6f + (scrollOffset < 0 ? scrollOffset * 2.6f : scrollOffset / 2) : backdropViewHeightConstraint.Constant + (scrollOffset < 0 ? scrollOffset : scrollOffset / 2);
 	}
 }

@@ -140,6 +140,14 @@ public static class Extensions
 			VisiblePath = UIBezierPath.FromRoundedRect(view.Frame.Inset(-padding, -padding), cornerRadius)
 		});
 	}
+
+	public static void AddConstraints(
+		this UIView view,
+		params NSLayoutConstraint[] constraints)
+	{
+		foreach(NSLayoutConstraint constraint in constraints)
+			view.AddConstraint(constraint);
+	}
 	
 	
 	public static UINavigationController WrapInNavController(
