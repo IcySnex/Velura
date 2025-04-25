@@ -285,6 +285,7 @@
     <data name="media_play">
         <value>Play</value>
     </data>
+    
     <data name="media_mark_as_watched">
         <value>Mark as watched</value>
     </data>
@@ -349,7 +350,11 @@
     <data name="error_failed_removing_show">
         <value>It looks like this show could not be removed.</value>
     </data>
-    
+
+    <data name="error_failed_getting_genres">
+        <value>It looks like getting the genres for this media container from the database failed.</value>
+    </data>
+
     <!-- Warnings -->
     <data name="warning_remove_movie">
         <value>Removing this movie will hide it in Velura and reset all watch progress. The media file will not be deleted.</value>

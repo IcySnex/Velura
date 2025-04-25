@@ -74,4 +74,20 @@ public static class Extensions
 		logger?.LogError(ex, "[{caller}] {message}.", caller, message);
 		throw ex;
 	}
+
+
+	public static string Join(
+		this IEnumerable<string> values,
+		bool useAmp = true)
+	{
+		string[] list = values as string[] ?? values.ToArray();
+		return list.Length switch
+		{
+			0 => "",
+			1 => list[0],
+			2 => list[0] + (useAmp ? " & " : ", ") + list[1],
+			_ when useAmp => string.Join(", ", list[..^1]) + " & " + list[^1],
+			_ => string.Join(", ", list)
+		};
+	}
 }

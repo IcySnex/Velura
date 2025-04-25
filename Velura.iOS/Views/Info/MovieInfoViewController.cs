@@ -1,5 +1,6 @@
 using Cirrious.FluentLayouts.Touch;
 using CoreAnimation;
+using Velura.Helpers;
 using Velura.iOS.Helpers;
 using Velura.iOS.UI;
 using Velura.ViewModels;
@@ -212,6 +213,16 @@ public class MovieInfoViewController(
 			LineBreakMode = UILineBreakMode.TailTruncation,
 			TextAlignment = UITextAlignment.Center
 		};
+		UILabel infoLabel = new()
+		{
+			Text = $"{(viewModel.Genres.Count > 0 ? viewModel.Genres.Join() + " • " : "")}{viewModel.Movie.ReleaseDate:yyyy} • {viewModel.Movie.Duration.L10N()}",
+			Font = UIFontMetrics.DefaultMetrics.GetScaledFont(UIFont.SystemFontOfSize(14)),
+			AdjustsFontForContentSizeCategory = true,
+			TextColor = UIColor.White.ColorWithAlpha(0.375f),
+			Lines = 2,
+			LineBreakMode = UILineBreakMode.WordWrap,
+			TextAlignment = UITextAlignment.Center
+		};
 		ExpandableTextView descriptionLabel = new(this)
 		{
 			Text = viewModel.Movie.Description,
@@ -222,8 +233,17 @@ public class MovieInfoViewController(
 			TextAlignment = UITextAlignment.Center,
 			HorizontalPadding = 24
 		};
+		UIButton playButton = UIButtonConfiguration.FilledButtonConfiguration.CreateButton(
+			title: "media_play".L10N(),
+			cornerStyle: UIButtonConfigurationCornerStyle.Capsule,
+			image: UIImage.GetSystemImage("play.fill"),
+			imagePadding: 8,
+			imagePlacement: NSDirectionalRectEdge.Leading,
+			foregroundColor: UIColor.Black,
+			backgroundColor: UIColor.White.ColorWithAlpha(0.75f),
+			onPress: _ => { });
 		
-		topContainerView.AddSubviews(imageShadowView, imageView, titleLabel, descriptionLabel, fadeInView);
+		topContainerView.AddSubviews(imageShadowView, imageView, titleLabel, infoLabel, descriptionLabel, playButton, fadeInView);
 
 		// UI: Bottom Container
 		UIView bottomContainerView = new()
@@ -297,11 +317,18 @@ public class MovieInfoViewController(
 
 			titleLabel.AtLeftOf(topContainerView, 24),
 			titleLabel.AtRightOf(topContainerView, 24),
-			titleLabel.Below(imageView, 40),
+			titleLabel.Below(imageView, 32),
 			
+			infoLabel.AtLeftOf(topContainerView, 24),
+			infoLabel.AtRightOf(topContainerView, 24),
+			infoLabel.Below(titleLabel, 2),
+
 			descriptionLabel.AtLeftOf(topContainerView, 24),
 			descriptionLabel.AtRightOf(topContainerView, 24),
-			descriptionLabel.Below(titleLabel, 6),
+			descriptionLabel.Below(infoLabel, 12),
+			
+			playButton.WithSameCenterX(topContainerView),
+			playButton.Below(descriptionLabel, 32),
 			
 			// Structure
 			fadeInView.AtLeftOf(View),

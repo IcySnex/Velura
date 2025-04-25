@@ -40,20 +40,18 @@ public partial class MediaSectionViewModel<TMediaContainer> : ObservableObject w
 	
 	
 	[RelayCommand]
-	void ShowMediaContainerInfo(
+	async Task ShowMediaContainerInfoAsync(
 		TMediaContainer mediaContainer)
 	{
 		switch (mediaContainer)
 		{
 			case Movie movie:
-				logger.LogInformation("[MediaSectionViewModel-ShowMediaContainerInfo] Creating new movie info ViewModel");
-				ILogger<MovieInfoViewModel> movieViewModelLogger = App.Provider.GetRequiredService<ILogger<MovieInfoViewModel>>();
-				MovieInfoViewModel movieViewModel = new(movieViewModelLogger, navigation, movie);
+				MovieInfoViewModel movieViewModel = App.Provider.GetRequiredService<MovieInfoViewModel>();
+				await movieViewModel.InitializeAsync(movie);
 				
 				navigation.Present(movieViewModel, false);
 				break;
 			case Show show:
-				logger.LogInformation("[MediaSectionViewModel-ShowMediaContainerInfo] Creating new show info ViewModel");
 				break;
 		}
 	}

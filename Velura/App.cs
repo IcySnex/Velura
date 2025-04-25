@@ -74,6 +74,8 @@ public abstract class App
 		services.AddSingleton<SettingsViewModel>();
 		
 		services.AddSingleton<AboutViewModel>();
+		
+		services.AddTransient<MovieInfoViewModel>();
 	}
 
 

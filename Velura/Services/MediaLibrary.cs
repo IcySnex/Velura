@@ -149,4 +149,25 @@ public class MediaLibrary
 			await dialogHandler.ShowAlertAsync("alert_error".L10N(), "error_failed_removing_show".L10N(), "alert_confirm".L10N());
 		}
 	}
+
+
+	public async Task<IEnumerable<int>> GetGenresAsync(
+		int mediaContainerId)
+	{
+		logger.LogInformation("[MediaLibrary-GetGenresAsync] Getting genres for media container from database...");
+
+		try
+		{
+			GenreMap[] genreMaps = await database.GetAsync<GenreMap>(gm => gm.MediaContainerId == mediaContainerId);
+
+			return genreMaps.Select(gm => gm.GenreId);
+		}
+		catch (Exception ex)
+		{
+			logger.LogError(ex, "[MediaLibrary-GetGenresAsync] Failed to get genres for media container from database.");
+			await dialogHandler.ShowAlertAsync("alert_error".L10N(), "error_failed_getting_genres".L10N(), "alert_confirm".L10N());
+			
+			return [];
+		}
+	}
 }

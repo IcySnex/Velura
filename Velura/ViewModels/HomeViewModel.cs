@@ -34,12 +34,11 @@ public partial class HomeViewModel : ObservableObject
 
 
 	[RelayCommand]
-	void ShowMovieInfo(
+	async Task ShowMovieInfoAsync(
 		Movie movie)
 	{
-		logger.LogInformation("[HomeViewmodel-ShowMovieInfo] Creating new movie info ViewModel");
-		ILogger<MovieInfoViewModel> viewModelLogger = App.Provider.GetRequiredService<ILogger<MovieInfoViewModel>>();
-		MovieInfoViewModel viewModel = new(viewModelLogger, navigation, movie);
+		MovieInfoViewModel viewModel = App.Provider.GetRequiredService<MovieInfoViewModel>();
+		await viewModel.InitializeAsync(movie);
 			
 		navigation.Present(viewModel, false);
 	}

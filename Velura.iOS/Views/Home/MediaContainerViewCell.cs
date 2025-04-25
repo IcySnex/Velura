@@ -106,7 +106,7 @@ public class MediaContainerViewCell : UICollectionViewCell
 		string? description = config.Home.MediaContainerDescription switch
 		{
 			MediaContainerDescription.ReleaseDate => 
-				mediaContainer.ReleaseDate?.ToString("dd. MMM yyyy"),
+				mediaContainer.ReleaseDate?.ToString("yyyy"),
 			MediaContainerDescription.Lenght =>
 				mediaContainer switch
 				{ 
