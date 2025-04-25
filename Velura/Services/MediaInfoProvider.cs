@@ -18,7 +18,7 @@ public sealed class MediaInfoProvider
 	
 	readonly ILogger<MediaInfoProvider> logger;
 
-	readonly Client client = new(Client.AuthTypes.APIKey, "d8321e5f175262c6a054a024df87c763");
+	readonly Client client = new(Client.AuthTypes.BearerToken, SecretKeys.TMDBAuthKey);
 
 	public MediaInfoProvider(
 		ILogger<MediaInfoProvider> logger)
