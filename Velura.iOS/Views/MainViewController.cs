@@ -42,6 +42,7 @@ public class MainViewController : UITabBarController, IUITabBarControllerDelegat
 		UITabBarController tabBarController,
 		UIViewController viewController)
 	{
+		return true;
 		if (UIDevice.CurrentDevice.UserInterfaceIdiom != UIUserInterfaceIdiom.Phone || viewController.TabBarItem is null || tabBarController.ViewControllers is null || !config.Appearance.AnimateTabBar)
 			return true;
 		

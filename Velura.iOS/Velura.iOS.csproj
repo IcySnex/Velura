@@ -18,6 +18,7 @@
         
         <MtouchLink>SdkOnly</MtouchLink>
         <MtouchExtraArgs>--xml=PleaseLinkerPleaseDont.xml</MtouchExtraArgs>
+        <CodesignProvision>iOS Team Provisioning Profile: com.icysnex.velura</CodesignProvision>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
@@ -25,6 +26,7 @@
         
         <MtouchLink>SdkOnly</MtouchLink>
         <MtouchExtraArgs>--xml=PleaseLinkerPleaseDont.xml</MtouchExtraArgs>
+        <CodesignProvision>iOS Team Provisioning Profile: com.icysnex.velura</CodesignProvision>
     </PropertyGroup>
 
     <ItemGroup>
